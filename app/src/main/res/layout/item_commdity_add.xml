@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="@dimen/recycler_item_height"
+                  android:orientation="horizontal">
+        <EditText
+            android:id="@+id/et_commodity_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:hint="请输入商品名称"/>
+
+        <View android:layout_width="1px" android:layout_height="match_parent"
+              android:background="@android:color/darker_gray"
+        />
+        <EditText android:id="@+id/et_commodity_price"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="1"
+                  android:background="@null"
+                  android:gravity="center"
+                  android:hint="请输入商品价格"
+                  android:inputType="number"/>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1px"
+          android:background="@android:color/darker_gray"
+    />
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+
+       android:shape="oval"
+    >
+
+
+
+    <!-- 填充 -->
+    <solid
+        android:color="@android:color/darker_gray"/><!-- 填充的颜色 -->
+
+    <size android:width="@dimen/terminal_state_icon_size"
+          android:height="@dimen/terminal_state_icon_size" />
+</shape>

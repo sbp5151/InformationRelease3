@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/regies_user_layout"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+
+    <include
+        android:id="@+id/register_number_title_phone"
+        layout="@layout/my_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+    />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_gary"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_line_height_item"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/line_gray"/>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_number_code"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:text="@string/register_code_account"
+                    android:textColor="@drawable/text_color_selector"
+                    android:textSize="16dp"
+                />
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/line_gray"/>
+                <com.jld.InformationRelease.widget.MyEditText
+                    android:id="@+id/et_input_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="@string/register_hint_phone"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"
+                    android:paddingLeft="@dimen/padding_right_left"
+                    android:paddingRight="@dimen/delete_padding_right"
+                    android:singleLine="true"
+                    android:textColorHint="@color/graysh"/>
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/line_gray"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_register_number_next"
+            style="@style/registerNextStyle"
+            android:text="@string/next_step"
+        />
+        <LinearLayout
+            android:id="@+id/ll_regiest_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/sure_protocol"
+                android:textColor="#7A7A7A"
+                android:textSize="@dimen/sp_13"/>
+
+            <TextView
+                android:id="@+id/tv_register_protocol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:singleLine="true"
+                android:text="@string/tucson_protocol"
+                android:textColor="@drawable/text_color_selector"
+                android:textSize="@dimen/sp_13"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_regiest_have"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="48dp"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:singleLine="true"
+        android:text="@string/regies_have_account"
+        android:textColor="#F85515"
+        android:textSize="@dimen/sp_22"
+        android:visibility="gone"/>
+
+</LinearLayout>

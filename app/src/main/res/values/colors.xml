@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="light_gray">#DADEE6</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#34353A</color>
+    <color name="line_gray">#D3D7DA</color>
+    <color name="background_red_check">#e44101</color>
+    <color name="background_red">#F85514</color>
+    <color name="background_gary">#EDEDED</color>
+    <color name="gray_btn">#e1e0df</color>
+    <color name="text_white">#ffffff</color>
+    <color name="graysh">#B5B7BB</color>
+    <color name="title_blue">#1E90FF</color>
+    <color name="title_blue_press">#1874CD</color>
+    <color name="cl_80c469">#F85514</color>
+    <!-- zxing二维码扫描 -->
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="bocop_dialog_bg">#77000000</color>
+    <color name="colorLine">#DFDEDE</color>
+    <color name="color_click">#e1e1e1</color>
+    <color name="dialog_backgroud">#00000000</color>
+</resources>

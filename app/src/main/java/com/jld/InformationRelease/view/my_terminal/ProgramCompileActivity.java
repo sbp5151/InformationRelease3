@@ -1,0 +1,279 @@
+package com.jld.InformationRelease.view.my_terminal;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
+import com.jld.InformationRelease.util.Constant;
+import com.jld.InformationRelease.util.LogUtil;
+import com.jld.InformationRelease.util.MD5Util;
+import com.jld.InformationRelease.util.ToastUtil;
+import com.jld.InformationRelease.util.UserConstant;
+import com.jld.InformationRelease.view.MainActivity;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+/**
+ * 节目编辑
+ */
+public class ProgramCompileActivity extends AppCompatActivity implements RecyclerImgAdapter.OnItemSelectClick, IViewToPresenter<BaseResponse> {
+
+
+    private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
+    private static final String TAG = "ProgramCompileActivity";
+    private static final int REQUEST_TAG = 0x00;
+    ArrayList<ProgramRequestBean.Commodity> mCommodities = new ArrayList();
+    ArrayList<String> mImgs = new ArrayList();
+    private RecyclerCommodityAdapter mCommodityAdapter;
+    private RecyclerImgAdapter mImgAdapter;
+    private int mGetImgPath;
+    private ProgressDialog mDialog;
+    private ImageButton mImg_add;
+    private ImageButton mCommodity_add;
+    private ArrayList<String> mCheckMacs;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_program_compile);
+        mCheckMacs = (ArrayList<String>) getIntent().getSerializableExtra("checkMacs");
+        LogUtil.d(TAG, "mCheckMacs:" + mCheckMacs);
+        initView();
+        mDialog = new ProgressDialog(this);
+        LogUtil.d(TAG, "onCreate");
+    }
+
+    private void initView() {
+        //title
+        View title = findViewById(R.id.program_compile_titlebar);
+        LinearLayout back = (LinearLayout) title.findViewById(R.id.title_back);
+        back.setOnClickListener(mOnClickListener);
+        TextView conter = (TextView) findViewById(R.id.title_center);
+        conter.setText(getString(R.string.program_compile));
+        TextView right = (TextView) findViewById(R.id.title_right);
+        right.setText(getString(R.string.push));
+        right.setOnClickListener(mOnClickListener);
+        //添加Item按钮
+        mCommodity_add = (ImageButton) findViewById(R.id.bt_commodity_add);
+        mCommodity_add.setOnClickListener(mOnClickListener);
+        mCommodity_add.setEnabled(false);
+        mImg_add = (ImageButton) findViewById(R.id.bt_img_add);
+        mImg_add.setEnabled(false);
+        mImg_add.setOnClickListener(mOnClickListener);
+        //CommodityRecycler
+        RecyclerView recyclerView_com = (RecyclerView) findViewById(R.id.rv_compile_commodity);
+        recyclerView_com.setItemAnimator(new DefaultItemAnimator());//动画
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView_com.setLayoutManager(layoutManager);
+        mCommodities.add(new ProgramRequestBean.Commodity("", ""));
+        mCommodityAdapter = new RecyclerCommodityAdapter(mCommodities, this);
+        mCommodityAdapter.addMyTextChangedListener(new RecyclerCommodityAdapter.MyTextChangedListener() {
+            @Override
+            public void onTextChanged() {
+                mCommodity_add.setEnabled(true);
+            }
+        });
+        recyclerView_com.setAdapter(mCommodityAdapter);
+        //imgRecycler
+        RecyclerView recyclerView_img = (RecyclerView) findViewById(R.id.rv_compile_img);
+        recyclerView_img.setItemAnimator(new DefaultItemAnimator());//动画
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+        recyclerView_img.setLayoutManager(layoutManager2);
+        mImgs.add("");
+        mImgAdapter = new RecyclerImgAdapter(mImgs, this);
+        recyclerView_img.setAdapter(mImgAdapter);
+        mImgAdapter.setOnItemSelectClick(this);
+    }
+
+    View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.bt_commodity_add:
+                    mCommodityAdapter.addData(mCommodities.size(), new ProgramRequestBean.Commodity("", ""));
+                    mCommodity_add.setEnabled(false);
+                    break;
+                case R.id.bt_img_add:
+                    mImgAdapter.addData(mImgs.size(), "");
+                    mImg_add.setEnabled(false);
+                    break;
+                case R.id.title_back:
+                    finish();
+                    break;
+                case R.id.title_right://节目推送
+                    ArrayList<String> imgs = mImgAdapter.getData();
+                    if (TextUtils.isEmpty(imgs.get(0))) {//图片不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
+                        return;
+                    }
+                    ArrayList<ProgramRequestBean.Commodity> data = mCommodityAdapter.getData();
+                    if (TextUtils.isEmpty(data.get(0).getName()) || TextUtils.isEmpty(data.get(0).getPrice())) {//名称和价格不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
+                        return;
+                    }
+                    SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+                    String userID = sp.getString(UserConstant.USER_ID, "");
+                    if (TextUtils.isEmpty(userID)) {//账号不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getResources().getString(R.string.please_login), 3000);
+                        return;
+                    }
+                    ProgramRequestBean body = new ProgramRequestBean();
+                    body.setCommoditys(data);//名称和价格
+                    body.setImages(imgs);//图片广告
+                    body.setDeviceMacs(mCheckMacs);//需要推送终端的Mac地址
+                    body.setModelId("1");//模板ID
+                    body.setUserID(userID);//账号
+                    body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
+
+                    Intent intent = new Intent(ProgramCompileActivity.this, MainActivity.class);
+                    intent.putExtra("body", body);
+                    setResult(0x11, intent);//编辑结果返回
+                    finish();
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 选择相片
+     *
+     * @param view
+     * @param position
+     */
+    @Override
+    public void onItemClick(View view, int position) {
+        mGetImgPath = position;
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+    }
+
+    /**
+     * 相片返回
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && data != null) {
+            Uri uri = data.getData();
+            Bitmap photoBmp = null;
+            if (uri != null) {
+                try {
+                    //所获取图片的bitmap
+                    photoBmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                    if (photoBmp != null) {
+                        String path = uri.getEncodedPath();
+                        LogUtil.d(TAG, "path:" + path);
+                        String[] split = path.split(File.separator);
+                        String imgName = split[split.length-1];
+                        LogUtil.d(TAG, "imgName:" + imgName);
+
+                        String miniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
+                        File file = new File(miniPath);
+                        if (!file.exists())
+                            file.mkdirs();
+                        String miniImgPath = miniPath + File.separator + imgName + "mini.jpg";
+                        LogUtil.d(TAG, "miniImgPath:" + miniImgPath);
+
+                        if (!new File(miniImgPath).exists()) {//没有压缩过进行压缩
+                            LogUtil.d(TAG, "压缩:");
+                            //图片压缩
+                            BitmapUtilPresenter presenter = new BitmapUtilPresenter(mBitmapCompressListen);
+                            //图片压缩RxJava
+                            presenter.bitmapCompress(photoBmp, miniImgPath);
+                        }else{
+                            LogUtil.d(TAG, "不压缩:");
+                            replaceImg(miniImgPath);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 替换图片路径
+     * @param strPath
+     */
+    public void replaceImg(String strPath){
+        mImgs.remove(mGetImgPath);
+        mImgs.add(mGetImgPath, strPath);
+        mImgAdapter.notifyDataSetChanged();
+        LogUtil.d(TAG, "path:" + strPath);
+        mImg_add.setEnabled(true);
+    }
+    //图片压缩返回监听
+    BitmapUtilPresenter.BitmapCompressListen mBitmapCompressListen = new BitmapUtilPresenter.BitmapCompressListen() {
+
+        @Override
+        public void compressSucceed(String compressPath) {//成功并返回结果
+            replaceImg(compressPath);
+            if (mDialog != null && mDialog.isShowing())
+                mDialog.dismiss();
+        }
+
+        @Override
+        public void compressError() {//失败
+            if (mDialog != null && mDialog.isShowing())
+                mDialog.dismiss();
+        }
+
+        @Override
+        public void onStart() {//开始
+            if (mDialog != null && !mDialog.isShowing())
+                mDialog.show();
+        }
+    };
+
+    @Override
+    public void showProgress(int requestTag) {
+        if (mDialog != null && !mDialog.isShowing())
+            mDialog.show();
+        LogUtil.d("showProgress");
+    }
+
+    @Override
+    public void hideProgress(int requestTag) {
+        if (mDialog != null && mDialog.isShowing())
+            mDialog.dismiss();
+        LogUtil.d("showProgress");
+    }
+
+    @Override
+    public void loadDataSuccess(BaseResponse data, int requestTag) {
+        //TODO 推送成功
+    }
+
+    @Override
+    public void loadDataError(Throwable e, int requestTag) {
+        hideProgress(requestTag);
+        ToastUtil.showToast(this, e.getMessage().toString(), 3000);
+    }
+}

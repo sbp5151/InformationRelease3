@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/regies_user_layout"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+
+    <include
+        android:id="@+id/register_number_title_code"
+        layout="@layout/my_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+    />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_gary"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_line_height_item"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/line_gray"/>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:orientation="horizontal">
+
+                <com.jld.InformationRelease.widget.MyEditText
+                    android:id="@+id/et_input_code"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/register_hint_code"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:paddingLeft="@dimen/padding_right_left"
+                    android:paddingRight="@dimen/delete_padding_right"
+                    android:singleLine="true"
+                    android:textColorHint="@color/graysh"/>
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/line_gray"/>
+                <Button
+                    android:id="@+id/btn_code_again"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:text="@string/register_code_again"
+                    android:textSize="16dp"
+                    android:textColor="@drawable/text_color_selector"
+                />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/line_gray"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_register_code_next"
+            style="@style/registerNextStyle"
+            android:text="@string/next_step"
+        />
+
+    </LinearLayout>
+
+</LinearLayout>

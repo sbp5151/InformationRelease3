@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="complete_spinner">
+        <item>节目推送</item>
+        <item>关机</item>
+        <item>重启</item>
+        <item>定时开关机</item>
+        <item>音量调节</item>
+        <item>获取截屏</item>
+    </string-array>
+</resources>

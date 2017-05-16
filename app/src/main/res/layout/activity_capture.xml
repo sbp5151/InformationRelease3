@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
+
+    <include
+        layout="@layout/my_titlebar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/title_height"
+        android:id="@+id/scan_title_bar"
+        android:visibility="gone"
+    />
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <SurfaceView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:id="@+id/preview_view"/>
+
+            <com.jld.InformationRelease.util.zxing.view.ViewfinderView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/viewfinder_view"/>
+        </RelativeLayout>
+
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_my_terminal"
+            android:icon="@mipmap/my_terminal"
+            android:title="@string/myTerminal"/>
+        <item
+            android:id="@+id/menu_my_model"
+            android:icon="@mipmap/my_model"
+            android:title="@string/myModel"/>
+        <item
+            android:id="@+id/menu_system_model"
+            android:icon="@mipmap/system_model"
+            android:title="@string/systemModel"/>
+        <item
+            android:id="@+id/menu_scan_code"
+            android:icon="@mipmap/scan_code"
+            android:title="@string/scanCode"/>
+        <item
+            android:id="@+id/menu_setting"
+            android:icon="@mipmap/setting"
+            android:title="@string/setting"/>
+    </group>
+</menu>

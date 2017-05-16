@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name">JLD发布系统</string>
+    <string name="title_activity_login">登录界面</string>
+    <string name="title_activity_register">注册之输入手机号码</string>
+    <string name="title_activity_code">注册之输入手机验证码</string>
+    <string name="t_frag_set_dia_btn_can">取消</string>
+    <string name="login_prompt">手机登录</string>
+    <string name="register_code_account">中国(+86)</string>
+    <string name="register_code_again">重新发送</string>
+    <string name="login">登录</string>
+    <string name="forget_password">忘记密码？</string>
+    <string name="new_user">新用户注册</string>
+
+    <string name="login_password_hint">输入密码</string>
+    <string name="login_mobile_hint">输入手机号码</string>
+    <string name="regies_username">填写用户名</string>
+    <string name="regies_hint">使用真实姓名能让别人更快地找到你</string>
+    <string name="next_step">下一步</string>
+    <string name="register_completer">完成</string>
+    <string name="sure_protocol">点击下一步，既表示您已同意</string>
+    <string name="tucson_protocol">《用户协议》</string>
+    <string name="regies_have_account">已有账户，点击登录</string>
+    <string name="register_hint_phone">填写手机号码</string>
+    <string name="register_hint_code">填写验证码</string>
+    <string name="register_hint_name">请输入用户名（选填）</string>
+    <string name="register_hint_companyName">请输入公司名称（选填）</string>
+    <string name="register_hint_password">请输入密码</string>
+    <string name="register_hint_passwordAgain">请再次输入密码</string>
+    <string name="network_error">网络错误</string>
+    <string name="back">返回</string>
+    <string name="verify_number">验证手机号码</string>
+    <string name="myTerminal">我的终端</string>
+    <string name="myModel">我的模板</string>
+    <string name="systemModel">系统模板</string>
+    <string name="scanCode">扫描添加</string>
+    <string name="setting">设置</string>
+    <string name="action_settings">设置</string>
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="terminal_state_offline">离线</string>
+    <string name="terminal_state_online">在线</string>
+    <string name="terminal_state_showdown">关机</string>
+    <string name="terminal_state_fault">故障</string>
+    <string name="completer">编辑</string>
+    <string name="cancle">取消</string>
+    <string name="program_compile">模板编辑</string>
+    <string name="push">推送</string>
+    <string name="str_scan_hint">扫描二维码绑定设备</string>
+    <string name="str_open_light">打开闪光灯</string>
+    <string name="str_close_light">关闭闪光灯</string>
+    <string name="str_scan_title">二维码扫描</string>
+    <string name="str_editphoto_wrapper_title">打开闪光灯</string>
+    <string name="scan_bind">扫描绑定</string>
+    <string name="set_name">请输入设备名称</string>
+    <string name="confirm">确定</string>
+    <string name="input_name">请输入设备名称</string>
+    <string name="please_set_img">请设置图片广告</string>
+    <string name="please_set_commodity">请完整输入商品名称和价格</string>
+    <string name="please_select_terminal">请选择需要操作的终端设备</string>
+    <string name="please_login">请先登录</string>
+    <string name="push_succeed">节目发布成功</string>
+
+</resources>

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.jld.InformationRelease.R;
 
 import java.util.ArrayList;
 
@@ -19,14 +18,14 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/4/20 16:34
  */
-public class VpImgAdapter extends PagerAdapter {
+public class VpImg1Adapter extends PagerAdapter {
 
 
     ArrayList<ImageView> mViews = new ArrayList<>();
     ArrayList<String> mImgUlrs;
     Context mContext;
 
-    public VpImgAdapter(ArrayList<String> imgUlrs, Context context) {
+    public VpImg1Adapter(ArrayList<String> imgUlrs, Context context) {
         this.mImgUlrs = imgUlrs;
         mContext = context;
         for (String url : imgUlrs) {
@@ -36,16 +35,13 @@ public class VpImgAdapter extends PagerAdapter {
         }
     }
 
-    public VpImgAdapter(Context context) {
+    public VpImg1Adapter(Context context) {
         mContext = context;
-        ImageView imageView1 = new ImageView(mContext);
-        imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        ImageView imageView2 = new ImageView(mContext);
-        imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView1.setImageResource(R.mipmap.img1);
-        imageView2.setImageResource(R.mipmap.img2);
-        mViews.add(imageView1);
-        mViews.add(imageView2);
+        for (String img : mImgUlrs) {
+            ImageView imageView1 = new ImageView(mContext);
+            imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mViews.add(imageView1);
+        }
     }
 
     @Override

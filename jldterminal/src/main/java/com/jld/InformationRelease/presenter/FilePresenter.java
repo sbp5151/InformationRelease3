@@ -33,10 +33,10 @@ public class FilePresenter extends BasePresenterImpl<FileResponseBean> {
         mFileModel = new FileModel(context);
     }
 
-//    public void updateFile(FileRequest body, int requesTag) {
-//
-//        mFileModel.updateFile(body, this, requesTag);
-//    }
+    public void updateFile(String imgPath, int requesTag) {
+
+        mFileModel.updateFile(imgPath, this, requesTag);
+    }
 
     public void updateFiles(ArrayList<String> imgPath, int requesTag) {
 

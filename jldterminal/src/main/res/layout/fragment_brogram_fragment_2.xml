@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--<View android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@android:color/white"-->
+    <!--/>-->
+    <View android:layout_width="1920px"
+          android:layout_height="1080px"
+          android:background="@android:color/white"
+    />
+    <!--<View android:layout_width="1280px"-->
+    <!--android:layout_height="800px"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--/>-->
+
+    <Spinner
+        android:id="@+id/sp_animation"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:entries="@array/animation"
+        android:visibility="gone"
+    />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/program2_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+    />
+
+</RelativeLayout>

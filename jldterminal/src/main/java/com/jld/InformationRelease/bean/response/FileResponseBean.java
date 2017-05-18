@@ -14,7 +14,18 @@ import java.util.ArrayList;
  */
 public class FileResponseBean extends BaseResponse {
 
+    //多张图片url存储
     private ArrayList<String> fileUrls;
+    //单张图片存储
+    private String fileUrl;
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
 
     public ArrayList<String> getFileUrls() {
         return fileUrls;
@@ -28,6 +39,7 @@ public class FileResponseBean extends BaseResponse {
     public String toString() {
         return "FileResponseBean{" +
                 "fileUrls=" + fileUrls +
+                ", fileUrl='" + fileUrl + '\'' +
                 '}';
     }
 }

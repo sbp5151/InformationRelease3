@@ -13,7 +13,11 @@ public class URLConstant {
     public static final String BASE_HTTP_URL = "http://112.74.215.42";
     public static final String LOAD_PROGRAM_URL = "";
     /**
-     * 13、上传文件接口
+     * 1、上传文件接口
      */
-    public static final String PUSH_FILES = "/user/userimg";
+    public static final String UPLOAD_FILES = "/user/userimg";
+    /**
+     * 2、上传截屏接口
+     */
+    public static final String UPLOAD_SCREEN = "/user/userimg";
 }

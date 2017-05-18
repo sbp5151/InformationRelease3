@@ -1,7 +1,6 @@
 package com.jld.InformationRelease.model;
 
 import com.jld.InformationRelease.bean.response.FileResponseBean;
-import com.jld.InformationRelease.bean.response.FileSingleResponseBean;
 import com.jld.InformationRelease.util.URLConstant;
 
 import java.util.Map;
@@ -31,9 +30,9 @@ public interface FileService {
      * @return
      */
     @Multipart
-    @POST(URLConstant.PUSH_FILES)
-    Observable<FileSingleResponseBean> updateFile(
-            @Part String sign,
+    @POST(URLConstant.UPLOAD_FILES)
+    Observable<FileResponseBean> updateFile(
+            @Part("sign") RequestBody sign,
             @Part MultipartBody.Part file);
 
     /**
@@ -43,8 +42,8 @@ public interface FileService {
      * @return
      */
     @Multipart
-    @POST(URLConstant.PUSH_FILES)
+    @POST(URLConstant.UPLOAD_FILES)
     Observable<FileResponseBean> updateFiles(
-            @Part String sign,
+            @Part("sign") RequestBody sign,
             @PartMap Map<String, RequestBody> files);
 }

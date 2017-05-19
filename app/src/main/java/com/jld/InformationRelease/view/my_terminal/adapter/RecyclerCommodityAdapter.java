@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_terminal;
+package com.jld.InformationRelease.view.my_terminal.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -84,7 +84,7 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
         mTextChangedListener = textChangedListener;
     }
 
-    interface MyTextChangedListener {
+    public interface MyTextChangedListener {
         public void onTextChanged();
     }
 

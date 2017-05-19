@@ -80,7 +80,6 @@
             android:label="@string/title_activity_register"
             android:theme="@style/MyTheme">
         </activity>
-
         <activity android:name=".view.my_terminal.ProgramCompileActivity">
         </activity>
         <activity android:name=".util.zxing.activity.CaptureActivity">
@@ -91,6 +90,13 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <activity android:name=".view.my_terminal.SelectModelActivity">
+        </activity>
+        <activity
+            android:name=".view.my_terminal.preview.PreviewActivity_1"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoBar"/>
     </application>
 
 </manifest>

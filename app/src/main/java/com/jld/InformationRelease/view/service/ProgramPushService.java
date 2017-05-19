@@ -94,8 +94,7 @@ public class ProgramPushService extends Service implements IViewToPresenter {
         public void startPush() {
             Gson gson = new Gson();
             String toJson = gson.toJson(mBody);
-            LogUtil.d(TAG,"tojson:"+toJson);
-            return;
+            LogUtil.d(TAG, "tojson:" + toJson);
             //上传图片
             if (!mImgIsUpdate && mBody.getImages().size() > 0) {
                 FilePresenter filePresenter = new FilePresenter(ProgramPushService.this, ProgramPushService.this);

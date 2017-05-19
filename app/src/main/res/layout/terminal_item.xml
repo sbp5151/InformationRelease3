@@ -11,7 +11,9 @@
         <CheckBox
             android:id="@+id/terminal_check"
             android:layout_width="wrap_content"
-            android:visibility="gone"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checkbox_bg"
+            android:layout_marginLeft="8dp"
             android:layout_height="match_parent"/>
         <TextView
             android:id="@+id/tv_terminal_item_id"

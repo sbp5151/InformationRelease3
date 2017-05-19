@@ -20,7 +20,7 @@ import retrofit2.http.POST;
  * @create-time 2017/4/12 9:49
  */
 public interface UserModelService {
-
+    //http://www.jianshu.com/p/308f3c54abdd retrofit详解
     /**
      * 登录
      */

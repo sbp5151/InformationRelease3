@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_terminal;
+package com.jld.InformationRelease.view.my_terminal.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +22,7 @@ import java.util.List;
  * @creator boping
  * @create-time 2017/4/18 14:30
  *
- * 终端机列表
+ * 设备终端适配器
  */
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
 

@@ -22,10 +22,14 @@ import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
+import com.jld.InformationRelease.view.my_terminal.adapter.TerminalAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 一：我的设备
+ */
 public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRecyclerViewItemClickListener, IViewToPresenter<GetTerminalResponse> {
 
     private RecyclerView mRecyclerView;

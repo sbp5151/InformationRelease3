@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.util.LogUtil;
 
+import java.io.Serializable;
+
 /**
  * 项目名称：InformationRelease
  * 晶凌达科技有限公司所有，
@@ -34,5 +36,11 @@ public class BaseActivity extends AppCompatActivity {
         intent.putExtra(putName,putData);
         startActivity(intent);
         overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    }
+    public void toActivity(Class activity,Serializable serializable,String serializableName){
+        Intent intent = new Intent(this, activity);
+        intent.putExtra(serializableName,serializable);
+        startActivity(intent);
+
     }
 }

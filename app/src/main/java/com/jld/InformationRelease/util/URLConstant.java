@@ -63,12 +63,22 @@ public class URLConstant {
     public static final String PUSH_PROGRAM_URL = "";
 
     /**
-     *  12、验证码请求接口
+     * 12、验证码请求接口
      */
     public static final String GET_VERIFY_CODE = "/tsmsg/sop";
 
     /**
-     * 13、上传文件接口
+     * 13、多个文件上传接口
      */
     public static final String PUSH_FILES = "/user/userimg";
+    /**
+     * 14、单个文件上传接口
+     */
+    public static final String PUSH_FILE = "/user/userimg";
+
+    /**
+     * 15、获取所有节目模板
+     */
+    public static final String GET_MODEL = "/user/userimg";
+
 }

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
 import com.jld.InformationRelease.interfaces.IViewToPresenter;
@@ -26,19 +26,22 @@ import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
+import com.jld.InformationRelease.util.ModelId;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
+import com.jld.InformationRelease.view.my_terminal.adapter.RecyclerCommodityAdapter;
+import com.jld.InformationRelease.view.my_terminal.adapter.RecyclerImgAdapter;
+import com.jld.InformationRelease.view.my_terminal.preview.PreviewActivity_1;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * 节目编辑
+ * 三：节目编辑
  */
-public class ProgramCompileActivity extends AppCompatActivity implements RecyclerImgAdapter.OnItemSelectClick, IViewToPresenter<BaseResponse> {
-
+public class ProgramCompileActivity extends BaseActivity implements RecyclerImgAdapter.OnItemSelectClick, IViewToPresenter<BaseResponse> {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
     private static final String TAG = "ProgramCompileActivity";
@@ -52,12 +55,16 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
     private ImageButton mImg_add;
     private ImageButton mCommodity_add;
     private ArrayList<String> mCheckMacs;
+    private String modleId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_program_compile);
+        //获取mac 地址
         mCheckMacs = (ArrayList<String>) getIntent().getSerializableExtra("checkMacs");
+        //获取节目模板ID
+        modleId = (String) getIntent().getSerializableExtra("modelid");
         LogUtil.d(TAG, "mCheckMacs:" + mCheckMacs);
         initView();
         mDialog = new ProgressDialog(this);
@@ -65,6 +72,12 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
     }
 
     private void initView() {
+        //纯图片不用编辑文字
+        LinearLayout ll_commodity = (LinearLayout) findViewById(R.id.ll_commodity);
+        LinearLayout ll_img = (LinearLayout) findViewById(R.id.ll_img);
+        if (modleId.equals(ModelId.modle_002)) {
+            ll_commodity.setVisibility(View.GONE);
+        }
         //title
         View title = findViewById(R.id.program_compile_titlebar);
         LinearLayout back = (LinearLayout) title.findViewById(R.id.title_back);
@@ -122,6 +135,12 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
                     finish();
                     break;
                 case R.id.title_right://节目推送
+                    SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+                    String userID = sp.getString(UserConstant.USER_ID, "");
+                    if (TextUtils.isEmpty(userID)) {//账号不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getResources().getString(R.string.please_login), 3000);
+                        return;
+                    }
                     ArrayList<String> imgs = mImgAdapter.getData();
                     if (TextUtils.isEmpty(imgs.get(0))) {//图片不能为空
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
@@ -132,17 +151,12 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
-                    SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-                    String userID = sp.getString(UserConstant.USER_ID, "");
-                    if (TextUtils.isEmpty(userID)) {//账号不能为空
-                        ToastUtil.showToast(ProgramCompileActivity.this, getResources().getString(R.string.please_login), 3000);
-                        return;
-                    }
+
                     ProgramRequestBean body = new ProgramRequestBean();
                     body.setCommoditys(data);//名称和价格
                     body.setImages(imgs);//图片广告
                     body.setDeviceMacs(mCheckMacs);//需要推送终端的Mac地址
-                    body.setModelId("1");//模板ID
+                    body.setModelId(modleId);//模板ID
                     body.setUserID(userID);//账号
                     body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
 
@@ -150,6 +164,24 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
                     intent.putExtra("body", body);
                     setResult(0x11, intent);//编辑结果返回
                     finish();
+                    break;
+                case 1://预览
+                    ArrayList<String> preview_imgs = mImgAdapter.getData();
+                    if (TextUtils.isEmpty(preview_imgs.get(0))) {//图片不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
+                        return;
+                    }
+                    ArrayList<ProgramRequestBean.Commodity> preview_data = mCommodityAdapter.getData();
+                    if (TextUtils.isEmpty(preview_data.get(0).getName()) || TextUtils.isEmpty(preview_data.get(0).getPrice())) {//名称和价格不能为空
+                        ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
+                        return;
+                    }
+
+                    ProgramRequestBean preview_body = new ProgramRequestBean();
+                    preview_body.setCommoditys(preview_data);//名称和价格
+                    preview_body.setImages(preview_imgs);//图片广告
+                    preview_body.setModelId(modleId);//模板ID
+                    toActivity(PreviewActivity_1.class,preview_body,"previewData");
                     break;
             }
         }
@@ -190,7 +222,7 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
                         String path = uri.getEncodedPath();
                         LogUtil.d(TAG, "path:" + path);
                         String[] split = path.split(File.separator);
-                        String imgName = split[split.length-1];
+                        String imgName = split[split.length - 1];
                         LogUtil.d(TAG, "imgName:" + imgName);
 
                         String miniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
@@ -206,7 +238,7 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
                             BitmapUtilPresenter presenter = new BitmapUtilPresenter(mBitmapCompressListen);
                             //图片压缩RxJava
                             presenter.bitmapCompress(photoBmp, miniImgPath);
-                        }else{
+                        } else {
                             LogUtil.d(TAG, "不压缩:");
                             replaceImg(miniImgPath);
                         }
@@ -219,16 +251,18 @@ public class ProgramCompileActivity extends AppCompatActivity implements Recycle
     }
 
     /**
-     * 替换图片路径
+     * 将图片路径更换成url
+     *
      * @param strPath
      */
-    public void replaceImg(String strPath){
+    public void replaceImg(String strPath) {
         mImgs.remove(mGetImgPath);
         mImgs.add(mGetImgPath, strPath);
         mImgAdapter.notifyDataSetChanged();
         LogUtil.d(TAG, "path:" + strPath);
         mImg_add.setEnabled(true);
     }
+
     //图片压缩返回监听
     BitmapUtilPresenter.BitmapCompressListen mBitmapCompressListen = new BitmapUtilPresenter.BitmapCompressListen() {
 

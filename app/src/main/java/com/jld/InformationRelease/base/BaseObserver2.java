@@ -26,7 +26,6 @@ public  class BaseObserver2<T> implements Observer<T> {
     @Override
     public void onSubscribe(Disposable d) {
         mCallback.beforeRequest(mRequestTag);
-
     }
 
     @Override

@@ -62,5 +62,8 @@
     <string name="please_select_terminal">请选择需要操作的终端设备</string>
     <string name="please_login">请先登录</string>
     <string name="push_succeed">节目发布成功</string>
+    <string name="device_list">设备列表</string>
+    <string name="select_device_complete">请选择设备</string>
+    <string name="data_exception">数据异常</string>
 
 </resources>

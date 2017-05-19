@@ -29,9 +29,9 @@ import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.interfaces.IViewToPresenter;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
@@ -42,7 +42,7 @@ import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.util.zxing.activity.CaptureActivity;
 import com.jld.InformationRelease.view.my_model.MyModelFragment;
 import com.jld.InformationRelease.view.my_terminal.MyTerminalFragment;
-import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_terminal.SelectModelActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 import com.jld.InformationRelease.view.settings.SettingFragment;
 import com.jld.InformationRelease.view.system_model.SystemModelFragment;
@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity
     private int mProgramRequestCode = 0x21;//节目编辑数据返回
     private int mPhotoRequestCode = 0x22;//节目编辑数据返回
     private ProgramRequestBean mProgram;
+    private TextView mTitle_tx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class MainActivity extends BaseActivity
         mTvComplete = (TextView) view.findViewById(R.id.toolbar_complete);
         push = (ImageButton) view.findViewById(R.id.toolbar_push);
         ImageButton menu = (ImageButton) view.findViewById(R.id.toolbar_left);
+        mTitle_tx = (TextView) findViewById(R.id.toolbar_title);
+        mTitle_tx.setText(getString(R.string.device_list));
         menu.setOnClickListener(mOnClickListener);
         push.setOnClickListener(mOnClickListener);
         mTvComplete.setOnClickListener(mOnClickListener);
@@ -134,7 +137,9 @@ public class MainActivity extends BaseActivity
                 terminal_fragment.setCheck(false);
                 push.setVisibility(View.GONE);
                 mTvComplete.setText(getResources().getString(R.string.completer));
+                mTitle_tx.setText(getString(R.string.device_list));
             } else {//编辑状态
+                mTitle_tx.setText(getString(R.string.select_device_complete));
                 terminal_fragment.setCheck(true);
                 push.setVisibility(View.VISIBLE);
                 mTvComplete.setText(getResources().getString(R.string.cancle));
@@ -374,7 +379,7 @@ public class MainActivity extends BaseActivity
                     ToastUtil.showToast(MainActivity.this, "节目推送", 3000);
                     mPopupWindow.dismiss();
                     LogUtil.d(TAG, "mCheckMacs:" + checkMacs);
-                    Intent intent = new Intent(MainActivity.this, ProgramCompileActivity.class);
+                    Intent intent = new Intent(MainActivity.this, SelectModelActivity.class);
                     intent.putExtra("checkMacs", checkMacs);
                     startActivityForResult(intent, mProgramRequestCode);
 //                    toActivity(ProgramCompileActivity.class);

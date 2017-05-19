@@ -31,8 +31,9 @@ public interface FileService {
      * @return
      */
     @Multipart
-    @POST(URLConstant.PUSH_FILES)
+    @POST(URLConstant.PUSH_FILE)
     Observable<BaseResponse> updateFile(
+            @Part RequestBody sing,
             @Part MultipartBody.Part file);
 
     /**
@@ -44,6 +45,6 @@ public interface FileService {
     @Multipart
     @POST(URLConstant.PUSH_FILES)
     Observable<FileResponseBean> updateFiles(
-            @Part String sing,
+            @Part RequestBody sing,
             @PartMap Map<String, RequestBody> files);
 }

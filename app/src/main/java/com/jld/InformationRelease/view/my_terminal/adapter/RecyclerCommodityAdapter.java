@@ -35,6 +35,7 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
     public RecyclerCommodityAdapter(ArrayList<ProgramRequestBean.Commodity> commoditys, Context context) {
         mCommoditys = commoditys;
         mContext = context;
+
     }
 
     @Override
@@ -49,6 +50,11 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
         ProgramRequestBean.Commodity bean = mCommoditys.get(position);
         holder.name.setText(bean.getName());
         holder.price.setText(bean.getPrice());
+        LogUtil.d(TAG,"position:"+position);
+        LogUtil.d(TAG,"mCommoditys.size():"+mCommoditys.size());
+        if(position==(mCommoditys.size()-1)){
+            holder.name.requestFocus();
+        }
 
         holder.name.addTextChangedListener(new MyTextWatcher() {
             @Override

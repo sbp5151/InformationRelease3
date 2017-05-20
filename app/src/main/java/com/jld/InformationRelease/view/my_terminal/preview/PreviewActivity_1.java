@@ -1,6 +1,10 @@
 package com.jld.InformationRelease.view.my_terminal.preview;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,9 +24,30 @@ import java.util.ArrayList;
  * 节目预览1
  */
 public class PreviewActivity_1 extends AppCompatActivity {
+    private static final int CHANGE_IMG = 0x01;
+    private static final long IMG_CHANGE_TIME = 3000;
     private ViewPager mVp_img;
     private ProgramRequestBean mPreviewData;
-
+    Handler mHandler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case CHANGE_IMG://图片自动切换
+                    if (mVp_img != null) {
+                        int currentItem = mVp_img.getCurrentItem();
+                        if (currentItem == (mPreviewData.getImages().size() - 1))
+                            currentItem = 0;
+                        else
+                            currentItem++;
+                        mVp_img.setCurrentItem(currentItem);
+                        mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+                    }
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +58,7 @@ public class PreviewActivity_1 extends AppCompatActivity {
             return;
         }
         initView();
+        mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
     }
 
     public void initView() {

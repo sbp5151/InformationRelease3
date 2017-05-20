@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
@@ -56,6 +59,11 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
     private ImageButton mCommodity_add;
     private ArrayList<String> mCheckMacs;
     private String modleId;
+    private RecyclerView mRecyclerView_com;
+    private RecyclerView mRecyclerView_img;
+    private View mImg_head;
+    private View mText_head;
+    private View mHead_head;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +73,14 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
         mCheckMacs = (ArrayList<String>) getIntent().getSerializableExtra("checkMacs");
         //获取节目模板ID
         modleId = (String) getIntent().getSerializableExtra("modelid");
+        modleId = "001";
         LogUtil.d(TAG, "mCheckMacs:" + mCheckMacs);
         initView();
         mDialog = new ProgressDialog(this);
         LogUtil.d(TAG, "onCreate");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void initView() {
         //纯图片不用编辑文字
         LinearLayout ll_commodity = (LinearLayout) findViewById(R.id.ll_commodity);
@@ -82,23 +92,50 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
         View title = findViewById(R.id.program_compile_titlebar);
         LinearLayout back = (LinearLayout) title.findViewById(R.id.title_back);
         back.setOnClickListener(mOnClickListener);
+        TextView tv_preview = (TextView) title.findViewById(R.id.title_preview);
+        tv_preview.setVisibility(View.VISIBLE);
+        tv_preview.setOnClickListener(mOnClickListener);
         TextView conter = (TextView) findViewById(R.id.title_center);
         conter.setText(getString(R.string.program_compile));
         TextView right = (TextView) findViewById(R.id.title_right);
         right.setText(getString(R.string.push));
         right.setOnClickListener(mOnClickListener);
-        //添加Item按钮
-        mCommodity_add = (ImageButton) findViewById(R.id.bt_commodity_add);
-        mCommodity_add.setOnClickListener(mOnClickListener);
-        mCommodity_add.setEnabled(false);
-        mImg_add = (ImageButton) findViewById(R.id.bt_img_add);
-        mImg_add.setEnabled(false);
-        mImg_add.setOnClickListener(mOnClickListener);
+        /***********************head***********************/
+        //图片head
+        mImg_head = findViewById(R.id.program_compile_head_img);
+        //文字head
+        mText_head = findViewById(R.id.program_compile_head_text);
+        //主head
+        mHead_head = findViewById(R.id.program_compile_head_head);
+        ImageButton add_item = (ImageButton) mHead_head.findViewById(R.id.bt_compile_head_add);
+        add_item.setOnClickListener(mOnClickListener);
+
+//        TextView img_tv_head = (TextView) img_head.findViewById(R.id.tv_compile_head_text);
+//        mCommodity_add = (ImageButton) img_head.findViewById(R.id.bt_compile_head_add);
+//        mCommodity_add.setOnClickListener(mOnClickListener);
+//        mCommodity_add.setEnabled(false);
+//        mImg_add = (ImageButton) findViewById(R.id.bt_img_add);
+//        mImg_add.setEnabled(false);
+//        mImg_add.setOnClickListener(mOnClickListener);
+
+//        ScrollView
+        final ScrollView scrollView = (ScrollView) findViewById(R.id.program_compile_scroll);
+        scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+
+                View stickyInfoView = scrollView.findChildViewUnder(tvStickyHeaderView.getMeasuredWidth() / 2, 5);
+
+
+
+            }
+        });
         //CommodityRecycler
-        RecyclerView recyclerView_com = (RecyclerView) findViewById(R.id.rv_compile_commodity);
-        recyclerView_com.setItemAnimator(new DefaultItemAnimator());//动画
+        mRecyclerView_com = (RecyclerView) findViewById(R.id.rv_compile_commodity);
+        mRecyclerView_com.setItemAnimator(new DefaultItemAnimator());//动画
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView_com.setLayoutManager(layoutManager);
+//        layoutManager.setStackFromEnd(true);
+        mRecyclerView_com.setLayoutManager(layoutManager);
         mCommodities.add(new ProgramRequestBean.Commodity("", ""));
         mCommodityAdapter = new RecyclerCommodityAdapter(mCommodities, this);
         mCommodityAdapter.addMyTextChangedListener(new RecyclerCommodityAdapter.MyTextChangedListener() {
@@ -107,15 +144,16 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                 mCommodity_add.setEnabled(true);
             }
         });
-        recyclerView_com.setAdapter(mCommodityAdapter);
+        mRecyclerView_com.setAdapter(mCommodityAdapter);
         //imgRecycler
-        RecyclerView recyclerView_img = (RecyclerView) findViewById(R.id.rv_compile_img);
-        recyclerView_img.setItemAnimator(new DefaultItemAnimator());//动画
+        mRecyclerView_img = (RecyclerView) findViewById(R.id.rv_compile_img);
+        mRecyclerView_img.setItemAnimator(new DefaultItemAnimator());//动画
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-        recyclerView_img.setLayoutManager(layoutManager2);
+//        layoutManager2.setStackFromEnd(true);
+        mRecyclerView_img.setLayoutManager(layoutManager2);
         mImgs.add("");
         mImgAdapter = new RecyclerImgAdapter(mImgs, this);
-        recyclerView_img.setAdapter(mImgAdapter);
+        mRecyclerView_img.setAdapter(mImgAdapter);
         mImgAdapter.setOnItemSelectClick(this);
     }
 
@@ -123,14 +161,17 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.bt_commodity_add:
-                    mCommodityAdapter.addData(mCommodities.size(), new ProgramRequestBean.Commodity("", ""));
-                    mCommodity_add.setEnabled(false);
-                    break;
-                case R.id.bt_img_add:
-                    mImgAdapter.addData(mImgs.size(), "");
-                    mImg_add.setEnabled(false);
-                    break;
+//                case R.id.bt_commodity_add:
+//                    mCommodityAdapter.addData(mCommodities.size(), new ProgramRequestBean.Commodity("", ""));
+//                    Log.d(TAG,"size:"+mCommodityAdapter.getData().size());
+//                    mRecyclerView_com.scrollToPosition(mCommodityAdapter.getData().size());
+//                    mCommodity_add.setEnabled(false);
+//                    break;
+//                case R.id.bt_img_add:
+//                    mImgAdapter.addData(mImgs.size(), "");
+//                    mRecyclerView_img.scrollToPosition(mImgAdapter.getData().size());
+//                    mImg_add.setEnabled(false);
+//                    break;
                 case R.id.title_back:
                     finish();
                     break;
@@ -165,7 +206,7 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                     setResult(0x11, intent);//编辑结果返回
                     finish();
                     break;
-                case 1://预览
+                case R.id.title_preview://预览
                     ArrayList<String> preview_imgs = mImgAdapter.getData();
                     if (TextUtils.isEmpty(preview_imgs.get(0))) {//图片不能为空
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
@@ -181,7 +222,7 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                     preview_body.setCommoditys(preview_data);//名称和价格
                     preview_body.setImages(preview_imgs);//图片广告
                     preview_body.setModelId(modleId);//模板ID
-                    toActivity(PreviewActivity_1.class,preview_body,"previewData");
+                    toActivity(PreviewActivity_1.class, preview_body, "previewData");
                     break;
             }
         }

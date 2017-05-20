@@ -81,8 +81,8 @@ public class RecyclerImgAdapter extends RecyclerView.Adapter<RecyclerImgAdapter.
     }
 
     public void addData(int position, String data) {
-        if (mImgs.size() >= 6) {
-            ToastUtil.showToast(mContext, "最多只能添加6张轮播图", 3000);
+        if (mImgs.size() >= 10) {
+            ToastUtil.showToast(mContext, "最多只能添加10张轮播图", 3000);
             return;
         }
         mImgs.add(position, data);

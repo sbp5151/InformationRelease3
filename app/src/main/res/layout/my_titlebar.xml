@@ -47,4 +47,16 @@
         android:textSize="16dp"
         android:background="@drawable/title_pressed_selector"
         android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/title_preview"
+        android:layout_width="wrap_content"
+        android:text="预览"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/title_right"
+        android:textColor="@color/text_white"
+        android:gravity="center"
+        android:layout_marginRight="10dp"
+        android:textSize="16dp"
+        android:background="@drawable/title_pressed_selector"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

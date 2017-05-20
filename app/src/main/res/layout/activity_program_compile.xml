@@ -12,98 +12,57 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
     />
-    <ScrollView android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:orientation="vertical">
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent">
 
-
-        <LinearLayout
-            android:id="@+id/ll_img"
+        <ScrollView
+            android:id="@+id/program_compile_scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <TextView android:layout_width="0dp"
-                          android:layout_height="match_parent"
-                          android:layout_weight="1"
-                          android:gravity="center"
-                          android:text="请添加轮播宣传图片"
-                          android:textSize="20dp"
-                          android:typeface="serif"/>
-                <View android:layout_width="1px"
-                      android:layout_height="match_parent"
-                      android:background="@android:color/black"/>
-                <LinearLayout
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:padding="10dp">
-                    <ImageButton
-                        android:id="@+id/bt_img_add"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/plus_click"/>
-                </LinearLayout>
-            </LinearLayout>
-            <View android:layout_width="match_parent"
-                  android:layout_height="1px"
-                  android:background="@android:color/darker_gray"/>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_compile_img"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/ll_commodity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
                 <LinearLayout
+                    android:id="@+id/ll_img"
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <TextView android:layout_width="0dp"
-                              android:layout_height="match_parent"
-                              android:layout_weight="1"
-                              android:gravity="center"
-                              android:text="添加商品名称和价格"
-                              android:textSize="20dp"
-                              android:typeface="serif"/>
-                    <View android:layout_width="1px"
-                          android:layout_height="match_parent"
-                          android:background="@android:color/black"/>
-                    <LinearLayout
-                        android:layout_width="55dp"
-                        android:layout_height="match_parent"
-                        android:padding="10dp">
-                        <ImageButton
-                            android:id="@+id/bt_commodity_add"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/plus_click"/>
-                    </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <include
+                        android:id="@+id/program_compile_head_img"
+                        layout="@layout/program_compile_head"/>
+                    <View android:layout_width="match_parent"
+                          android:layout_height="1px"
+                          android:background="@android:color/darker_gray"/>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_compile_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
-                <View android:layout_width="match_parent"
-                      android:layout_height="1px"
-                      android:background="@android:color/darker_gray"/>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_compile_commodity"
+
+
+                <LinearLayout
+                    android:id="@+id/ll_commodity"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <include
+                        android:id="@+id/program_compile_head_text"
+                        layout="@layout/program_compile_head"/>
+                    <View android:layout_width="match_parent"
+                          android:layout_height="1px"
+                          android:background="@android:color/darker_gray"/>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_compile_commodity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
             </LinearLayout>
-
-
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+        <include
+            android:id="@+id/program_compile_head_head"
+            layout="@layout/program_compile_head"/>
+    </FrameLayout>
 
 </LinearLayout>

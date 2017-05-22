@@ -42,7 +42,7 @@ import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.util.zxing.activity.CaptureActivity;
 import com.jld.InformationRelease.view.my_model.MyModelFragment;
 import com.jld.InformationRelease.view.my_terminal.MyTerminalFragment;
-import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity2;
 import com.jld.InformationRelease.view.my_terminal.SelectModelActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 import com.jld.InformationRelease.view.settings.SettingFragment;
@@ -384,7 +384,7 @@ public class MainActivity extends BaseActivity
                     intent.putExtra("checkMacs", checkMacs);
                     // TODO: 2017/5/19 调试
 //                    startActivityForResult(intent, mProgramRequestCode);
-                    toActivity(ProgramCompileActivity.class);
+                    toActivity(ProgramCompileActivity2.class);
                     break;
                 case R.id.pp_showdown://关机
                     ToastUtil.showToast(MainActivity.this, "关机", 3000);

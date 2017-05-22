@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity">
+    <include
+        android:id="@+id/program_compile_titlebar"
+        layout="@layout/my_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+    />
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_program_compile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <include
+            android:id="@+id/program_compile_head"
+            layout="@layout/item_head_add"/>
+
+    </FrameLayout>
+
+
+</LinearLayout>

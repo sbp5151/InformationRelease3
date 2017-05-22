@@ -82,6 +82,8 @@
         </activity>
         <activity android:name=".view.my_terminal.ProgramCompileActivity">
         </activity>
+        <activity android:name=".view.my_terminal.ProgramCompileActivity2">
+        </activity>
         <activity android:name=".util.zxing.activity.CaptureActivity">
         </activity>
 

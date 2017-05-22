@@ -65,5 +65,9 @@
     <string name="device_list">设备列表</string>
     <string name="select_device_complete">请选择设备</string>
     <string name="data_exception">数据异常</string>
+    <string name="add_imgs">请添加轮播宣传图片</string>
+    <string name="add_commoditys">请添加商品名称和价格</string>
+    <string name="most_add_imgs">最多添加10轮播图</string>
+    <string name="most_add_commoditys">最多添加20个</string>
 
 </resources>

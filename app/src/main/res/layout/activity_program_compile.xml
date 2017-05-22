@@ -60,9 +60,6 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-        <include
-            android:id="@+id/program_compile_head_head"
-            layout="@layout/program_compile_head"/>
     </FrameLayout>
 
 </LinearLayout>

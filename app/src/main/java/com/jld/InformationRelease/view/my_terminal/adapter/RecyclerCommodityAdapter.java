@@ -39,8 +39,15 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
     }
 
     @Override
+    public int getItemViewType(int position) {
+
+
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View contentView = LayoutInflater.from(mContext).inflate(R.layout.item_commdity_add, null);
+        View contentView = LayoutInflater.from(mContext).inflate(R.layout.item_commodity_add, null);
         ViewHolder viewHolder = new ViewHolder(contentView);
         return viewHolder;
     }

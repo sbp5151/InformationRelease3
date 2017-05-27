@@ -1,6 +1,7 @@
 package com.jld.InformationRelease.base;
 
 import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.util.LogUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -15,6 +16,7 @@ import io.reactivex.disposables.Disposable;
  */
 public  class BaseObserver2<T> implements Observer<T> {
 
+    private static final java.lang.String TAG = "BaseObserver2";
     IPresenterToModel<T> mCallback;
     int mRequestTag;
 
@@ -31,10 +33,11 @@ public  class BaseObserver2<T> implements Observer<T> {
     @Override
     public void onNext(T value) {
         BaseResponse baseResponse = (BaseResponse) value;
+        LogUtil.d(TAG,"baseResponse:"+baseResponse);
         if (baseResponse != null && baseResponse.getResult().equals("0")) {//成功
             mCallback.requestSuccess((T) baseResponse, mRequestTag);
         } else if (value != null) {//失败
-            mCallback.requestError(new Exception(baseResponse.getMsg()), mRequestTag);
+            mCallback.requestError(new Exception(baseResponse.getResult()), mRequestTag);
         } else {//错误
             mCallback.requestError(new Exception("获取数据错误，请重试！"), mRequestTag);
         }

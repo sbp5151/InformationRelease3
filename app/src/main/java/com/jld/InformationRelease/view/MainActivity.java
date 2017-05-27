@@ -29,8 +29,9 @@ import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.interfaces.IViewToPresenter;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -43,7 +44,6 @@ import com.jld.InformationRelease.util.zxing.activity.CaptureActivity;
 import com.jld.InformationRelease.view.my_model.MyModelFragment;
 import com.jld.InformationRelease.view.my_terminal.MyTerminalFragment;
 import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity2;
-import com.jld.InformationRelease.view.my_terminal.SelectModelActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 import com.jld.InformationRelease.view.settings.SettingFragment;
 import com.jld.InformationRelease.view.system_model.SystemModelFragment;
@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity
     public static final int REQUEST_TAG_IMAGE = 0x16;//获取截屏tag
     private int mProgramRequestCode = 0x21;//节目编辑数据返回
     private int mPhotoRequestCode = 0x22;//节目编辑数据返回
-    private ProgramRequestBean mProgram;
+    private ProgramBean mProgram;
     private TextView mTitle_tx;
 
     @Override
@@ -195,7 +195,13 @@ public class MainActivity extends BaseActivity
             } else {
                 ft.show(mTerminal_fragment);
             }
-        } else if (id == R.id.menu_my_model) {//我的模板
+            mTvComplete.setVisibility(View.VISIBLE);
+        } else {
+            if (push.getVisibility() == View.VISIBLE)
+                changeCompleteState();
+            mTvComplete.setVisibility(View.GONE);
+        }
+        if (id == R.id.menu_my_model) {//我的模板
             mMyModelFragment = (MyModelFragment) fm.findFragmentByTag(MY_MODEL_TAG);
             if (mMyModelFragment == null) {
                 mMyModelFragment = new MyModelFragment();
@@ -256,7 +262,7 @@ public class MainActivity extends BaseActivity
             }
             ToastUtil.showToast(this, isMac + "", 3000);
         } else if (requestCode == mProgramRequestCode && data != null) {//节目制作
-            mProgram = (ProgramRequestBean) data.getSerializableExtra("body");
+            mProgram = (ProgramBean) data.getSerializableExtra("body");
             LogUtil.d(TAG, "program:" + mProgram);
             //开启service上传节目
             createProgramService();
@@ -281,6 +287,14 @@ public class MainActivity extends BaseActivity
                 public void updateSucceed() {
                     //上传成功 解绑service
                     unbindService(mCon);
+                    //更新数据库为已上传状态
+                    SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+                    ProgramDao baseHelper =  ProgramDao.getInstance(MainActivity.this,sp.getString(UserConstant.USER_ID,""));
+                    try {
+                        baseHelper.updateInProgramId(mProgram);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     ToastUtil.showToast(MainActivity.this, getString(R.string.push_succeed), 3000);
                 }
 
@@ -371,6 +385,7 @@ public class MainActivity extends BaseActivity
             if (mTerminalFunctionPresenter == null)
                 mTerminalFunctionPresenter = new TerminalFunctionPresenter(MainActivity.this, MainActivity.this);
             ArrayList<String> checkMacs = mTerminal_fragment.getCheckMac();
+            LogUtil.d(TAG, "checkMacs:" + checkMacs);
             if (checkMacs.size() == 0) {
                 ToastUtil.showToast(MainActivity.this, getString(R.string.please_select_terminal), 3000);
                 return;
@@ -380,11 +395,12 @@ public class MainActivity extends BaseActivity
                     ToastUtil.showToast(MainActivity.this, "节目推送", 3000);
                     mPopupWindow.dismiss();
                     LogUtil.d(TAG, "mCheckMacs:" + checkMacs);
-                    Intent intent = new Intent(MainActivity.this, SelectModelActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ProgramCompileActivity2.class);
                     intent.putExtra("checkMacs", checkMacs);
+                    startActivity(intent);
                     // TODO: 2017/5/19 调试
 //                    startActivityForResult(intent, mProgramRequestCode);
-                    toActivity(ProgramCompileActivity2.class);
+//                    toActivity(ProgramCompileActivity2.class);
                     break;
                 case R.id.pp_showdown://关机
                     ToastUtil.showToast(MainActivity.this, "关机", 3000);

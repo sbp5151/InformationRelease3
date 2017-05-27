@@ -7,6 +7,7 @@ import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
 import com.jld.InformationRelease.bean.response_bean.UserResponse;
 import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.RetrofitManager;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,7 +25,7 @@ import retrofit2.Retrofit;
 public class UserModel {
 
     private final UserModelService mUserService;
-
+    public static final String TAG = "UserModel";
     public UserModel(Context context) {
         Retrofit  retrofit = RetrofitManager.getInstance(context).getRetrofit();
         mUserService = retrofit.create(UserModelService.class);
@@ -52,7 +53,7 @@ public class UserModel {
      * @param requestTag 请求ID
      */
     public void retrofitRegister(RegisterRequestBean body, final IPresenterToModel<UserResponse> callBack, final int requestTag) {
-
+        LogUtil.d(TAG,"RegisterRequestBean:"+body);
         mUserService.register(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

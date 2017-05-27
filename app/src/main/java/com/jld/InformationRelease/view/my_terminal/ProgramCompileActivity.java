@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.interfaces.IViewToPresenter;
 import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -49,7 +49,7 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
     private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
     private static final String TAG = "ProgramCompileActivity";
     private static final int REQUEST_TAG = 0x00;
-    ArrayList<ProgramRequestBean.Commodity> mCommodities = new ArrayList();
+    ArrayList<ProgramBean.Commodity> mCommodities = new ArrayList();
     ArrayList<String> mImgs = new ArrayList();
     private RecyclerCommodityAdapter mCommodityAdapter;
     private RecyclerImgAdapter mImgAdapter;
@@ -127,7 +127,7 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 //        layoutManager.setStackFromEnd(true);
         mRecyclerView_com.setLayoutManager(layoutManager);
-        mCommodities.add(new ProgramRequestBean.Commodity("", ""));
+        mCommodities.add(new ProgramBean.Commodity("", ""));
         mCommodityAdapter = new RecyclerCommodityAdapter(mCommodities, this);
         mCommodityAdapter.addMyTextChangedListener(new RecyclerCommodityAdapter.MyTextChangedListener() {
             @Override
@@ -153,7 +153,7 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
         public void onClick(View view) {
             switch (view.getId()) {
 //                case R.id.bt_commodity_add:
-//                    mCommodityAdapter.addData(mCommodities.size(), new ProgramRequestBean.Commodity("", ""));
+//                    mCommodityAdapter.addData(mCommodities.size(), new ProgramBean.Commodity("", ""));
 //                    Log.d(TAG,"size:"+mCommodityAdapter.getData().size());
 //                    mRecyclerView_com.scrollToPosition(mCommodityAdapter.getData().size());
 //                    mCommodity_add.setEnabled(false);
@@ -178,13 +178,13 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
                         return;
                     }
-                    ArrayList<ProgramRequestBean.Commodity> data = mCommodityAdapter.getData();
+                    ArrayList<ProgramBean.Commodity> data = mCommodityAdapter.getData();
                     if (TextUtils.isEmpty(data.get(0).getName()) || TextUtils.isEmpty(data.get(0).getPrice())) {//名称和价格不能为空
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
 
-                    ProgramRequestBean body = new ProgramRequestBean();
+                    ProgramBean body = new ProgramBean();
                     body.setCommoditys(data);//名称和价格
                     body.setImages(imgs);//图片广告
                     body.setDeviceMacs(mCheckMacs);//需要推送终端的Mac地址
@@ -203,13 +203,13 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_img), 3000);
                         return;
                     }
-                    ArrayList<ProgramRequestBean.Commodity> preview_data = mCommodityAdapter.getData();
+                    ArrayList<ProgramBean.Commodity> preview_data = mCommodityAdapter.getData();
                     if (TextUtils.isEmpty(preview_data.get(0).getName()) || TextUtils.isEmpty(preview_data.get(0).getPrice())) {//名称和价格不能为空
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
 
-                    ProgramRequestBean preview_body = new ProgramRequestBean();
+                    ProgramBean preview_body = new ProgramBean();
                     preview_body.setCommoditys(preview_data);//名称和价格
                     preview_body.setImages(preview_imgs);//图片广告
                     preview_body.setModelId(modleId);//模板ID

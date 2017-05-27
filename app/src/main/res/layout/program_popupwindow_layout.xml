@@ -14,62 +14,29 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:gravity="center"
-        android:text="节目推送"
+        android:text="@string/push"
         android:textSize="16dp"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@android:color/darker_gray"/>
     <TextView
-        android:id="@+id/pp_showdown"
+        android:id="@+id/pp_preview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:gravity="center"
-        android:text="关机"
+        android:text="@string/preview"
         android:textSize="16dp"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@android:color/darker_gray"/>
     <TextView
-        android:id="@+id/pp_restart"
+        android:id="@+id/pp_save"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:gravity="center"
-        android:text="重启"
-        android:textSize="16dp"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/darker_gray"/>
-    <TextView
-        android:id="@+id/pp_time_showdown"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height"
-        android:gravity="center"
-        android:text="定时开关机"
-        android:textSize="16dp"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/darker_gray"/>
-    <TextView
-        android:id="@+id/pp_volume_adjust"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height"
-        android:gravity="center"
-        android:text="音量调节"
-        android:textSize="16dp"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/darker_gray"/>
-    <TextView
-        android:id="@+id/pp_get_screen"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height"
-        android:gravity="center"
-        android:text="获取截屏"
+        android:text="@string/save"
         android:textSize="16dp"/>
     <View
         android:layout_width="match_parent"

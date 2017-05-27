@@ -2,7 +2,7 @@ package com.jld.InformationRelease.model;
 
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
@@ -38,7 +38,7 @@ public interface TerminalFunctionService {
      * @return
      */
     @POST(URLConstant.PUSH_PROGRAM_URL)
-    Observable<BaseResponse> push(@Body ProgramRequestBean body);
+    Observable<BaseResponse> push(@Body ProgramBean body);
 
     /**
      * 关机、重启

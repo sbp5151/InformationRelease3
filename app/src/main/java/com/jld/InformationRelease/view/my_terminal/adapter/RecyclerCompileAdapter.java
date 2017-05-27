@@ -13,9 +13,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
+import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity2;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "RecyclerCommodityAdapter";
-    private ProgramRequestBean mBean;
-    private Context mContext;
+    private ProgramBean mBean;
+    private ProgramCompileActivity2 mContext;
     public static final int ITEM_TAG_HEAD_1 = 1;
     public static final int ITEM_TAG_HEAD_2 = 2;
     public static final int ITEM_TAG_IMG = 3;
@@ -45,9 +46,9 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         ITEM_TYPE_HEAD,//img_head
     }
 
-    public RecyclerCompileAdapter(ProgramRequestBean bean, Context context) {
+    public RecyclerCompileAdapter(ProgramBean bean, Context context) {
         mBean = bean;
-        mContext = context;
+        mContext = (ProgramCompileActivity2) context;
     }
 
     @Override
@@ -87,7 +88,9 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             if (position == 0) {//图片head1
                 headHolder.view.setTag(ITEM_TAG_HEAD_1);
                 headHolder.head_text.setText(mContext.getResources().getString(R.string.add_imgs));
-            } else {//head2
+            } else if (mContext.modleId.equals("002")) {// "002"不添加 head2
+                headHolder.view.setVisibility(View.GONE);
+            } else {
                 headHolder.view.setTag(ITEM_TAG_HEAD_2);
                 headHolder.head_text.setText(mContext.getResources().getString(R.string.add_commoditys));
                 headHolder.head_add.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +120,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //            //减去imagpath和两个head 获得真实位置
 //            int realPosition = position - size - 2;
             int realPosition = getRealPositionImg(position);
-            ProgramRequestBean.Commodity commodity = mBean.getCommoditys().get(realPosition);
+            ProgramBean.Commodity commodity = mBean.getCommoditys().get(realPosition);
             comHolder.name.setText(commodity.getName());
             comHolder.price.setText(commodity.getPrice());
             if (realPosition == (mBean.getCommoditys().size() - 1)) {
@@ -172,42 +175,41 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void addCommodityItem() {
-        ArrayList<ProgramRequestBean.Commodity> commoditys = mBean.getCommoditys();
+        ArrayList<ProgramBean.Commodity> commoditys = mBean.getCommoditys();
         if (commoditys.size() > 20) {
             ToastUtil.showToast(mContext, mContext.getResources().getString(R.string.most_add_commoditys), 3000);
             return;
         }
-        commoditys.add(new ProgramRequestBean.Commodity("", ""));
+        commoditys.add(new ProgramBean.Commodity("", ""));
         mBean.setCommoditys(commoditys);
         notifyDataSetChanged();
     }
 
     /**
-     *
      * @param isClear 是否清除空值
      * @return
      */
-    public ArrayList<ProgramRequestBean.Commodity> getCommodityData(boolean isClear) {
-        ArrayList<ProgramRequestBean.Commodity> commoditys = mBean.getCommoditys();
-        Log.d(TAG,"commodityssize:"+commoditys.size());
-        if(isClear){
+    public ArrayList<ProgramBean.Commodity> getCommodityData(boolean isClear) {
+        ArrayList<ProgramBean.Commodity> commoditys = mBean.getCommoditys();
+        Log.d(TAG, "commodityssize:" + commoditys.size());
+        if (isClear) {
             //去除空值
             for (int i = 0; i < commoditys.size(); i++) {
-                Log.d(TAG,"commodityssize-i:"+i);
-                ProgramRequestBean.Commodity commodity = commoditys.get(i);
+                Log.d(TAG, "commodityssize-i:" + i);
+                ProgramBean.Commodity commodity = commoditys.get(i);
                 if (TextUtils.isEmpty(commodity.getName()) || TextUtils.isEmpty(commodity.getPrice())) {
                     commoditys.remove(i);
                     i--;
                 }
             }
             notifyDataSetChanged();
-            Log.d(TAG,"commoditys:"+commoditys);
+            Log.d(TAG, "commoditys:" + commoditys);
             return commoditys;
-        }else{//不清除空值
-            ArrayList<ProgramRequestBean.Commodity> commoditys2 = new ArrayList<>();
+        } else {//不清除空值
+            ArrayList<ProgramBean.Commodity> commoditys2 = new ArrayList<>();
             for (int i = 0; i < commoditys.size(); i++) {
-                Log.d(TAG,"commodityssize-i:"+i);
-                ProgramRequestBean.Commodity commodity = commoditys.get(i);
+                Log.d(TAG, "commodityssize-i:" + i);
+                ProgramBean.Commodity commodity = commoditys.get(i);
                 if (!TextUtils.isEmpty(commodity.getName()) && !TextUtils.isEmpty(commodity.getPrice())) {
                     commoditys2.add(commodity);
                 }
@@ -217,16 +219,15 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     /**
-     *
      * @param isClear 是否清除空值
      * @return
      */
     public ArrayList<String> getImgData(boolean isClear) {
         ArrayList<String> images = mBean.getImages();
-        Log.d(TAG,"imagessize:"+images.size());
-        if(isClear){
+        Log.d(TAG, "imagessize:" + images.size());
+        if (isClear) {
             for (int i = 0; i < images.size(); i++) {
-                Log.d(TAG,"imagessize-i:"+i);
+                Log.d(TAG, "imagessize-i:" + i);
                 String img = images.get(i);
                 if (TextUtils.isEmpty(img)) {
                     images.remove(i);
@@ -234,9 +235,9 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             }
             notifyDataSetChanged();
-            Log.d(TAG,"images:"+images);
+            Log.d(TAG, "images:" + images);
             return images;
-        }else{
+        } else {
             ArrayList<String> images2 = new ArrayList<>();
 
             for (int i = 0; i < images.size(); i++) {

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
@@ -29,10 +29,10 @@ import java.util.ArrayList;
 public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommodityAdapter.ViewHolder> {
 
     private static final String TAG = "RecyclerCommodityAdapter";
-    private ArrayList<ProgramRequestBean.Commodity> mCommoditys;
+    private ArrayList<ProgramBean.Commodity> mCommoditys;
     private Context mContext;
 
-    public RecyclerCommodityAdapter(ArrayList<ProgramRequestBean.Commodity> commoditys, Context context) {
+    public RecyclerCommodityAdapter(ArrayList<ProgramBean.Commodity> commoditys, Context context) {
         mCommoditys = commoditys;
         mContext = context;
 
@@ -54,7 +54,7 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        ProgramRequestBean.Commodity bean = mCommoditys.get(position);
+        ProgramBean.Commodity bean = mCommoditys.get(position);
         holder.name.setText(bean.getName());
         holder.price.setText(bean.getPrice());
         LogUtil.d(TAG,"position:"+position);
@@ -118,7 +118,7 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
         }
     }
 
-    public void addData(int position, ProgramRequestBean.Commodity data) {
+    public void addData(int position, ProgramBean.Commodity data) {
         if (mCommoditys.size() >= 20) {
             ToastUtil.showToast(mContext, "最多只能添加20张轮播图", 3000);
             return;
@@ -134,7 +134,7 @@ public class RecyclerCommodityAdapter extends RecyclerView.Adapter<RecyclerCommo
         notifyItemRangeChanged(position, mCommoditys.size());
     }
 
-    public ArrayList<ProgramRequestBean.Commodity> getData() {
+    public ArrayList<ProgramBean.Commodity> getData() {
         return mCommoditys;
     }
 }

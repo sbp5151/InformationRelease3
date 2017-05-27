@@ -22,7 +22,6 @@
         <include
             android:id="@+id/program_compile_head"
             layout="@layout/item_head_add"/>
-
     </FrameLayout>
 
 

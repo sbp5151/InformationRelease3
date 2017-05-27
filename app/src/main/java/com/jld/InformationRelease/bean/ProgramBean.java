@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.bean.request_bean;
+package com.jld.InformationRelease.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/4/19 15:09
  */
-public class ProgramRequestBean implements Serializable {
+public class ProgramBean implements Serializable {
 
     /**
      * 图片集
@@ -38,9 +38,48 @@ public class ProgramRequestBean implements Serializable {
      */
     private String modelId;
     /**
+     * 节目ID 用于获取节目
+     */
+    private String programid;
+    /**
      * 加密字符串 md5(key+mobile)
      */
     private String sign;
+    /**
+     * 是否异常上传服务器 0位没有1位上传
+     */
+    private String isLoad = "0";
+
+    /**
+     * 创建时间
+     */
+    private String creation_time;
+
+    /**
+     * 数据库字段ID
+     */
+    private int table_id = -1;
+
+    /**
+     * 用户输入的标签
+     */
+    private String tab;
+
+    public String getTab() {
+        return tab;
+    }
+
+    public void setTab(String tab) {
+        this.tab = tab;
+    }
+
+    public int getTable_id() {
+        return table_id;
+    }
+
+    public void setTable_id(int table_id) {
+        this.table_id = table_id;
+    }
 
     public ArrayList<String> getVideos() {
         return videos;
@@ -60,10 +99,14 @@ public class ProgramRequestBean implements Serializable {
          */
         String price;
 
+        public Commodity() {
+        }
+
         public Commodity(String name, String price) {
             this.name = name;
             this.price = price;
         }
+
         public String getName() {
             return name;
         }
@@ -82,10 +125,10 @@ public class ProgramRequestBean implements Serializable {
 
         @Override
         public String toString() {
-            return "Commodity{" +
+            return "" +
                     "name='" + name + '\'' +
-                    ", price='" + price + '\'' +
-                    '}';
+                    ", price='" + price + '\''
+                    ;
         }
     }
 
@@ -137,16 +180,45 @@ public class ProgramRequestBean implements Serializable {
         this.sign = sign;
     }
 
+    public String getProgramid() {
+        return programid;
+    }
+
+    public void setProgramid(String programid) {
+        this.programid = programid;
+    }
+
+    public String getIsLoad() {
+        return isLoad;
+    }
+
+    public void setIsLoad(String isLoad) {
+        this.isLoad = isLoad;
+    }
+
+    public String getCreation_time() {
+        return creation_time;
+    }
+
+    public void setCreation_time(String creation_time) {
+        this.creation_time = creation_time;
+    }
+
     @Override
     public String toString() {
-        return "ProgramRequestBean{" +
+        return "ProgramBean{" +
                 "images=" + images +
                 ", commoditys=" + commoditys +
                 ", videos=" + videos +
                 ", deviceMacs=" + deviceMacs +
                 ", userID='" + userID + '\'' +
                 ", modelId='" + modelId + '\'' +
+                ", programid='" + programid + '\'' +
                 ", sign='" + sign + '\'' +
+                ", isLoad='" + isLoad + '\'' +
+                ", creation_time='" + creation_time + '\'' +
+                ", table_id=" + table_id +
+                ", tab='" + tab + '\'' +
                 '}';
     }
 }

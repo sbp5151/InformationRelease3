@@ -6,7 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.google.gson.Gson;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.FileResponseBean;
 import com.jld.InformationRelease.interfaces.IViewToPresenter;
 import com.jld.InformationRelease.presenter.FilePresenter;
@@ -31,7 +31,7 @@ public class ProgramPushService extends Service implements IViewToPresenter {
     /**
      * 上传数据
      */
-    ProgramRequestBean mBody;
+    ProgramBean mBody;
     private MyBinder mMyBinder;
 
     @Override
@@ -85,7 +85,7 @@ public class ProgramPushService extends Service implements IViewToPresenter {
         }
 
         //传递上传数据
-        public void sendPushData(ProgramRequestBean body) {
+        public void sendPushData(ProgramBean body) {
             LogUtil.d(TAG, "sendPushData:" + body);
             mBody = body;
         }

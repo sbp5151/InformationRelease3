@@ -692,7 +692,7 @@ public class GeneralUtil {
      */
     public static String getTimeStr() {
         SimpleDateFormat sDateFormat = new SimpleDateFormat(
-                "yyyyMMddhhmmss");
+                "yyyy/MM/dd/hh:mm:ss");
         String date = sDateFormat.format(new Date());
         return date;
     }

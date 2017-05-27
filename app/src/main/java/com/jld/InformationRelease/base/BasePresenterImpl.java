@@ -28,6 +28,7 @@ public class BasePresenterImpl<T> implements IPresenterToModel<T> {
     @Override
     public void requestError(Throwable e, int requestTag) {
         //通知UI具体的错误信息
+
         iView.loadDataError(e,requestTag);
     }
 

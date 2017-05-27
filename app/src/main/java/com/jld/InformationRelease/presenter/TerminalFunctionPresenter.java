@@ -5,8 +5,8 @@ import android.content.Context;
 import com.jld.InformationRelease.base.BasePresenterImpl;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.interfaces.IViewToPresenter;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
@@ -54,7 +54,7 @@ public class TerminalFunctionPresenter extends BasePresenterImpl<BaseResponse> {
      * @param body
      * @param requestTag
      */
-    public void pushProgram(ProgramRequestBean body, int requestTag) {
+    public void pushProgram(ProgramBean body, int requestTag) {
         mTerminalFunctionModel.retrofitPushProgram(body, this, requestTag);
     }
 

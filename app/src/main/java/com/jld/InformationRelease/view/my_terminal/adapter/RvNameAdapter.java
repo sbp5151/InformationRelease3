@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 
 import java.util.ArrayList;
 
@@ -24,10 +24,10 @@ import java.util.ArrayList;
 public class RvNameAdapter extends RecyclerView.Adapter<RvNameAdapter.MyViewHolder> {
 
     private static final String TAG = "RvNameAdapter";
-    private ArrayList<ProgramRequestBean.Commodity> beans;
+    private ArrayList<ProgramBean.Commodity> beans;
     private Context mContext;
 
-    public RvNameAdapter(ArrayList<ProgramRequestBean.Commodity> beans, Context context) {
+    public RvNameAdapter(ArrayList<ProgramBean.Commodity> beans, Context context) {
         Log.d(TAG, "RvNameAdapter:"+beans);
         this.beans = beans;
         mContext = context;

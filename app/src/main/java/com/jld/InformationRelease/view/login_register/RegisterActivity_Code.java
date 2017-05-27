@@ -163,7 +163,11 @@ public class RegisterActivity_Code extends BaseActivity implements IViewToPresen
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
-        ToastUtil.showToast(this, e.toString(), 3000);
+        String s = e.getMessage().toString();
+        if ("1004".equals(s))
+            ToastUtil.showToast(this, "手机或密码错误", 3000);
+        else
+            ToastUtil.showToast(this, s, 3000);
         hideProgress(requestTag);
     }
 }

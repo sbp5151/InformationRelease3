@@ -8,4 +8,10 @@
         <item>音量调节</item>
         <item>获取截屏</item>
     </string-array>
+
+    <string-array name="program_compile_spinner">
+        <item>推送</item>
+        <item>预览</item>
+        <item>保存</item>
+    </string-array>
 </resources>

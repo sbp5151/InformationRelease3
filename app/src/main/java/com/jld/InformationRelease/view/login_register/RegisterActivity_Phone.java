@@ -126,17 +126,22 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewToPrese
     @Override
     public void loadDataSuccess(VerifyCodeResponseBean data, int requestTag) {
         String code = data.getCode();
-        if(!TextUtils.isEmpty(code)){
+        if (!TextUtils.isEmpty(code)) {
             Intent intent = new Intent(this, RegisterActivity_Code.class);
-            intent.putExtra("code",code);
-            intent.putExtra("phone",mPhoneNum);
+            intent.putExtra("code", code);
+            intent.putExtra("phone", mPhoneNum);
             startActivity(intent);
-            overridePendingTransition(R.anim.right_in, R.anim.left_out);        }
+            overridePendingTransition(R.anim.right_in, R.anim.left_out);
+        }
     }
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
-        ToastUtil.showToast(this, e.getMessage().toString(), 3000);
+        String s = e.getMessage().toString();
+        if ("1004".equals(s))
+            ToastUtil.showToast(this, "用户已存在", 3000);
+        else
+            ToastUtil.showToast(this, s, 3000);
         hideProgress(requestTag);
     }
 }

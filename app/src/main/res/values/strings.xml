@@ -69,5 +69,9 @@
     <string name="add_commoditys">请添加商品名称和价格</string>
     <string name="most_add_imgs">最多添加10轮播图</string>
     <string name="most_add_commoditys">最多添加20个</string>
+    <string name="preview">预览</string>
+    <string name="save">保存</string>
+    <string name="read_data_error">读取数据错误</string>
+    <string name="NULL">(空)</string>
 
 </resources>

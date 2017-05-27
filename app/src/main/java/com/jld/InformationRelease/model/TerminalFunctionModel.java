@@ -5,7 +5,7 @@ import android.content.Context;
 import com.jld.InformationRelease.base.BaseObserver2;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
-import com.jld.InformationRelease.bean.request_bean.ProgramRequestBean;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
@@ -59,7 +59,7 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitPushProgram(ProgramRequestBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitPushProgram(ProgramBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.push(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -99,6 +99,8 @@
             android:name=".view.my_terminal.preview.PreviewActivity_1"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBar"/>
+        <activity android:name=".view.my_model.MyModelContentActivity">
+        </activity>
     </application>
 
 </manifest>

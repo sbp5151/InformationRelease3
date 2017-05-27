@@ -2,11 +2,10 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.jld.InformationRelease.view.my_model.MyModelFragment">
+             tools:context="com.jld.InformationRelease.view.my_terminal.MyTerminalFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/myModel"/>
-
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/terminal_recycler_view"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
 </FrameLayout>

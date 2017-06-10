@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
 import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.model.GetModelModel;
 
 /**
@@ -24,7 +24,7 @@ public class GetModelPresenter extends BasePresenterImpl<GetModelResponse> {
      *
      * @param view 具体业务的接口对象
      */
-    public GetModelPresenter(IViewToPresenter view, Context context) {
+    public GetModelPresenter(IViewListen view, Context context) {
         super(view);
         mModel = new GetModelModel(context);
     }

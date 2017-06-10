@@ -24,4 +24,15 @@
     <color name="colorLine">#DFDEDE</color>
     <color name="color_click">#e1e1e1</color>
     <color name="dialog_backgroud">#00000000</color>
+    <color name="backgroud_gray">#F1F5F8</color>
+    <color name="item_content_black">#333539</color>
+    <color name="transparent">#00000000</color>
+    <color name="light_blue">#15a6ff</color>
+    <color name="smssdk_lv_title_color">#ff999999</color>
+    <color name="smssdk_lv_tv_color">#ff353535</color>
+    <color name="bg_title_gray">#2e2e2f</color>
+
+    <color name="backgroud_red">#F85514</color>
+    <color name="backgroud_red_shape">#Fc6b47</color>
+    <color name="backgroud_red_gray">#ee410b</color>
 </resources>

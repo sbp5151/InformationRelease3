@@ -30,7 +30,7 @@
     <string name="back">返回</string>
     <string name="verify_number">验证手机号码</string>
     <string name="myTerminal">我的终端</string>
-    <string name="myModel">我的模板</string>
+    <string name="myProgram">我的节目</string>
     <string name="systemModel">系统模板</string>
     <string name="scanCode">扫描添加</string>
     <string name="setting">设置</string>
@@ -54,7 +54,7 @@
     <string name="str_scan_title">二维码扫描</string>
     <string name="str_editphoto_wrapper_title">打开闪光灯</string>
     <string name="scan_bind">扫描绑定</string>
-    <string name="set_name">请输入设备名称</string>
+    <string name="set_name">请设置设备名称</string>
     <string name="confirm">确定</string>
     <string name="input_name">请输入设备名称</string>
     <string name="please_set_img">请设置图片广告</string>
@@ -62,7 +62,9 @@
     <string name="please_select_terminal">请选择需要操作的终端设备</string>
     <string name="please_login">请先登录</string>
     <string name="push_succeed">节目发布成功</string>
+    <string name="push_defeated">节目发布失败</string>
     <string name="device_list">设备列表</string>
+    <string name="program_list">节目列表</string>
     <string name="select_device_complete">请选择设备</string>
     <string name="data_exception">数据异常</string>
     <string name="add_imgs">请添加轮播宣传图片</string>
@@ -73,5 +75,26 @@
     <string name="save">保存</string>
     <string name="read_data_error">读取数据错误</string>
     <string name="NULL">(空)</string>
+    <string name="find_password">找回密码</string>
+    <string name="regies_code_account">中国(+86)</string>
+    <string name="get_security_code">获取验证码</string>
+    <string name="sure">确定</string>
+    <string name="input_regiest_number">请输入注册时填写的手机号</string>
+    <string name="mobile_hint">填写手机号码</string>
+    <string name="t_find_back_pwd_phone">请填写手机号码</string>
+    <string name="t_find_back_pwd_text_info">信息不完整</string>
+    <string name="t_find_back_pwd_code_info">验证码输入不正确</string>
+    <string name="t_find_back_pwd_re_code_info">重新验证</string>
+    <string name="input_new_password">请输入新密码</string>
+    <string name="sure_new_password">新密码确认</string>
+    <string name="t_reset_pwd_info">重设密码</string>
+    <string name="t_reset_pwd_new_pwd">新密码不能为空</string>
+    <string name="change_pw_sure">修改成功</string>
+    <string name="change_pw_error">修改失败</string>
+    <string name="smssdk_search">搜索</string>
+
+    <!--loading-->
+    <string name="loading">loading...</string>
+    <string name="login_loading">正在登陆...</string>
 
 </resources>

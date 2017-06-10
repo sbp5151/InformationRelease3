@@ -8,17 +8,17 @@ package com.jld.InformationRelease.bean.request_bean;
  * @creator boping
  * @create-time 2017/5/11 14:37
  */
-public class GetTerminalRequest {
+public class UpdateTerminalRequest {
 
-    private String userId;
+    private String userid;
     private String sign;//md5($ts_skey + userid)
 
     public String getUserId() {
-        return userId;
+        return userid;
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userid = userId;
     }
 
     public String getSign() {
@@ -31,8 +31,8 @@ public class GetTerminalRequest {
 
     @Override
     public String toString() {
-        return "GetTerminalRequest{" +
-                "userId='" + userId + '\'' +
+        return "UpdateTerminalRequest{" +
+                "userId='" + userid + '\'' +
                 ", sign='" + sign + '\'' +
                 '}';
     }

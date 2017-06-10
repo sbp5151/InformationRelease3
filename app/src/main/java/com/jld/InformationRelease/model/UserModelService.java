@@ -1,7 +1,9 @@
 package com.jld.InformationRelease.model;
 
-import com.jld.InformationRelease.bean.request_bean.UserRequest;
+import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
+import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
+import com.jld.InformationRelease.bean.request_bean.UserRequest;
 import com.jld.InformationRelease.bean.request_bean.VerifyCodeRequestBean;
 import com.jld.InformationRelease.bean.response_bean.UserResponse;
 import com.jld.InformationRelease.bean.response_bean.VerifyCodeResponseBean;
@@ -21,6 +23,7 @@ import retrofit2.http.POST;
  */
 public interface UserModelService {
     //http://www.jianshu.com/p/308f3c54abdd retrofit详解
+
     /**
      * 登录
      */
@@ -32,23 +35,29 @@ public interface UserModelService {
      */
     @POST(URLConstant.REGISTER_URL)
     Observable<UserResponse> register(@Body RegisterRequestBean body);
-//
-//    /**
-//     * 修改密码
-//     */
-//    @POST(URLConstant.CHANGE_PASSWORD)
-//    Observable<MagnaResponse<List<UserInfoBean>>> changerPassword();
-//
-//    /**
-//     * 找回密码
-//     */
-//    @POST(URLConstant.RETRIEVE_PASSWORD)
-    // Observable<MagnaResponse<List<UserInfoBean>>> retrievePassword();
 
     /**
-     * 获取验证码
+     * 修改密码
+     */
+    @POST(URLConstant.CHANGE_PASSWORD)
+    Observable<UserResponse> changerPassword(@Body ChangePWRequestBean body);
+
+    /**
+     * 找回密码
+     */
+    @POST(URLConstant.RETRIEVE_PASSWORD)
+     Observable<UserResponse> retrievePassword(@Body RetrievePWRequestBean body);
+
+    /**
+     * 注册获取验证码
      */
     @POST(URLConstant.GET_VERIFY_CODE)
-    Observable<VerifyCodeResponseBean> getVerifyCode(@Body VerifyCodeRequestBean body);
+    Observable<VerifyCodeResponseBean> getVerifyCode1(@Body VerifyCodeRequestBean body);
+
+    /**
+     * 找回密码获取验证码
+     */
+    @POST(URLConstant.SMS_GET)
+    Observable<VerifyCodeResponseBean> getVerifyCode2(@Body VerifyCodeRequestBean body);
 
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.jld.InformationRelease.view.my_model.MyModelContentActivity">
+    tools:context="com.jld.InformationRelease.view.my_program.MyProgramContentActivity">
     <include
         android:id="@+id/model_content_titlebar"
         layout="@layout/my_titlebar"

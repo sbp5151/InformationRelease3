@@ -2,14 +2,16 @@ package com.jld.InformationRelease.model;
 
 import android.content.Context;
 
+import com.jld.InformationRelease.base.BaseObserver;
 import com.jld.InformationRelease.base.BaseObserver2;
 import com.jld.InformationRelease.base.BaseResponse;
-import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.bean.response_bean.UpdateProgramResponse;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
 import com.jld.InformationRelease.util.RetrofitManager;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,7 +45,7 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitBinding(BindingRequest body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitBinding(BindingRequest body, final IPresenterListen<BaseResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.binding(body)
                 .subscribeOn(Schedulers.io())
@@ -59,11 +61,22 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitPushProgram(ProgramBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitPushProgram(ProgramBean body, final IPresenterListen<UpdateProgramResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.push(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<BaseResponse>(callback,requestTag));
+                .subscribe(new BaseObserver<UpdateProgramResponse>(callback,requestTag){
+                    @Override
+                    public void onNext(UpdateProgramResponse value) {
+                        if (value != null && value.getResult().equals("0")) {//成功
+                            callback.requestSuccess(value, requestTag);
+                        } else if (value != null) {//失败
+                            callback.requestError(new Exception(value.getMsg()), requestTag);
+                        } else {//错误
+                            callback.requestError(new Exception("获取数据失败"), requestTag);
+                        }
+                    }
+                });
     }
 
     /**
@@ -73,7 +86,7 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitShowdownRestart(ShowdownRestartRequestBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitShowdownRestart(ShowdownRestartRequestBean body, final IPresenterListen<BaseResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.showdown_restart(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +101,7 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitTimeShowdown(TimeShowdownRequestBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitTimeShowdown(TimeShowdownRequestBean body, final IPresenterListen<BaseResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.time_showdown(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -103,7 +116,7 @@ public class TerminalFunctionModel{
      * @param callback
      * @param requestTag
      */
-    public void retrofitVolumeAdjust(VolumeAdjustRequestBean body, final IPresenterToModel<BaseResponse> callback, final int requestTag) {
+    public void retrofitVolumeAdjust(VolumeAdjustRequestBean body, final IPresenterListen<BaseResponse> callback, final int requestTag) {
 
         mTerminalFunctionService.volume_adjust(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -33,7 +33,7 @@ public interface FileService {
     @Multipart
     @POST(URLConstant.PUSH_FILE)
     Observable<BaseResponse> updateFile(
-            @Part RequestBody sing,
+            @Part("sign") RequestBody sign,
             @Part MultipartBody.Part file);
 
     /**

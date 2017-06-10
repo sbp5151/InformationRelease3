@@ -66,6 +66,15 @@
             android:theme="@style/MyTheme">
         </activity>
         <activity
+            android:name=".view.login_register.FindBackPassWordActivity"
+            android:theme="@style/MyTheme"/>
+        <activity
+            android:name=".view.login_register.ResetPasswordActivity"
+            android:theme="@style/MyTheme"/>
+        <activity
+            android:name=".view.login_register.CountryPageActivity"
+            android:theme="@style/MyTheme"/>
+        <activity
             android:name=".view.login_register.RegisterActivity_Phone"
             android:label="@string/title_activity_register"
             android:theme="@style/MyTheme">
@@ -99,7 +108,8 @@
             android:name=".view.my_terminal.preview.PreviewActivity_1"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBar"/>
-        <activity android:name=".view.my_model.MyModelContentActivity">
+        <activity android:name=".view.my_program.MyProgramContentActivity">
+
         </activity>
     </application>
 

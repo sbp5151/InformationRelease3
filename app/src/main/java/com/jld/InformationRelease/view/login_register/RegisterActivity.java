@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.response_bean.UserResponse;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
 import com.jld.InformationRelease.presenter.UserPresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -21,7 +21,10 @@ import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 
-public class RegisterActivity extends BaseActivity implements IViewToPresenter<UserResponse> {
+/**
+ * 注册3
+ */
+public class RegisterActivity extends BaseActivity implements IViewListen<UserResponse> {
 
     private EditText mInput_name;
     private EditText mInput_companyName;

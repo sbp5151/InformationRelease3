@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 >
     <View android:layout_width="match_parent"
           android:layout_height="1px"
@@ -12,20 +13,21 @@
         <TextView
             android:id="@+id/tv_model_content_head"
             android:layout_width="120dp"
-            android:padding="10dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
+            android:padding="10dp"
             android:textSize="18dp"/>
         <View android:layout_width="1px"
               android:layout_height="match_parent"
               android:background="@android:color/darker_gray"/>
         <TextView
             android:id="@+id/tv_model_content_tail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
             android:textSize="18dp"/>
-    </LinearLayout>
+</LinearLayout>
 
 </RelativeLayout>

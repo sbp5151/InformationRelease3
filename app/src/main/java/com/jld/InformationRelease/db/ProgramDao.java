@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.jld.InformationRelease.db.DataBaseHelper.TABLE_NAME;
-import static com.jld.InformationRelease.db.DataBaseHelper.commoditys;
+import static com.jld.InformationRelease.db.DataBaseHelper.tab;
+import static com.jld.InformationRelease.db.DataBaseHelper.texts;
 import static com.jld.InformationRelease.db.DataBaseHelper.creation_time;
 import static com.jld.InformationRelease.db.DataBaseHelper.imgs;
-import static com.jld.InformationRelease.db.DataBaseHelper.is_load;
+import static com.jld.InformationRelease.db.DataBaseHelper.upload_state;
 import static com.jld.InformationRelease.db.DataBaseHelper.macs;
 import static com.jld.InformationRelease.db.DataBaseHelper.model_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.program_id;
@@ -72,35 +73,6 @@ public class ProgramDao {
     }
 
     /**
-     * 根据节目ID更新节目
-     */
-    public void updateInProgramId(ProgramBean bean) throws Exception {
-        if (bean == null || TextUtils.isEmpty(bean.getProgramid()))
-            throw new Exception("空指针异常");
-        SQLiteDatabase wDb = mDb.getWritableDatabase();
-        wDb.beginTransaction();
-        ContentValues content = getContentValues(bean);
-        wDb.update(TABLE_NAME, content, program_id + "=?", new String[]{bean.getProgramid()});
-        wDb.setTransactionSuccessful();
-        wDb.endTransaction();
-    }
-
-    /**
-     * 根据数据库ID更新节目
-     */
-    public void updateInDataBaseId(ProgramBean bean) throws Exception {
-        if (bean == null || bean.getTable_id() == -1)
-            throw new Exception("空指针异常");
-        SQLiteDatabase wDb = mDb.getWritableDatabase();
-        wDb.beginTransaction();
-        ContentValues content = getContentValues(bean);
-        int update = wDb.update(TABLE_NAME, content, table_id + "=?", new String[]{String.valueOf(bean.getTable_id())});
-        LogUtil.d("update:" + update);
-        wDb.setTransactionSuccessful();
-        wDb.endTransaction();
-    }
-
-    /**
      * 根据用户ID获取节目
      *
      * @return
@@ -125,10 +97,10 @@ public class ProgramDao {
 //        Cursor cursor = rDb.query(TABLE_NAME, null, user_id + "=?", new String[]{mUserID}, null, null, null);
         while (cursor.moveToNext()) {
             ProgramBean bean = new ProgramBean();
-            String commoditys = cursor.getString(cursor.getColumnIndex(DataBaseHelper.commoditys));
+            String commoditys = cursor.getString(cursor.getColumnIndex(DataBaseHelper.texts));
             String model_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.model_id));
             String program_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.program_id));
-            String is_load = cursor.getString(cursor.getColumnIndex(DataBaseHelper.is_load));
+            String is_load = cursor.getString(cursor.getColumnIndex(DataBaseHelper.upload_state));
             String imgs = cursor.getString(cursor.getColumnIndex(DataBaseHelper.imgs));
             String mac = cursor.getString(cursor.getColumnIndex(DataBaseHelper.macs));
             int table_id = cursor.getInt(cursor.getColumnIndex(DataBaseHelper.table_id));
@@ -144,7 +116,7 @@ public class ProgramDao {
                 commodity.setPrice(o.getString("price"));
                 commodities.add(commodity);
             }
-            bean.setCommoditys(commodities);
+            bean.setTexts(commodities);
             //imgs
             ArrayList<String> arImg = new ArrayList<>();
             JSONArray imgarry = new JSONArray(imgs);
@@ -157,16 +129,16 @@ public class ProgramDao {
             //model_id
             bean.setModelId(model_id);
             //program_id
-            bean.setProgramid(program_id);
-            //is_load
-            bean.setProgramid(is_load);
+            bean.setProgramId(program_id);
+            //upload_state
+            bean.setState(is_load);
             //table_id
             LogUtil.d(TAG, "table_id:" + table_id);
             bean.setTable_id(table_id);
             //creation_time
             bean.setCreation_time(creation_time);
             //user_id
-            bean.setUserID(user_id);
+            bean.setUserid(user_id);
             //mac
             ArrayList<String> macs = new ArrayList<>();
             JSONArray macarry = new JSONArray(mac);
@@ -181,20 +153,87 @@ public class ProgramDao {
         return data;
     }
 
+    /**
+     * 根据节目ID更新节目
+     */
+    public void updateInProgramId(ProgramBean bean) throws Exception {
+        LogUtil.d(TAG, "bean.getProgramid():" + bean.getProgramId());
+        if (bean == null || TextUtils.isEmpty(bean.getProgramId()))
+            throw new Exception("空指针异常");
+        SQLiteDatabase wDb = mDb.getWritableDatabase();
+        wDb.beginTransaction();
+        ContentValues content = getContentValues(bean);
+        content.put(program_id, bean.getProgramId());
+        content.put(upload_state, bean.getState());
+        wDb.update(TABLE_NAME, content, program_id + "=?", new String[]{bean.getProgramId()});
+        wDb.setTransactionSuccessful();
+        wDb.endTransaction();
+    }
+
+
+    /**
+     * 更新发布状态
+     *
+     * @param createTime
+     * @param state
+     */
+    public void updateState(String createTime, String state) {
+        if (createTime == null)
+            return;
+        if (state == null)
+            return;
+        SQLiteDatabase wdb = mDb.getWritableDatabase();
+        wdb.execSQL("update " + TABLE_NAME + " set " + upload_state + "=? " + "where " + creation_time + "=?",
+                new Object[]{state, createTime});
+    }
+
+    /**
+     * 更新节目ID
+     *
+     * @param createTime
+     * @param programId
+     */
+    public void updateProgramId(String createTime, String programId) {
+        if (createTime == null)
+            return;
+        if (programId == null)
+            return;
+        SQLiteDatabase wdb = mDb.getWritableDatabase();
+        wdb.execSQL("update " + TABLE_NAME + " set " + program_id + "=? " + "where " + creation_time + "=?",
+                new Object[]{programId, createTime});
+    }
+
+    /**
+     * 根据数据库ID更新节目
+     */
+    public void updateInDataBaseId(ProgramBean bean) throws Exception {
+        if (bean == null || bean.getTable_id() == -1)
+            throw new Exception("空指针异常");
+        SQLiteDatabase wDb = mDb.getWritableDatabase();
+        wDb.beginTransaction();
+        ContentValues content = getContentValues(bean);
+        int update = wDb.update(TABLE_NAME, content, table_id + "=?", new String[]{String.valueOf(bean.getTable_id())});
+        LogUtil.d("update:" + update);
+        wDb.setTransactionSuccessful();
+        wDb.endTransaction();
+    }
+
+
     public void jsonToArry(ArrayList<Objects> data, String json) throws JSONException {
     }
 
     public ContentValues getContentValues(ProgramBean bean) {
         LogUtil.d(TAG, "getContentValues:" + bean);
         ContentValues content = new ContentValues();
+        content.put(user_id, mUserID);
         content.put(creation_time, bean.getCreation_time());
         content.put(model_id, bean.getModelId());
-        content.put(program_id, bean.getProgramid());
+        content.put(program_id, bean.getProgramId());
         content.put(imgs, mGson.toJson(bean.getImages()));
-        content.put(commoditys, mGson.toJson(bean.getCommoditys()));
-        content.put(is_load, bean.getIsLoad());
-        content.put(user_id, mUserID);
+        content.put(texts, mGson.toJson(bean.getTexts()));
         content.put(macs, mGson.toJson(bean.getDeviceMacs()));
+        content.put(upload_state, mGson.toJson(bean.getState()));
+        content.put(tab, mGson.toJson(bean.getTab()));
         return content;
     }
 }

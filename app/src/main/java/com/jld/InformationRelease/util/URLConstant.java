@@ -10,7 +10,7 @@ package com.jld.InformationRelease.util;
  */
 public class URLConstant {
 
-    public static final String BASE_HTTP_URL = "http://112.74.215.42";
+    public static final String BASE_HTTP_URL = "http://admsg.torsun.cn";
 
     /**
      * 1、注册接口
@@ -25,17 +25,17 @@ public class URLConstant {
     /**
      * 3、修改密码
      */
-    public static final String CHANGE_PASSWORD = "";
+    public static final String CHANGE_PASSWORD = "user/uppwd";
 
     /**
      * 4、找回密码
      */
-    public static final String RETRIEVE_PASSWORD = "";
+    public static final String RETRIEVE_PASSWORD = "user/findpwd";
 
     /**
      * 5、获取账号所有绑定的设备接口
      */
-    public static final String GET_DEVICE_URL = "";
+    public static final String GET_DEVICE_URL = "/device/all";
 
     /**
      * 6、获取指定设备信息接口
@@ -60,12 +60,20 @@ public class URLConstant {
     /**
      * 11、推送节目接口
      */
-    public static final String PUSH_PROGRAM_URL = "";
+    public static final String PUSH_PROGRAM_URL = "/program/getprogram";
+    /**
+     * 设备绑定接口
+     */
+    public static final String BIND_DEVICE = "/device/binding";
 
     /**
      * 12、验证码请求接口
      */
     public static final String GET_VERIFY_CODE = "/tsmsg/sop";
+    /**
+     * 12、验证码请求接口
+     */
+    public static final String SMS_GET = "/tsmsg/soppwd";
 
     /**
      * 13、多个文件上传接口

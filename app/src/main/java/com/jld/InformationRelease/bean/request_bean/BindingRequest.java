@@ -9,9 +9,8 @@ package com.jld.InformationRelease.bean.request_bean;
  * @create-time 2017/4/22 10:07
  */
 public class BindingRequest {
-
     //用户ID
-    private String userId;
+    private String userid;
     //设备MAC地址
     private String devicemac;
     //设备名称
@@ -20,11 +19,11 @@ public class BindingRequest {
     private String sign;
 
     public String getUserId() {
-        return userId;
+        return userid;
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userid = userId;
     }
 
     public String getDevicemac() {
@@ -42,7 +41,7 @@ public class BindingRequest {
     @Override
     public String toString() {
         return "BindingRequest{" +
-                "userId='" + userId + '\'' +
+                "userId='" + userid + '\'' +
                 ", devicemac='" + devicemac + '\'' +
                 ", devicename='" + devicename + '\'' +
                 ", sign='" + sign + '\'' +

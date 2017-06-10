@@ -24,7 +24,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.ProgramBean;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
@@ -41,10 +41,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+
 /**
  * 三：节目编辑
  */
-public class ProgramCompileActivity extends BaseActivity implements RecyclerImgAdapter.OnItemSelectClick, IViewToPresenter<BaseResponse> {
+public class ProgramCompileActivity extends BaseActivity implements RecyclerImgAdapter.OnItemSelectClick, IViewListen<BaseResponse> {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
     private static final String TAG = "ProgramCompileActivity";
@@ -185,16 +187,16 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                     }
 
                     ProgramBean body = new ProgramBean();
-                    body.setCommoditys(data);//名称和价格
+                    body.setTexts(data);//名称和价格
                     body.setImages(imgs);//图片广告
                     body.setDeviceMacs(mCheckMacs);//需要推送终端的Mac地址
                     body.setModelId(modleId);//模板ID
-                    body.setUserID(userID);//账号
+                    body.setUserid(userID);//账号
                     body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
 
                     Intent intent = new Intent(ProgramCompileActivity.this, MainActivity.class);
                     intent.putExtra("body", body);
-                    setResult(0x11, intent);//编辑结果返回
+                    setResult(mProgramResultCode, intent);//编辑结果返回
                     finish();
                     break;
                 case R.id.title_preview://预览
@@ -208,9 +210,8 @@ public class ProgramCompileActivity extends BaseActivity implements RecyclerImgA
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
-
                     ProgramBean preview_body = new ProgramBean();
-                    preview_body.setCommoditys(preview_data);//名称和价格
+                    preview_body.setTexts(preview_data);//名称和价格
                     preview_body.setImages(preview_imgs);//图片广告
                     preview_body.setModelId(modleId);//模板ID
                     toActivity(PreviewActivity_1.class, preview_body, "previewData");

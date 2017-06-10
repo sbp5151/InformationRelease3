@@ -16,8 +16,8 @@ public class TimeShowdownRequestBean {
 
     private String mobile;
     private ArrayList<String> macs;
-    private String offTime;
-    private String onTime;
+    private String offtime;
+    private String ontime;
     /**
      * key+mobile
      */
@@ -39,20 +39,20 @@ public class TimeShowdownRequestBean {
         this.macs = macs;
     }
 
-    public String getOffTime() {
-        return offTime;
+    public String getOfftime() {
+        return offtime;
     }
 
-    public void setOffTime(String offTime) {
-        this.offTime = offTime;
+    public void setOfftime(String offtime) {
+        this.offtime = offtime;
     }
 
-    public String getOnTime() {
-        return onTime;
+    public String getOntime() {
+        return ontime;
     }
 
-    public void setOnTime(String onTime) {
-        this.onTime = onTime;
+    public void setOntime(String ontime) {
+        this.ontime = ontime;
     }
 
     public String getSign() {
@@ -68,8 +68,8 @@ public class TimeShowdownRequestBean {
         return "TimeShowdownRequestBean{" +
                 "mobile='" + mobile + '\'' +
                 ", macs=" + macs +
-                ", offTime='" + offTime + '\'' +
-                ", onTime='" + onTime + '\'' +
+                ", offtime='" + offtime + '\'' +
+                ", ontime='" + ontime + '\'' +
                 ", sign='" + sign + '\'' +
                 '}';
     }

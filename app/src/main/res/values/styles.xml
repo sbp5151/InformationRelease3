@@ -69,4 +69,8 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="popupwindow_style">
+        <item name="android:windowBackground">@drawable/popupwindow_back</item>
+    </style>
 </resources>

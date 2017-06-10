@@ -20,7 +20,7 @@ public class ProgramBean implements Serializable {
     /**
      * 商品名、价格
      */
-    private ArrayList<Commodity> commoditys;
+    private ArrayList<Commodity> texts = new ArrayList<>();
     /**
      * 视频集
      */
@@ -29,26 +29,20 @@ public class ProgramBean implements Serializable {
      * 需要推送的终端mac地址
      */
     private ArrayList<String> deviceMacs;
+
     /**
      * 用户ID
      */
-    private String userID;
-    /**
-     * 模板ID
-     */
-    private String modelId;
+    private String userid;
     /**
      * 节目ID 用于获取节目
      */
-    private String programid;
+    private String programId;
+
     /**
      * 加密字符串 md5(key+mobile)
      */
     private String sign;
-    /**
-     * 是否异常上传服务器 0位没有1位上传
-     */
-    private String isLoad = "0";
 
     /**
      * 创建时间
@@ -64,6 +58,23 @@ public class ProgramBean implements Serializable {
      * 用户输入的标签
      */
     private String tab;
+    /**
+     * 模板ID
+     */
+    private String modelId;
+
+    /**
+     * 状态：0为未上传，1为已上传，-1为上传失败
+     */
+    private String state;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getTab() {
         return tab;
@@ -140,12 +151,12 @@ public class ProgramBean implements Serializable {
         this.images = images;
     }
 
-    public ArrayList<Commodity> getCommoditys() {
-        return commoditys;
+    public ArrayList<Commodity> getTexts() {
+        return texts;
     }
 
-    public void setCommoditys(ArrayList<Commodity> commoditys) {
-        this.commoditys = commoditys;
+    public void setTexts(ArrayList<Commodity> texts) {
+        this.texts = texts;
     }
 
     public ArrayList<String> getDeviceMacs() {
@@ -156,12 +167,12 @@ public class ProgramBean implements Serializable {
         this.deviceMacs = deviceMacs;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getUserid() {
+        return userid;
     }
 
-    public void setUserID(String mobile) {
-        this.userID = mobile;
+    public void setUserid(String mobile) {
+        this.userid = mobile;
     }
 
     public String getModelId() {
@@ -180,22 +191,6 @@ public class ProgramBean implements Serializable {
         this.sign = sign;
     }
 
-    public String getProgramid() {
-        return programid;
-    }
-
-    public void setProgramid(String programid) {
-        this.programid = programid;
-    }
-
-    public String getIsLoad() {
-        return isLoad;
-    }
-
-    public void setIsLoad(String isLoad) {
-        this.isLoad = isLoad;
-    }
-
     public String getCreation_time() {
         return creation_time;
     }
@@ -204,21 +199,29 @@ public class ProgramBean implements Serializable {
         this.creation_time = creation_time;
     }
 
+    public String getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(String programId) {
+        this.programId = programId;
+    }
+
     @Override
     public String toString() {
         return "ProgramBean{" +
                 "images=" + images +
-                ", commoditys=" + commoditys +
+                ", texts=" + texts +
                 ", videos=" + videos +
                 ", deviceMacs=" + deviceMacs +
-                ", userID='" + userID + '\'' +
-                ", modelId='" + modelId + '\'' +
-                ", programid='" + programid + '\'' +
+                ", userid='" + userid + '\'' +
+                ", programId='" + programId + '\'' +
                 ", sign='" + sign + '\'' +
-                ", isLoad='" + isLoad + '\'' +
                 ", creation_time='" + creation_time + '\'' +
                 ", table_id=" + table_id +
                 ", tab='" + tab + '\'' +
+                ", modelId='" + modelId + '\'' +
+                ", upload_state='" + state + '\'' +
                 '}';
     }
 }

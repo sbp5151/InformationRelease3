@@ -15,7 +15,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.request_bean.VerifyCodeRequestBean;
 import com.jld.InformationRelease.bean.response_bean.VerifyCodeResponseBean;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.VerifyCodePresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
@@ -23,8 +23,12 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
 
-public class RegisterActivity_Phone extends BaseActivity implements IViewToPresenter<VerifyCodeResponseBean> {
+/**
+ * 注册1
+ */
+public class RegisterActivity_Phone extends BaseActivity implements IViewListen<VerifyCodeResponseBean> {
 
+    private static final int GET_CODE_TAG = 666;
     private ProgressDialog mProgressDialog;
     private ImageView mImg_back;
     private EditText mEt_input_nike;
@@ -34,6 +38,8 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewToPrese
     private EditText mEt_number;
     private int mRequestId = 0x11;
     private String mPhoneNum;
+    private String countryCode = "86";
+    private Button mBtn_num_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +64,7 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewToPrese
         // 用户协议
         TextView tv_protocol = (TextView) findViewById(R.id.tv_register_protocol);
         //区号
-        Button btn_num_code = (Button) findViewById(R.id.btn_number_code);
+        mBtn_num_code = (Button) findViewById(R.id.btn_number_code);
         //电话号码
         mEt_number = (EditText) findViewById(R.id.et_input_number);
         //下一步
@@ -66,7 +72,7 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewToPrese
 
         title_back.setOnClickListener(mOnClickListener);
         tv_protocol.setOnClickListener(mOnClickListener);
-        btn_num_code.setOnClickListener(mOnClickListener);
+        mBtn_num_code.setOnClickListener(mOnClickListener);
         btn_next.setOnClickListener(mOnClickListener);
         btn_next.setEnabled(false);// 非激活状态
 
@@ -97,19 +103,34 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewToPrese
                     ToastUtil.showToast(RegisterActivity_Phone.this, "霸王条约不让看!", 3000);
                     break;
                 case R.id.btn_number_code://区号
-                    ToastUtil.showToast(RegisterActivity_Phone.this, "86!", 3000);
+                    Intent intent = new Intent(RegisterActivity_Phone.this, CountryPageActivity.class);
+                    startActivityForResult(intent, GET_CODE_TAG);
+                    overridePendingTransition(R.anim.right_in, R.anim.left_out);
                     break;
                 case R.id.bt_register_number_next://下一步
                     VerifyCodeRequestBean bean = new VerifyCodeRequestBean();
                     mPhoneNum = mEt_number.getText().toString();
                     bean.setMobile(mPhoneNum);
-                    bean.setDa("86");
+                    bean.setDa(countryCode);
                     bean.setSign(MD5Util.getMD5(Constant.S_KEY + mPhoneNum));
-                    mPresenter.getVerifyCode(bean, mRequestId);
+                    mPresenter.getVerifyCode1(bean, mRequestId);
                     break;
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (null != data && requestCode == GET_CODE_TAG) {
+            countryCode = data.getExtras().getString("CountryCode");
+            String countryName = data.getExtras().getString("CountryName");
+            if (!TextUtils.isEmpty(countryCode)
+                    && !TextUtils.isEmpty(countryName)) {
+                mBtn_num_code.setText(countryName + "(+" + countryCode + ")");
+            }
+        }
+    }
 
     @Override
     public void showProgress(int requestTag) {

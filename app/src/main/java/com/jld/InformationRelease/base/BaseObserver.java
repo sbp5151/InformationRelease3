@@ -1,6 +1,6 @@
 package com.jld.InformationRelease.base;
 
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -15,10 +15,10 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class BaseObserver<T> implements Observer<T> {
 
-    IPresenterToModel<T> mCallback;
+    IPresenterListen<T> mCallback;
     int mRequestTag;
 
-    public BaseObserver(IPresenterToModel<T> callback, int requestTag) {
+    public BaseObserver(IPresenterListen<T> callback, int requestTag) {
         mRequestTag = requestTag;
         mCallback = callback;
     }
@@ -36,6 +36,6 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
-        mCallback.requestError(e, mRequestTag);
+        mCallback.requestError(new Exception("网络错误"), mRequestTag);
     }
 }

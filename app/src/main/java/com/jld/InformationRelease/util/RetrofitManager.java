@@ -33,7 +33,7 @@ public class RetrofitManager {
     //长缓存有效期为7天
     public static final int CACHE_STALE_LONG = 60 * 60 * 24 * 7;
     //网络访问超时
-    public static final int NETWORK_TIMEOUT = 8;
+    public static final int NETWORK_TIMEOUT = 40;
     private static RetrofitManager mRetrofitManager;
     private Context mContext;
     private static OkHttpClient mOkHttpClient;

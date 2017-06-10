@@ -12,50 +12,67 @@ public class TerminalBeanSimple {
     /**
      * 终端id
      */
-    private String deviceid;
+    private String id;
     /**
      * 终端状态
      */
-    private String state;
+    private String state = "1";
     /**
      * 所在组名
      */
-    private String group_name;
+    private String group_name ="";
     /**
      * 所在组ID
      */
-    private String group_id;
+    private String group_id ="";
     /***
      * 设备Mac地址
      */
-    private String device_mac;
+    private String mac;
+    /**
+     * 设备名称
+     */
+    private String name;
     /**
      * 是否被选中
      */
     private Boolean isCheck = false;
 
-    public TerminalBeanSimple(String id, String start, String group_name, String group_id, String device_mac) {
-        this.deviceid = id;
-        this.state = start;
+    public TerminalBeanSimple(String id, String state, String group_name, String group_id, String mac, String name) {
+        this.id = id;
+        this.state = state;
         this.group_name = group_name;
         this.group_id = group_id;
-        this.device_mac = device_mac;
+        this.mac = mac;
+        this.name = name;
     }
 
-    public String getDevice_mac() {
-        return device_mac;
+    public TerminalBeanSimple() {
     }
 
-    public void setDevice_mac(String device_mac) {
-        this.device_mac = device_mac;
+    public String getMac() {
+        return mac;
     }
+
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public String getId() {
-        return deviceid;
+        return id;
     }
 
     public void setId(String id) {
-        this.deviceid = id;
+        this.id = id;
     }
 
     public String getState() {
@@ -85,11 +102,12 @@ public class TerminalBeanSimple {
     @Override
     public String toString() {
         return "TerminalBeanSimple{" +
-                "id='" + deviceid + '\'' +
-                ", state='" + state + '\'' +
+                "id='" + id + '\'' +
+                ", upload_state='" + state + '\'' +
                 ", group_name='" + group_name + '\'' +
                 ", group_id='" + group_id + '\'' +
-                ", device_mac='" + device_mac + '\'' +
+                ", mac='" + mac + '\'' +
+                ", name='" + name + '\'' +
                 ", isCheck=" + isCheck +
                 '}';
     }
@@ -97,7 +115,6 @@ public class TerminalBeanSimple {
     public Boolean getCheck() {
         return isCheck;
     }
-
     public void setCheck(Boolean check) {
         isCheck = check;
     }

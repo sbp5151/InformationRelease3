@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @creator boping
  * @create-time 2017/4/18 14:30
- *
+ * <p>
  * 设备终端适配器
  */
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
@@ -50,10 +51,9 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (mClickListener != null)
                     mClickListener.onItemClick(view, holder.getLayoutPosition());
-                if(isCompile){
+                if (isCompile) {
                     TerminalBeanSimple simple = beans.get(holder.getLayoutPosition());
                     simple.setCheck(!simple.getCheck());
                     notifyDataSetChanged();
@@ -63,7 +63,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (mClickListener != null){
+                if (mClickListener != null) {
                     mClickListener.onItemLongClick(view, holder.getLayoutPosition());
                 }
                 return true;
@@ -78,13 +78,16 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
             }
         });
         TerminalBeanSimple terminal = beans.get(position);
+        LogUtil.d(TAG, "terminal:" + terminal);
+        LogUtil.d(TAG, "getCheck:" + terminal.getCheck());
         holder.mCheckBox.setChecked(terminal.getCheck());
-        if (isCompile)
+        if (isCompile && "1".equals(terminal.getState()))//在线并处于编辑状态
             holder.mCheckBox.setVisibility(View.VISIBLE);
         else
             holder.mCheckBox.setVisibility(View.GONE);
 
         holder.tv_id.setText(terminal.getId());
+        holder.tv_name.setText(terminal.getName());
         switch (terminal.getState()) {
             case "0"://离线
                 holder.tv_state.setText(mContext.getResources().getString(R.string.terminal_state_offline));
@@ -112,6 +115,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_id;
+        TextView tv_name;
         TextView tv_state;
         ImageView iv_state;
         CheckBox mCheckBox;
@@ -119,6 +123,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             tv_id = (TextView) itemView.findViewById(R.id.tv_terminal_item_id);
+            tv_name = (TextView) itemView.findViewById(R.id.tv_terminal_item_name);
             tv_state = (TextView) itemView.findViewById(R.id.tv_terminal_item_state);
             iv_state = (ImageView) itemView.findViewById(R.id.iv_terminal_item_state);
             mCheckBox = (CheckBox) itemView.findViewById(R.id.terminal_check);
@@ -137,21 +142,25 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         mClickListener = listener;
     }
 
-    public List<TerminalBeanSimple> getData(){
+    public List<TerminalBeanSimple> getData() {
         return beans;
     }
-    public void setCompile(boolean isCompile){
-        if(!isCompile){
-            for(TerminalBeanSimple beanSimple:beans)
+
+    public void setCompile(boolean isCompile) {
+        if (!isCompile) {
+            for (TerminalBeanSimple beanSimple : beans)
                 beanSimple.setCheck(false);
         }
         this.isCompile = isCompile;
     }
-    public boolean isCompile(){
+
+    public boolean isCompile() {
         return isCompile;
     }
-    public void setDataChange(List<TerminalBeanSimple> beans){
+
+    public void setDataChange(List<TerminalBeanSimple> beans) {
         this.beans = beans;
+        LogUtil.d(TAG, "setDataChange:" + beans);
         notifyDataSetChanged();
     }
 }

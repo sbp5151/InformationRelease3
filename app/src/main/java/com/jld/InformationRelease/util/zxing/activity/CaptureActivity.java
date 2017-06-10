@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import static android.R.attr.data;
+import static com.jld.InformationRelease.view.MainActivity.mScanResultCode;
 
 /**
  * Initial the camera
@@ -184,7 +185,7 @@ public class CaptureActivity extends BaseActivity implements Callback {
 			Bundle bundle = new Bundle();
 			bundle.putString("result", resultString);
 			resultIntent.putExtras(bundle);
-			this.setResult(RESULT_OK, resultIntent);
+			this.setResult(mScanResultCode, resultIntent);
 		}
 		CaptureActivity.this.finish();
 	}
@@ -240,7 +241,7 @@ public class CaptureActivity extends BaseActivity implements Callback {
 						Bundle bundle = new Bundle();
 						bundle.putString("result", resultImage);
 						resultIntent.putExtras(bundle);
-						CaptureActivity.this.setResult(RESULT_OK, resultIntent);
+						CaptureActivity.this.setResult(mScanResultCode, resultIntent);
 					}
 
 					CaptureActivity.this.finish();

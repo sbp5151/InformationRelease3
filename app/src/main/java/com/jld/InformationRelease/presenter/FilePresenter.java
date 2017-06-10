@@ -3,8 +3,8 @@ package com.jld.InformationRelease.presenter;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
-import com.jld.InformationRelease.bean.response_bean.FileResponseBean;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.model.FileModel;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/4/25 15:11
  */
-public class FilePresenter extends BasePresenterImpl<FileResponseBean> {
+public class FilePresenter extends BasePresenterImpl<BaseResponse> {
 
     Context mContext;
     private final FileModel mFileModel;
@@ -27,19 +27,21 @@ public class FilePresenter extends BasePresenterImpl<FileResponseBean> {
      *
      * @param view 具体业务的接口对象
      */
-    public FilePresenter(Context context, IViewToPresenter view) {
+    public FilePresenter(Context context, IViewListen view) {
         super(view);
         mContext = context;
         mFileModel = new FileModel(context);
     }
 
-//    public void updateFile(FileRequest body, int requesTag) {
-//
-//        mFileModel.updateFile(body, this, requesTag);
-//    }
+    public void updateFile(String body, int requesTag) {
+
+        mFileModel.updateFile(body, this, requesTag);
+    }
 
     public void updateFiles(ArrayList<String> imgPath, int requesTag) {
 
-        mFileModel.updateFiles(imgPath,this,requesTag);
+        for (String path : imgPath)
+            mFileModel.updateFile(path, this, requesTag);
+
     }
 }

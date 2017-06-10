@@ -5,7 +5,7 @@ package com.jld.InformationRelease.interfaces;
  * Presenter用于接受model获取（加载）数据后的回调
  * Created by Administrator on 2016/3/23.
  */
-public interface IPresenterToModel<T> {
+public interface IPresenterListen<T> {
     /**
      * 开始请求之前
      */

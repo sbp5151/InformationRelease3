@@ -1,21 +1,21 @@
 package com.jld.InformationRelease.base;
 
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
+import com.jld.InformationRelease.interfaces.IViewListen;
 
 /**
  * 代理对象的基础实现
  *
  * @param <T> 业务请求返回的具体对象
  */
-public class BasePresenterImpl<T> implements IPresenterToModel<T> {
-    public IViewToPresenter iView;
+public class BasePresenterImpl<T> implements IPresenterListen<T> {
+    public IViewListen iView;
     /**
      * 构造方法
      *
      * @param view 具体业务的接口对象
      */
-    public BasePresenterImpl(IViewToPresenter view) {
+    public BasePresenterImpl(IViewListen view) {
         this.iView = view;
     }
 

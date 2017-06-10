@@ -3,10 +3,10 @@ package com.jld.InformationRelease.presenter;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
-import com.jld.InformationRelease.bean.request_bean.GetTerminalRequest;
+import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
-import com.jld.InformationRelease.model.GetTerminalModel;
+import com.jld.InformationRelease.interfaces.IViewListen;
+import com.jld.InformationRelease.model.UpdateTerminalModel;
 
 /**
  * 项目名称：InformationRelease
@@ -18,18 +18,18 @@ import com.jld.InformationRelease.model.GetTerminalModel;
  *
  * 获取绑定的终端设备
  */
-public class GetTerminalPresenter extends BasePresenterImpl<GetTerminalResponse> {
+public class UpdateTerminalPresenter extends BasePresenterImpl<GetTerminalResponse> {
 
-    private final GetTerminalModel mModel;
+    private final UpdateTerminalModel mModel;
 
     /**
      * 构造方法
      *
      * @param view 具体业务的接口对象
      */
-    public GetTerminalPresenter(IViewToPresenter view, Context context) {
+    public UpdateTerminalPresenter(IViewListen view, Context context) {
         super(view);
-        mModel = new GetTerminalModel(context);
+        mModel = new UpdateTerminalModel(context);
     }
 
     /**
@@ -37,8 +37,8 @@ public class GetTerminalPresenter extends BasePresenterImpl<GetTerminalResponse>
      * @param request
      * @param requestTag
      */
-    public void getTerminal(GetTerminalRequest request,int requestTag) {
+    public void updateTerminal(UpdateTerminalRequest request, int requestTag) {
 
-        mModel.getTerminal(request,this,requestTag);
+        mModel.updateTerminal(request,this,requestTag);
     }
 }

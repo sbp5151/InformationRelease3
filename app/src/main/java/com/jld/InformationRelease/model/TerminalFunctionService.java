@@ -1,16 +1,17 @@
 package com.jld.InformationRelease.model;
 
 import com.jld.InformationRelease.base.BaseResponse;
-import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
+import com.jld.InformationRelease.bean.response_bean.UpdateProgramResponse;
 import com.jld.InformationRelease.util.URLConstant;
 
+import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import io.reactivex.Observable;
 
 /**
  * 项目名称：InformationRelease2
@@ -28,7 +29,7 @@ public interface TerminalFunctionService {
      * @param body
      * @return
      */
-    @POST(URLConstant.PUSH_PROGRAM_URL)
+    @POST(URLConstant.BIND_DEVICE)
     Observable<BaseResponse> binding(@Body BindingRequest body);
 
     /**
@@ -38,7 +39,7 @@ public interface TerminalFunctionService {
      * @return
      */
     @POST(URLConstant.PUSH_PROGRAM_URL)
-    Observable<BaseResponse> push(@Body ProgramBean body);
+    Observable<UpdateProgramResponse> push(@Body ProgramBean body);
 
     /**
      * 关机、重启

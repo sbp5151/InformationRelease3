@@ -16,14 +16,17 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.request_bean.VerifyCodeRequestBean;
 import com.jld.InformationRelease.bean.response_bean.VerifyCodeResponseBean;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.VerifyCodePresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
 
-public class RegisterActivity_Code extends BaseActivity implements IViewToPresenter<VerifyCodeResponseBean> {
+/**
+ * 注册2
+ */
+public class RegisterActivity_Code extends BaseActivity implements IViewListen<VerifyCodeResponseBean> {
 
     private ProgressDialog mProgressDialog;
     public static final int COUNT_DOWN = 0x01;
@@ -123,7 +126,7 @@ public class RegisterActivity_Code extends BaseActivity implements IViewToPresen
                     bean.setMobile(mPhone);
                     bean.setDa("86");
                     bean.setSign(MD5Util.getMD5(Constant.S_KEY + mPhone));
-                    mPresenter.getVerifyCode(bean, mRequestId);
+                    mPresenter.getVerifyCode1(bean, mRequestId);
 
                     mBtn_again.setEnabled(false);
                     mBtn_again.setClickable(false);

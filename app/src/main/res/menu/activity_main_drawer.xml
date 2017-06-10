@@ -9,7 +9,7 @@
         <item
             android:id="@+id/menu_my_model"
             android:icon="@mipmap/my_model"
-            android:title="@string/myModel"/>
+            android:title="@string/myProgram"/>
         <item
             android:id="@+id/menu_system_model"
             android:icon="@mipmap/system_model"

@@ -15,12 +15,26 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
         />
-        <TextView
-            android:id="@+id/tv_model_time"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="18dp"/>
+
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_model_time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18dp"/>
+            <ImageView
+                android:id="@+id/iv_upload_defeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@mipmap/defeat"
+                android:visibility="gone"
+            />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

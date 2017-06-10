@@ -1,6 +1,6 @@
 package com.jld.InformationRelease.model;
 
-import com.jld.InformationRelease.bean.request_bean.GetTerminalRequest;
+import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.util.URLConstant;
 
@@ -22,5 +22,5 @@ public interface GetTerminalService {
      * 获取绑定的所有终端设备
      */
     @POST(URLConstant.GET_DEVICE_URL)
-    Observable<GetTerminalResponse> getTerminal(@Body GetTerminalRequest body);
+    Observable<GetTerminalResponse> getTerminal(@Body UpdateTerminalRequest body);
 }

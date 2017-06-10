@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_model;
+package com.jld.InformationRelease.view.my_program;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseRecyclerViewAdapterClick;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
 
@@ -22,14 +23,16 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/5/25 18:00
  */
-public class MyModelRecyclerAdapter extends RecyclerView.Adapter<MyModelRecyclerAdapter.MyHolder> implements BaseRecyclerViewAdapterClick {
+public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecyclerAdapter.MyHolder> implements BaseRecyclerViewAdapterClick {
 
     private Context mContext;
     private ArrayList<ProgramBean> data;
+    public static final String TAG = "MyProgramRecyclerAdapter";
 
-    public MyModelRecyclerAdapter(Context context, ArrayList<ProgramBean> data) {
+    public MyProgramRecyclerAdapter(Context context, ArrayList<ProgramBean> data) {
         mContext = context;
         this.data = data;
+        LogUtil.d(TAG, "data:" + data);
     }
 
     @Override
@@ -44,15 +47,20 @@ public class MyModelRecyclerAdapter extends RecyclerView.Adapter<MyModelRecycler
     public void onBindViewHolder(final MyHolder holder, int position) {
         ProgramBean programBean = data.get(position);
         holder.mTime.setText(programBean.getCreation_time());
-        if (programBean.getIsLoad().equals("1"))
+        if (programBean.getState() != null && programBean.getState().equals("1")) {
             holder.mIcon.setImageResource(R.mipmap.model_icon_update);
-        else
+            holder.defeat.setVisibility(View.GONE);
+        }  else if (programBean.getState() != null && programBean.getState().equals("-1")) {
             holder.mIcon.setImageResource(R.mipmap.model_icon);
-
+            holder.defeat.setVisibility(View.VISIBLE);
+        }else {
+            holder.mIcon.setImageResource(R.mipmap.model_icon);
+            holder.defeat.setVisibility(View.GONE);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOnItemSelectClick.onItemClick(view,holder.getLayoutPosition());
+                mOnItemSelectClick.onItemClick(view, holder.getLayoutPosition());
             }
         });
     }
@@ -63,6 +71,7 @@ public class MyModelRecyclerAdapter extends RecyclerView.Adapter<MyModelRecycler
     }
 
     MyItemClick mOnItemSelectClick;
+
     @Override
     public void setMyItemSelectClick(MyItemClick onItemSelectClick) {
         mOnItemSelectClick = onItemSelectClick;
@@ -72,12 +81,14 @@ public class MyModelRecyclerAdapter extends RecyclerView.Adapter<MyModelRecycler
         public ImageView mIcon;
         public TextView mTime;
         public View mView;
+        public ImageView defeat;
 
         public MyHolder(View itemView) {
             super(itemView);
             mView = itemView;
             mIcon = (ImageView) itemView.findViewById(R.id.iv_model_icon);
             mTime = (TextView) itemView.findViewById(R.id.tv_model_time);
+            defeat = (ImageView) itemView.findViewById(R.id.iv_upload_defeat);
         }
     }
 

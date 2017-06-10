@@ -3,10 +3,12 @@ package com.jld.InformationRelease.model;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BaseObserver2;
+import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
+import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
 import com.jld.InformationRelease.bean.response_bean.UserResponse;
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.RetrofitManager;
 
@@ -26,8 +28,9 @@ public class UserModel {
 
     private final UserModelService mUserService;
     public static final String TAG = "UserModel";
+
     public UserModel(Context context) {
-        Retrofit  retrofit = RetrofitManager.getInstance(context).getRetrofit();
+        Retrofit retrofit = RetrofitManager.getInstance(context).getRetrofit();
         mUserService = retrofit.create(UserModelService.class);
     }
 
@@ -38,7 +41,7 @@ public class UserModel {
      * @param callBack   结果回调
      * @param requestTag 请求标识
      */
-    public void retrofitLogin(UserRequest body, final IPresenterToModel<UserResponse> callBack, final int requestTag) {
+    public void retrofitLogin(UserRequest body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
         mUserService.login(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -52,12 +55,41 @@ public class UserModel {
      * @param callBack   结果回调
      * @param requestTag 请求ID
      */
-    public void retrofitRegister(RegisterRequestBean body, final IPresenterToModel<UserResponse> callBack, final int requestTag) {
-        LogUtil.d(TAG,"RegisterRequestBean:"+body);
+    public void retrofitRegister(RegisterRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "RegisterRequestBean:" + body);
         mUserService.register(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<UserResponse>(callBack,requestTag));
+                .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));
     }
 
+    /**
+     * 找回密码
+     *
+     * @param body
+     * @param callBack
+     * @param requestTag
+     */
+    public void RetrievePW(RetrievePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "retrievePW:");
+        mUserService.retrievePassword(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));
+    }
+
+    /**
+     * 秘密修改
+     *
+     * @param body
+     * @param callBack
+     * @param requestTag
+     */
+    public void ChangePw(ChangePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "ChangePw:");
+        mUserService.changerPassword(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));
+    }
 }

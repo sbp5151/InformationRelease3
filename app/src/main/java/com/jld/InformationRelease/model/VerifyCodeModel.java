@@ -5,7 +5,7 @@ import android.content.Context;
 import com.jld.InformationRelease.base.BaseObserver;
 import com.jld.InformationRelease.bean.request_bean.VerifyCodeRequestBean;
 import com.jld.InformationRelease.bean.response_bean.VerifyCodeResponseBean;
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.RetrofitManager;
 
@@ -38,9 +38,37 @@ public class VerifyCodeModel {
      * @param callback   结果回调
      * @param requestTag 请求标识
      */
-    public void retrofitVerifyCode(VerifyCodeRequestBean body, final IPresenterToModel<VerifyCodeResponseBean> callback, final int requestTag) {
-        LogUtil.d(TAG,"retrofitVerifyCode:"+ body);
-        mUserService.getVerifyCode(body)
+    public void retrofitVerifyCode1(VerifyCodeRequestBean body, final IPresenterListen<VerifyCodeResponseBean> callback, final int requestTag) {
+        LogUtil.d(TAG,"retrofitVerifyCode1:"+ body);
+        mUserService.getVerifyCode1(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver<VerifyCodeResponseBean>(callback, requestTag) {
+                    @Override
+                    public void onNext(VerifyCodeResponseBean value) {
+                        if (value != null && value.getResult().equals("0")) {//成功
+                            callback.requestSuccess(value, requestTag);
+                        } else if (value != null) {//失败
+                            callback.requestError(new Exception(value.getCode()), requestTag);
+                        } else {//错误
+                            callback.requestError(new Exception("获取数据错误，请重试！"), requestTag);
+                        }
+                    }
+
+                });
+
+    }
+
+    /**
+     * 获取验证码请求
+     *
+     * @param body       请求参数
+     * @param callback   结果回调
+     * @param requestTag 请求标识
+     */
+    public void retrofitVerifyCode2(VerifyCodeRequestBean body, final IPresenterListen<VerifyCodeResponseBean> callback, final int requestTag) {
+        LogUtil.d(TAG,"retrofitVerifyCode1:"+ body);
+        mUserService.getVerifyCode2(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseObserver<VerifyCodeResponseBean>(callback, requestTag) {

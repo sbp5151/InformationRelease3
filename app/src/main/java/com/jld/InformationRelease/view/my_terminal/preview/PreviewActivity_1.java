@@ -93,7 +93,7 @@ public class PreviewActivity_1 extends AppCompatActivity {
         VpImg1Adapter imgAdapter = new VpImg1Adapter(mPreviewData.getImages(), this);
         mVp_img.setAdapter(imgAdapter);
 
-        ArrayList<ProgramBean.Commodity> commoditys = mPreviewData.getCommoditys();
+        ArrayList<ProgramBean.Commodity> commoditys = mPreviewData.getTexts();
         ArrayList<ProgramBean.Commodity> leftCommodity = new ArrayList<>();
         ArrayList<ProgramBean.Commodity> rightCommodity = new ArrayList<>();
 

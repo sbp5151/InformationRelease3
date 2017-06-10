@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.jld.InformationRelease.base.BaseObserver2;
 import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
-import com.jld.InformationRelease.interfaces.IPresenterToModel;
+import com.jld.InformationRelease.interfaces.IPresenterListen;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.RetrofitManager;
@@ -39,7 +39,7 @@ public class GetModelModel {
         mContext = context;
     }
 
-    public void getModel(final IPresenterToModel<GetModelResponse> callback,int requestId){
+    public void getModel(final IPresenterListen<GetModelResponse> callback, int requestId){
 
         SharedPreferences sp = mContext.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE);
         String userid = sp.getString(UserConstant.USER_ID, "");

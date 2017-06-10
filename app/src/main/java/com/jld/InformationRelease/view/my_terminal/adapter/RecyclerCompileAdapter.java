@@ -120,10 +120,10 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //            //减去imagpath和两个head 获得真实位置
 //            int realPosition = position - size - 2;
             int realPosition = getRealPositionImg(position);
-            ProgramBean.Commodity commodity = mBean.getCommoditys().get(realPosition);
+            ProgramBean.Commodity commodity = mBean.getTexts().get(realPosition);
             comHolder.name.setText(commodity.getName());
             comHolder.price.setText(commodity.getPrice());
-            if (realPosition == (mBean.getCommoditys().size() - 1)) {
+            if (realPosition == (mBean.getTexts().size() - 1)) {
                 //最底下item获得焦点
                 comHolder.name.requestFocus();
             }
@@ -132,7 +132,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     if (charSequence != null) {
-                        mBean.getCommoditys().get(getRealPositionImg(holder.getLayoutPosition())).setName(charSequence.toString());
+                        mBean.getTexts().get(getRealPositionImg(holder.getLayoutPosition())).setName(charSequence.toString());
                     }
                 }
             });
@@ -140,7 +140,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     if (charSequence != null) {
-                        mBean.getCommoditys().get(getRealPositionImg(holder.getLayoutPosition())).setPrice(charSequence.toString());
+                        mBean.getTexts().get(getRealPositionImg(holder.getLayoutPosition())).setPrice(charSequence.toString());
                     }
                 }
             });
@@ -175,13 +175,13 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void addCommodityItem() {
-        ArrayList<ProgramBean.Commodity> commoditys = mBean.getCommoditys();
+        ArrayList<ProgramBean.Commodity> commoditys = mBean.getTexts();
         if (commoditys.size() > 20) {
             ToastUtil.showToast(mContext, mContext.getResources().getString(R.string.most_add_commoditys), 3000);
             return;
         }
         commoditys.add(new ProgramBean.Commodity("", ""));
-        mBean.setCommoditys(commoditys);
+        mBean.setTexts(commoditys);
         notifyDataSetChanged();
     }
 
@@ -190,7 +190,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
      * @return
      */
     public ArrayList<ProgramBean.Commodity> getCommodityData(boolean isClear) {
-        ArrayList<ProgramBean.Commodity> commoditys = mBean.getCommoditys();
+        ArrayList<ProgramBean.Commodity> commoditys = mBean.getTexts();
         Log.d(TAG, "commodityssize:" + commoditys.size());
         if (isClear) {
             //去除空值
@@ -203,7 +203,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             }
             notifyDataSetChanged();
-            Log.d(TAG, "commoditys:" + commoditys);
+            Log.d(TAG, "texts:" + commoditys);
             return commoditys;
         } else {//不清除空值
             ArrayList<ProgramBean.Commodity> commoditys2 = new ArrayList<>();
@@ -252,7 +252,7 @@ public class RecyclerCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return mBean.getImages().size() + mBean.getCommoditys().size() + 2;
+        return mBean.getImages().size() + mBean.getTexts().size() + 2;
     }
 
     class ComHolder extends RecyclerView.ViewHolder {

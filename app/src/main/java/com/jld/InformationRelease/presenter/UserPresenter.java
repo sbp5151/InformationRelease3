@@ -3,10 +3,12 @@ package com.jld.InformationRelease.presenter;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
+import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
+import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
 import com.jld.InformationRelease.bean.response_bean.UserResponse;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.model.UserModel;
 
 /**
@@ -31,7 +33,7 @@ public class UserPresenter extends BasePresenterImpl<UserResponse> {
      *
      * @param view 具体业务的接口对象
      */
-    public UserPresenter(IViewToPresenter view, Context context) {
+    public UserPresenter(IViewListen view, Context context) {
         super(view);
         mUserModel = new UserModel(context);
     }
@@ -56,5 +58,23 @@ public class UserPresenter extends BasePresenterImpl<UserResponse> {
         mUserModel.retrofitRegister(body, this, requestTag);
     }
 
+    /**
+     * 找回密码
+     *
+     * @param body
+     * @param requestTag
+     */
+    public void retrievePW(RetrievePWRequestBean body, int requestTag) {
+        mUserModel.RetrievePW(body, this, requestTag);
+    }
 
+    /**
+     * 修改密码
+     *
+     * @param body
+     * @param requestTag
+     */
+    public void changePW(ChangePWRequestBean body, int requestTag) {
+        mUserModel.ChangePw(body, this, requestTag);
+    }
 }

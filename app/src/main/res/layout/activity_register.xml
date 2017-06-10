@@ -10,7 +10,6 @@
         layout="@layout/my_titlebar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
-
     />
 
     <LinearLayout

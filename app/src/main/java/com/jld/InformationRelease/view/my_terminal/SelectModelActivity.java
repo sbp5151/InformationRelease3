@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
-import com.jld.InformationRelease.interfaces.IViewToPresenter;
+import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.GetModelPresenter;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_terminal.adapter.ModelAdapter;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 /**
  * 二：模板选择
  */
-public class SelectModelActivity extends AppCompatActivity implements IViewToPresenter<GetModelResponse> {
+public class SelectModelActivity extends AppCompatActivity implements IViewListen<GetModelResponse> {
 
     private RecyclerView mRecyclerView;
     private ArrayList<GetModelResponse.Model> models = new ArrayList<>();

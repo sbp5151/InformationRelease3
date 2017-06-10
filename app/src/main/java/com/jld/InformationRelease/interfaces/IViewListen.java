@@ -3,7 +3,7 @@ package com.jld.InformationRelease.interfaces;
 /**
  * 视图（View层）向presenter提供基础回调接口
  */
-public interface IViewToPresenter<T> {
+public interface IViewListen<T> {
 //    /**
 //     * 通过toast提示用户
 //     *

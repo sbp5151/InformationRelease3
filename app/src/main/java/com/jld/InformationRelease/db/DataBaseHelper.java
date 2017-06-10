@@ -22,8 +22,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String model_id = "model_id";
     public static final String program_id = "program_id";
     public static final String imgs = "imgs";
-    public static final String commoditys = "commoditys";
-    public static final String is_load = "is_load";
+    public static final String texts = "texts";
+    public static final String vodeos = "vodeos";
+    public static final String upload_state = "upload_state";
     public static final String tab = "tab";
     public static final String user_id = "user_id";
     public static final String macs = "mac";
@@ -39,9 +40,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + model_id + " varchar(30),"//模板ID
                     + program_id + " varchar(30) UNIQUE,"//节目ID 唯一
                     + imgs + " varchar(1000),"//图片集合
+                    + vodeos + " varchar(1000),"//视频集合
+                    + texts + " varchar(2000),"//“商品”集合
                     + macs + " varchar(1000),"//mac集合
-                    + commoditys + " varchar(2000),"//“商品”集合
-                    + is_load + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传
+                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传
                     + tab + " varchar(30)"//用户设置的标签
                     + ");";
 

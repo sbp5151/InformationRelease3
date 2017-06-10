@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_model;
+package com.jld.InformationRelease.view.my_program;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseRecyclerViewAdapterClick;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
 
@@ -22,35 +23,53 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/5/25 18:00
  */
-public class ModelContentRecyclerAdapter extends RecyclerView.Adapter<ModelContentRecyclerAdapter.MyHolder> implements BaseRecyclerViewAdapterClick {
+public class ProgramContentRecyclerAdapter extends RecyclerView.Adapter<ProgramContentRecyclerAdapter.MyHolder> implements BaseRecyclerViewAdapterClick {
 
     private Context mContext;
     ProgramBean data;
     private String[] headData = {"发布状态", "轮播图片", "商品价格", "推送的设备ID", "创建时间", "模板ID", "标签"};
     private ArrayList<String> tailData = new ArrayList<>();
 
-    public ModelContentRecyclerAdapter(Context context, ProgramBean data) {
+    public ProgramContentRecyclerAdapter(Context context, ProgramBean data) {
         mContext = context;
         this.data = data;
         //发布状态
-        if ("1".equals(data.getIsLoad()))
+        if ("1".equals(data.getState()))
             tailData.add("已发布");
+        else if ("-1".equals(data.getState()))
+            tailData.add("上传失败");
         else
             tailData.add("未发布");
         //轮播图片
-        if (data.getImages() != null)
-            tailData.add(data.getImages().toString());
+        if (data.getImages() != null&&data.getImages().size()>0){
+            StringBuffer buffer = new StringBuffer();
+            for (String img : data.getImages()) {
+                buffer.append(img + System.getProperty("line.separator"));
+            }
+            LogUtil.d("buffer", "" + buffer);
+            buffer.deleteCharAt(buffer.length() - 1);
+            LogUtil.d("buffer", "" + buffer);
+            tailData.add(buffer.toString());
+        }
         else
             tailData.add(mContext.getString(R.string.NULL));
         //商品价格
-        if (data.getCommoditys() != null)
-            tailData.add(data.getCommoditys().toString());
+        if (data.getTexts() != null)
+            tailData.add(data.getTexts().toString());
         else
             tailData.add(mContext.getString(R.string.NULL));
         //推送的设备ID
-        if (data.getDeviceMacs() != null)
-            tailData.add(data.getDeviceMacs().toString());
-        else
+        if (data.getDeviceMacs() != null && data.getDeviceMacs().size() > 0) {
+            LogUtil.d("getDeviceMacs", "" + data.getDeviceMacs());
+            StringBuffer buffer = new StringBuffer();
+            for (String mac : data.getDeviceMacs()) {
+                buffer.append(mac + System.getProperty("line.separator"));
+            }
+            LogUtil.d("buffer", "" + buffer);
+            buffer.deleteCharAt(buffer.length() - 1);
+            LogUtil.d("buffer", "" + buffer);
+            tailData.add(buffer.toString());
+        } else
             tailData.add(mContext.getString(R.string.NULL));
 
         //创建时间
@@ -79,6 +98,7 @@ public class ModelContentRecyclerAdapter extends RecyclerView.Adapter<ModelConte
 
     @Override
     public void onBindViewHolder(final MyHolder holder, int position) {
+
         holder.head.setText(headData[position]);
         holder.tail.setText(tailData.get(position));
     }
@@ -89,6 +109,7 @@ public class ModelContentRecyclerAdapter extends RecyclerView.Adapter<ModelConte
     }
 
     MyItemClick mOnItemSelectClick;
+
     @Override
     public void setMyItemSelectClick(MyItemClick onItemSelectClick) {
         mOnItemSelectClick = onItemSelectClick;

@@ -35,4 +35,8 @@
     <color name="backgroud_red">#F85514</color>
     <color name="backgroud_red_shape">#Fc6b47</color>
     <color name="backgroud_red_gray">#ee410b</color>
+    
+    <color name="text_click_color">#515151</color>
+    <color name="compile_program_head_color">#e6e9f1</color>
+    <color name="photopicker_background">#ffffff</color>
 </resources>

@@ -4,7 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -106,6 +109,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
@@ -125,6 +129,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
         View contentView = mActivity.getLayoutInflater().inflate(R.layout.popupwindow_layout, null);
@@ -135,14 +140,16 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         contentView.findViewById(R.id.pp_volume_adjust).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_get_screen).setOnClickListener(ppOnClickListener);
         mPopupWindow.setContentView(contentView);
+        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);
         mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth(GeneralUtil.dip2px(mActivity, 100));
+        mPopupWindow.setWidth((int)getResources().getDimension(R.dimen.push_popup_width));
         mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-        mPopupWindow.showAsDropDown(mPush, 0, GeneralUtil.dip2px(mActivity, -22));
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//背景透明
+
+        mPopupWindow.showAsDropDown(mPush, 0, GeneralUtil.dip2px(mActivity, -21));
         mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                ToastUtil.showToast(mActivity, "消失", 3000);
                 mPush.setClickable(true);
                 mPush.setEnabled(true);
             }
@@ -160,14 +167,13 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
             }
             switch (view.getId()) {
                 case R.id.pp_program_push://节目推送
-                    ToastUtil.showToast(mActivity, "节目推送", 3000);
                     mPopupWindow.dismiss();
                     LogUtil.d(TAG, "pushId:" + pushId);
-                    Intent intent = new Intent(mActivity, ProgramCompileActivity2.class);
+                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
                     intent.putExtra("pushId", pushId);
 //                    startActivity(intent);
                     startActivityForResult(intent, mProgramRequestCode);
-//                    toActivity(ProgramCompileActivity2.class);
+//                    toActivity(ProgramCompileActivity.class);
                     break;
                 case R.id.pp_showdown://关机
                     ToastUtil.showToast(mActivity, "关机", 3000);

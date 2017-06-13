@@ -22,7 +22,7 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
-import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity2;
+import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity;
 import com.jld.InformationRelease.view.my_terminal.preview.PreviewActivity_1;
 
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class MyProgramContentActivity extends BaseActivity {
                     preview();
                     break;
                 case R.id.pp_completer://再编辑
-                    toActivity(ProgramCompileActivity2.class, mData, "data");
+                    toActivity(ProgramCompileActivity.class, mData, "data");
                     finish();
                     break;
             }

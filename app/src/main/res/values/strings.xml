@@ -46,7 +46,7 @@
     <string name="terminal_state_fault">故障</string>
     <string name="completer">编辑</string>
     <string name="cancle">取消</string>
-    <string name="program_compile">模板编辑</string>
+    <string name="program_compile">节目编辑</string>
     <string name="push">推送</string>
     <string name="str_scan_hint">扫描二维码绑定设备</string>
     <string name="str_open_light">打开闪光灯</string>
@@ -96,5 +96,6 @@
     <!--loading-->
     <string name="loading">loading...</string>
     <string name="login_loading">正在登陆...</string>
+    <string name="message_add_photo_hint">最多添加二十张图片</string>
 
 </resources>

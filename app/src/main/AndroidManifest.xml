@@ -47,7 +47,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/MyTheme">
+        android:theme="@style/MyTheme"
+        >
         <activity android:name=".view.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -57,42 +58,40 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:theme="@style/MyTheme">
+           >
         </activity>
         <activity
             android:name=".view.login_register.LoginActivity"
             android:label="@string/title_activity_login"
             android:launchMode="singleTask"
-            android:theme="@style/MyTheme">
+            >
         </activity>
         <activity
             android:name=".view.login_register.FindBackPassWordActivity"
-            android:theme="@style/MyTheme"/>
+            />
         <activity
             android:name=".view.login_register.ResetPasswordActivity"
-            android:theme="@style/MyTheme"/>
+            />
         <activity
             android:name=".view.login_register.CountryPageActivity"
-            android:theme="@style/MyTheme"/>
+            />
         <activity
             android:name=".view.login_register.RegisterActivity_Phone"
             android:label="@string/title_activity_register"
-            android:theme="@style/MyTheme">
+            >
         </activity>
         <activity
             android:name=".view.login_register.RegisterActivity_Code"
             android:label="@string/title_activity_code"
-            android:theme="@style/MyTheme">
+            >
         </activity>
         <activity
             android:name=".view.login_register.RegisterActivity"
             android:label="@string/title_activity_register"
-            android:theme="@style/MyTheme">
+            >
         </activity>
-        <activity android:name=".view.my_terminal.ProgramCompileActivity">
-        </activity>
-        <activity android:name=".view.my_terminal.ProgramCompileActivity2">
-        </activity>
+        <activity android:name=".view.my_terminal.ProgramCompileActivity"
+                  />
         <activity android:name=".util.zxing.activity.CaptureActivity">
         </activity>
 
@@ -107,10 +106,16 @@
         <activity
             android:name=".view.my_terminal.preview.PreviewActivity_1"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoBar"/>
-        <activity android:name=".view.my_program.MyProgramContentActivity">
+           />
+        <activity android:name=".view.my_program.MyProgramContentActivity"/>
+        <!--photo select-->
+        <activity
+            android:name="com.foamtrace.photopicker.PhotoPickerActivity"
+            android:theme="@style/PhotoPickerTheme"
+            android:configChanges="orientation|screenSize"/>
 
-        </activity>
+        <activity android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
+                  android:theme="@style/PhotoPickerTheme"/>
     </application>
 
 </manifest>

@@ -220,7 +220,6 @@ public class MainActivity extends BaseActivity
             mNavigationView.getMenu().getItem(0).setChecked(true);
             switchFragment(R.id.menu_my_terminal);
         }
-
     }
 
     /**

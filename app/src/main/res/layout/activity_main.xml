@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
+    <!--// fitsystemwindows : 设置应用布局时是否考虑系统窗口布局;如果为true,将调整系统窗口布局以适应你自定义的布局-->
     <!--tools:openDrawer="center_horizontal">-->
     <FrameLayout
         android:id="@+id/main_fragment"

@@ -1,65 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity">
-    <include
-        android:id="@+id/program_compile_titlebar"
-        layout="@layout/my_titlebar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-    />
-    <FrameLayout android:layout_width="match_parent"
-                 android:layout_height="match_parent">
+    <!-- fitsystemwindows : 设置应用布局时是否考虑系统窗口布局;如果为true,将调整系统窗口布局以适应你自定义的布局-->
 
-        <ScrollView
-            android:id="@+id/program_compile_scroll"
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+        <include
+            android:id="@+id/program_compile_titlebar"
+            layout="@layout/my_titlebar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:id="@+id/ll_img"
+            android:layout_height="@dimen/title_height"
+        />
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="match_parent">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_program_compile"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <include
-                        android:id="@+id/program_compile_head_img"
-                        layout="@layout/program_compile_head"/>
-                    <View android:layout_width="match_parent"
-                          android:layout_height="1px"
-                          android:background="@android:color/darker_gray"/>
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_compile_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                    android:layout_height="match_parent"/>
 
+            <include
+                android:id="@+id/program_compile_head"
+                layout="@layout/item_head_add"/>
+        </FrameLayout>
+    </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/ll_commodity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <include
-                        android:id="@+id/program_compile_head_text"
-                        layout="@layout/program_compile_head"/>
-                    <View android:layout_width="match_parent"
-                          android:layout_height="1px"
-                          android:background="@android:color/darker_gray"/>
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_compile_commodity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
-
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>

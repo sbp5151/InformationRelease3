@@ -16,7 +16,7 @@ public class ProgramBean implements Serializable {
     /**
      * 图片集
      */
-    private ArrayList<String> images;
+    private ArrayList<String> images= new ArrayList<>();
     /**
      * 商品名、价格
      */
@@ -24,11 +24,11 @@ public class ProgramBean implements Serializable {
     /**
      * 视频集
      */
-    private ArrayList<String> videos;
+    private ArrayList<String> videos= new ArrayList<>();
     /**
      * 需要推送的终端mac地址
      */
-    private ArrayList<String> deviceMacs;
+    private ArrayList<String> deviceMacs= new ArrayList<>();
 
     /**
      * 用户ID

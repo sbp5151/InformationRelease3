@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -15,22 +15,27 @@
 
     <com.jld.InformationRelease.widget.RoundImageViewByXfermode
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@mipmap/meizi"/>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="meizi"
+        android:gravity="center"
+        android:layout_alignRight="@+id/imageView"
+        android:layout_alignLeft="@+id/imageView"
+        android:layout_below="@+id/imageView"
+        android:layout_marginTop="3dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:text="piaoliangdemeizi"/>
 
-</LinearLayout>
+</RelativeLayout>

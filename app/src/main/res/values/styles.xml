@@ -70,7 +70,30 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="popupwindow_style">
-        <item name="android:windowBackground">@drawable/popupwindow_back</item>
+    <style name="push_popupwindow_style">
+        <item name="android:windowEnterAnimation">@anim/push_popup_anim_show</item>
+        <item name="android:windowExitAnimation">@anim/push_popup_anim_hide</item>
+    </style>
+
+
+    <!-- 设置ActionBar菜单字体 -->
+    <style name="ActionMenuTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Menu">
+        <item name="android:textSize">@dimen/action_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="actionBarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
+    <style name="actionBarPopupTheme" parent="ThemeOverlay.AppCompat.Light">
+    </style>
+
+    <style name="PhotoPickerTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/photopicker_background</item>
+        <item name="actionMenuTextAppearance">@style/ActionMenuTextStyle</item>
+        <!--<item name="actionBarTheme">@style/actionBarTheme</item>-->
+        <!--<item name="actionBarPopupTheme">@style/actionBarPopupTheme</item>-->
     </style>
 </resources>

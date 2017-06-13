@@ -47,4 +47,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
     testCompile 'junit:junit:4.12'
     compile files('libs/mframework.jar')
+    compile 'com.foamtrace:photopicker:1.0'
+
 }

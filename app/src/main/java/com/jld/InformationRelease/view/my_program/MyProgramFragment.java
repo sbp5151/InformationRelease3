@@ -1,10 +1,14 @@
 package com.jld.InformationRelease.view.my_program;
 
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +17,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
@@ -46,7 +52,21 @@ public class MyProgramFragment extends Fragment {
     private MainActivity mActivity;
     private ArrayList<ProgramBean> mAllProgram;
     public MyProgramRecyclerAdapter mAdapter;
-
+    private ImageView mIv_add;
+    public static final int NEW_PROGRAM = 0x11;//新建节目
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case NEW_PROGRAM:
+                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
+                    intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
+                    startActivityForResult(intent, mProgramRequestCode);
+                    break;
+            }
+        }
+    };
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -94,6 +114,10 @@ public class MyProgramFragment extends Fragment {
         mAdapter = new MyProgramRecyclerAdapter(mActivity, mAllProgram);
         mAdapter.setMyItemSelectClick(mMyItemClick);
         mRecyclerView.setAdapter(mAdapter);
+
+        //add
+        mIv_add = (ImageView) view.findViewById(R.id.imagev_add_trouteam);
+        mIv_add.setOnClickListener(mOnClickListener);
     }
 
     public void initData() {
@@ -127,6 +151,10 @@ public class MyProgramFragment extends Fragment {
                     break;
                 case R.id.toolbar_complete://编辑
                     break;
+                case R.id.imagev_add_trouteam://新建节目单
+                    togetherRun(mIv_add, 270);
+                    mHandler.sendEmptyMessageDelayed(NEW_PROGRAM,270);
+                    break;
             }
         }
     };
@@ -134,8 +162,8 @@ public class MyProgramFragment extends Fragment {
         @Override
         public void onItemClick(View view, int position) {
             Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
-            intent.putExtra("data", mAllProgram.get(position));
-            intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());
+            intent.putExtra("program_data", mAllProgram.get(position));//节目数据
+            intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
             startActivityForResult(intent, mProgramRequestCode);
         }
 
@@ -156,5 +184,30 @@ public class MyProgramFragment extends Fragment {
                 mActivity.createProgramService();
             }
         }
+    }
+
+    /**
+     * 按钮动画
+     *
+     * @param imageView
+     * @param duration
+     */
+    public static void togetherRun(ImageView imageView, int duration) {
+        if (null == imageView) {
+            return;
+        }
+        if (duration <= 0) {
+            duration = 400;
+        }
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(imageView, "scaleX",
+                1.0f, 0.8f, 1.1f, 1.0f);
+        ObjectAnimator anim2 = ObjectAnimator.ofFloat(imageView, "scaleY",
+                1.0f, 0.8f, 1.1f, 1.0f);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.setDuration(duration);
+        animSet.setInterpolator(new LinearInterpolator());
+        //两个动画同时执行
+        animSet.playTogether(anim1, anim2);
+        animSet.start();
     }
 }

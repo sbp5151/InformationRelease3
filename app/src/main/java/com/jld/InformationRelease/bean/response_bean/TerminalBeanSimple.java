@@ -18,6 +18,10 @@ public class TerminalBeanSimple implements Parcelable {
     private String id;
     /**
      * 终端状态
+     *  0：离线
+     *  1：在线
+     *  2：关机
+     *  3：故障
      */
     private String state = "1";
     /**

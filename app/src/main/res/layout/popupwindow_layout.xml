@@ -17,6 +17,7 @@
             android:layout_height="@dimen/item_height"
             android:gravity="center"
             android:text="节目推送"
+            android:visibility="gone"
             android:textColor="@drawable/popupwindow_textcolor_click"
             android:textSize="16dp"/>
 

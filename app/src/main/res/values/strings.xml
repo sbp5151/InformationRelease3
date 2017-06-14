@@ -100,5 +100,6 @@
     <string name="select_device_dialog_title">请选择需要发布的设备终端</string>
     <string name="terminal_null">终端设备列表为空</string>
     <string name="terminal_id_no_null">设备ID不能为空</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 </resources>

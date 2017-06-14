@@ -74,10 +74,9 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     private static final String TAG = "ProgramCompileActivity";
     private static final int REQUEST_TAG = 0x00;
     ArrayList<ProgramBean.Commodity> mCommodities = new ArrayList();
-    ArrayList<String> mImgs = new ArrayList();
+    ArrayList<String> mCheckMac = new ArrayList();
     private ProgramCompileAdapter mAdapter;
     private ProgressDialog mPhotoCompileDialog;
-    private ArrayList<String> mPushId = new ArrayList<String>();
     public String modleId;
     private RecyclerView mRecyclerView;
     private View mHead_head;
@@ -95,26 +94,24 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.d(TAG, "onCreate");
         setContentView(R.layout.activity_program_compile);
-        //获取需要推送的设备ID集合
-        mPushId = (ArrayList<String>) getIntent().getSerializableExtra("pushId");
         //获取节目模板ID
         modleId = (String) getIntent().getSerializableExtra("modelid");
-        //再编辑
-        mProgramBean = (ProgramBean) getIntent().getSerializableExtra("data");
+        //获取终端设备数据
+        mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
+        //再编辑 节目数据
+        mProgramBean = (ProgramBean) getIntent().getSerializableExtra("program_data");
         if (mProgramBean == null)
             mProgramBean = new ProgramBean();
         else {
-            mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
             mAgainCompile = true;
-            mPushId = mProgramBean.getDeviceMacs();
             modleId = mProgramBean.getModelId();
+            mCheckMac = mProgramBean.getDeviceMacs();
         }
         modleId = "001";
-        LogUtil.d(TAG, "mPushId:" + mPushId);
         sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         initView();
-        LogUtil.d(TAG, "onCreate");
     }
 
     private void initView() {
@@ -162,6 +159,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 
             @Override
             public void onItemClickListen(View view, int position) {
+                //图片预览
                 PhotoPreviewIntent intent = new PhotoPreviewIntent(ProgramCompileActivity.this);
                 intent.setCurrentItem(position); // 当前选中照片的下标
                 intent.setPhotoPaths(mAdapter.getImgDatas(true)); // 已选中的照片地址
@@ -285,11 +283,8 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
-                    if (mAgainCompile)
-                        terminalSelect();
-                    else {
-                        programPush();
-                    }
+                    //选择需要推送的终端设备
+                    terminalSelect();
                     break;
                 case R.id.pp_preview://预览
                     mPopupWindow.dismiss();
@@ -324,7 +319,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                     body.setTexts(data);//名称和价格
                     body.setImages(imgs);//图片广告
                     body.setModelId(modleId);//模板ID
-                    body.setDeviceMacs(mPushId);//需要推送终端的Mac地址
+                    body.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
                     body.setUserid(userID);//账号
                     body.setTable_id(mProgramBean.getTable_id());
                     body.setState("0");
@@ -353,7 +348,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
      * 节目发布
      */
     public void programPush() {
-        if (mPushId.size() <= 0) {
+        if (mCheckMac.size() <= 0) {
             ToastUtil.showToast(this, getResources().getString(R.string.terminal_id_no_null), Toast.LENGTH_SHORT);
             return;
         }
@@ -364,8 +359,8 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         body.setCreation_time(GeneralUtil.getTimeStr());
         body.setTexts(data);//名称和价格
         body.setImages(imgs);//图片广告
-        LogUtil.d(TAG, "mPushId:" + mPushId);
-        body.setDeviceMacs(mPushId);//需要推送终端的Mac地址
+        LogUtil.d(TAG, "mCheckMac:" + mCheckMac);
+        body.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
         body.setModelId(modleId);//模板ID
         body.setUserid(userID);//账号
         body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
@@ -384,6 +379,9 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         finish();
     }
 
+    /**
+     * 终端选择
+     */
     private void terminalSelect() {
         if (mTerminals.size() <= 0) {
             ToastUtil.showToast(this, getString(R.string.terminal_null), Toast.LENGTH_SHORT);
@@ -402,10 +400,14 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 
         ArrayList<String> select_item = new ArrayList<>();
         for (int i = 0; i < mTerminals.size(); i++) {
-            select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
-            for (String str : mPushId) {
-                if (mTerminals.get(i).getMac().equals(str)) {
-                    terminalBoolean[i] = true;
+            if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
+                select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
+                if(mAgainCompile){//再编辑  默认选中以前选中过的设备
+                    for (String str : mCheckMac) {
+                        if (mTerminals.get(i).getMac().equals(str)) {
+                            terminalBoolean[i] = true;
+                        }
+                    }
                 }
             }
         }
@@ -414,14 +416,14 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         builder.setMultiChoiceItems(select_item_arry, terminalBoolean, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                LogUtil.d(TAG, "mPushId1:" + mPushId);
+                LogUtil.d(TAG, "mPushId1:" + mCheckMac);
                 if (b)
-                    mPushId.add(mTerminals.get(i).getMac());
+                    mCheckMac.add(mTerminals.get(i).getMac());
                 else {
-                    boolean remove = mPushId.remove(mTerminals.get(i).getMac());
+                    boolean remove = mCheckMac.remove(mTerminals.get(i).getMac());
                     LogUtil.d(TAG, "remove:" + remove);
                 }
-                LogUtil.d(TAG, "mPushId2:" + mPushId);
+                LogUtil.d(TAG, "mPushId2:" + mCheckMac);
 
             }
         });
@@ -435,7 +437,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mPushId.clear();
+                mCheckMac.clear();
             }
         });
         builder.setCancelable(true);

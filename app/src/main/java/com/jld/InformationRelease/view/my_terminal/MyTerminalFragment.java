@@ -91,6 +91,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         mAdapter = new TerminalAdapter(terminals, mActivity);
         mAdapter.setOnRecyclerViewItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
+
     }
 
     private void initData() {
@@ -142,7 +143,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         mPopupWindow.setContentView(contentView);
         mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);
         mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth((int)getResources().getDimension(R.dimen.push_popup_width));
+        mPopupWindow.setWidth((int) getResources().getDimension(R.dimen.push_popup_width));
         mPopupWindow.setOutsideTouchable(true);//触摸外部消失
         mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//背景透明
 
@@ -159,7 +160,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
     View.OnClickListener ppOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ArrayList<String> pushId = getPushID();
+            ArrayList<String> pushId = getCheckMac();
             LogUtil.d(TAG, "ids:" + pushId);
             if (pushId.size() == 0) {
                 ToastUtil.showToast(mActivity, getString(R.string.please_select_terminal), 3000);
@@ -168,11 +169,11 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
             switch (view.getId()) {
                 case R.id.pp_program_push://节目推送
                     mPopupWindow.dismiss();
-                    LogUtil.d(TAG, "pushId:" + pushId);
-                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
-                    intent.putExtra("pushId", pushId);
-//                    startActivity(intent);
-                    startActivityForResult(intent, mProgramRequestCode);
+//                    LogUtil.d(TAG, "pushId:" + pushId);
+//                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
+//                    intent.putExtra("pushId", pushId);
+////                    startActivity(intent);
+//                    startActivityForResult(intent, mProgramRequestCode);
 //                    toActivity(ProgramCompileActivity.class);
                     break;
                 case R.id.pp_showdown://关机
@@ -248,14 +249,33 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         return mAdapter.isCompile();
     }
 
-    public ArrayList<String> getPushID() {
+    /**
+     * 获取被选中的设备终端Mac地址
+     * @return
+     */
+    public ArrayList<String> getCheckMac() {
         List<TerminalBeanSimple> data = mAdapter.getData();
-        ArrayList<String> pushId = new ArrayList<>();
+        ArrayList<String> checkMac = new ArrayList<>();
         for (TerminalBeanSimple bean : data) {
             if (bean.getCheck())
-                pushId.add(bean.getMac());
+                checkMac.add(bean.getMac());
         }
-        return pushId;
+        return checkMac;
+    }
+
+    /**
+     * 获取在线终端Mac地址
+     *
+     * @return
+     */
+    public ArrayList<String> getOnlineMac() {
+        List<TerminalBeanSimple> data = mAdapter.getData();
+        ArrayList<String> onlineMac = new ArrayList<>();
+        for (TerminalBeanSimple bean : data) {
+            if (bean.getState().equals("1"))
+                onlineMac.add(bean.getMac());
+        }
+        return onlineMac;
     }
 
     @Override

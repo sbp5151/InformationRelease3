@@ -48,7 +48,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
     private RecyclerView mRecyclerView;
     private MainActivity mActivity;
     private ArrayList<TerminalBeanSimple> terminals = new ArrayList<>();
-    private TerminalAdapter mAdapter;
+    public TerminalAdapter mAdapter;
     private static final int UPDATE_TERMINAL = 0x21;
     private ProgressDialog mDialog;
     private ImageButton mPush;

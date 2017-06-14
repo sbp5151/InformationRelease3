@@ -1,5 +1,8 @@
 package com.jld.InformationRelease.bean.response_bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * 项目名称：InformationRelease
  * 晶凌达科技有限公司所有，
@@ -8,7 +11,7 @@ package com.jld.InformationRelease.bean.response_bean;
  * @creator boping
  * @create-time 2017/4/18 14:31
  */
-public class TerminalBeanSimple {
+public class TerminalBeanSimple implements Parcelable {
     /**
      * 终端id
      */
@@ -49,6 +52,27 @@ public class TerminalBeanSimple {
 
     public TerminalBeanSimple() {
     }
+
+    protected TerminalBeanSimple(Parcel in) {
+        id = in.readString();
+        state = in.readString();
+        group_name = in.readString();
+        group_id = in.readString();
+        mac = in.readString();
+        name = in.readString();
+    }
+
+    public static final Creator<TerminalBeanSimple> CREATOR = new Creator<TerminalBeanSimple>() {
+        @Override
+        public TerminalBeanSimple createFromParcel(Parcel in) {
+            return new TerminalBeanSimple(in);
+        }
+
+        @Override
+        public TerminalBeanSimple[] newArray(int size) {
+            return new TerminalBeanSimple[size];
+        }
+    };
 
     public String getMac() {
         return mac;
@@ -117,5 +141,20 @@ public class TerminalBeanSimple {
     }
     public void setCheck(Boolean check) {
         isCheck = check;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(state);
+        parcel.writeString(group_name);
+        parcel.writeString(group_id);
+        parcel.writeString(mac);
+        parcel.writeString(name);
     }
 }

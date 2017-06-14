@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.jld.InformationRelease.view.my_program.MyProgramContentActivity">
-    <include
-        android:id="@+id/model_content_titlebar"
-        layout="@layout/my_titlebar"
-    />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_model_content"
+    android:fitsSystemWindows="true">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.jld.InformationRelease.view.my_program.MyProgramContentActivity">
+
+        <include
+            android:id="@+id/model_content_titlebar"
+            layout="@layout/my_titlebar"
+        />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_model_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</android.support.v4.widget.DrawerLayout>
+

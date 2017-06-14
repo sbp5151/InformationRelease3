@@ -1,6 +1,7 @@
 package com.jld.InformationRelease.view.my_terminal;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foamtrace.photopicker.PhotoPickerActivity;
 import com.foamtrace.photopicker.PhotoPreviewActivity;
@@ -34,6 +37,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
@@ -73,7 +77,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     ArrayList<String> mImgs = new ArrayList();
     private ProgramCompileAdapter mAdapter;
     private ProgressDialog mPhotoCompileDialog;
-    private ArrayList<String> mPushId;
+    private ArrayList<String> mPushId = new ArrayList<String>();
     public String modleId;
     private RecyclerView mRecyclerView;
     private View mHead_head;
@@ -85,6 +89,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     ProgramBean mProgramBean;
     boolean mAgainCompile = false;//再次编辑进入
     private ArrayList<String> mPhotos;
+    private ArrayList<TerminalBeanSimple> mTerminals;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -100,6 +105,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         if (mProgramBean == null)
             mProgramBean = new ProgramBean();
         else {
+            mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
             mAgainCompile = true;
             mPushId = mProgramBean.getDeviceMacs();
             modleId = mProgramBean.getModelId();
@@ -262,7 +268,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                 case R.id.title_back:
                     finish();
                     break;
-                case R.id.pp_program_push://推送
+                case R.id.pp_program_push://发布
                     mPopupWindow.dismiss();
                     userID = sp.getString(UserConstant.USER_ID, "");
                     if (TextUtils.isEmpty(userID)) {//账号不能为空
@@ -279,27 +285,11 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                         ToastUtil.showToast(ProgramCompileActivity.this, getString(R.string.please_set_commodity), 3000);
                         return;
                     }
-                    body = new ProgramBean();
-                    body.setCreation_time(GeneralUtil.getTimeStr());
-                    body.setTexts(data);//名称和价格
-                    body.setImages(imgs);//图片广告
-                    body.setDeviceMacs(mPushId);//需要推送终端的Mac地址
-                    body.setModelId(modleId);//模板ID
-                    body.setUserid(userID);//账号
-                    body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
-                    /**
-                     * 保存数据库
-                     */
-//                    try {
-//                        mProgramDao = ProgramDao.getInstance(ProgramCompileActivity.this, userID);
-//                        mProgramDao.addProgram(body);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-                    Intent intent = new Intent();
-                    intent.putExtra("body", body);
-                    setResult(mProgramResultCode, intent);//编辑结果返回
-                    finish();
+                    if (mAgainCompile)
+                        terminalSelect();
+                    else {
+                        programPush();
+                    }
                     break;
                 case R.id.pp_preview://预览
                     mPopupWindow.dismiss();
@@ -358,6 +348,102 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         }
     };
 
+
+    /**
+     * 节目发布
+     */
+    public void programPush() {
+        if (mPushId.size() <= 0) {
+            ToastUtil.showToast(this, getResources().getString(R.string.terminal_id_no_null), Toast.LENGTH_SHORT);
+            return;
+        }
+        String userID = sp.getString(UserConstant.USER_ID, "");
+        ArrayList imgs = mAdapter.getImgDatas(true);
+        ArrayList data = mAdapter.getTextDatas(true);
+        ProgramBean body = new ProgramBean();
+        body.setCreation_time(GeneralUtil.getTimeStr());
+        body.setTexts(data);//名称和价格
+        body.setImages(imgs);//图片广告
+        LogUtil.d(TAG, "mPushId:" + mPushId);
+        body.setDeviceMacs(mPushId);//需要推送终端的Mac地址
+        body.setModelId(modleId);//模板ID
+        body.setUserid(userID);//账号
+        body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
+        /**
+         * 保存数据库
+         */
+//                    try {
+//                        mProgramDao = ProgramDao.getInstance(ProgramCompileActivity.this, userID);
+//                        mProgramDao.addProgram(body);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+        Intent intent = new Intent();
+        intent.putExtra("body", body);
+        setResult(mProgramResultCode, intent);//编辑结果返回
+        finish();
+    }
+
+    private void terminalSelect() {
+        if (mTerminals.size() <= 0) {
+            ToastUtil.showToast(this, getString(R.string.terminal_null), Toast.LENGTH_SHORT);
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.select_device_dialog_title));
+        /**
+         * 设置内容区域为多选列表项
+         */
+        //默认选择都为false
+        boolean[] terminalBoolean = new boolean[mTerminals.size()];
+        for (int i = 0; i < terminalBoolean.length; i++) {
+            terminalBoolean[i] = false;
+        }
+
+        ArrayList<String> select_item = new ArrayList<>();
+        for (int i = 0; i < mTerminals.size(); i++) {
+            select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
+            for (String str : mPushId) {
+                if (mTerminals.get(i).getMac().equals(str)) {
+                    terminalBoolean[i] = true;
+                }
+            }
+        }
+        final String[] select_item_arry = select_item.toArray(new String[0]);
+
+        builder.setMultiChoiceItems(select_item_arry, terminalBoolean, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                LogUtil.d(TAG, "mPushId1:" + mPushId);
+                if (b)
+                    mPushId.add(mTerminals.get(i).getMac());
+                else {
+                    boolean remove = mPushId.remove(mTerminals.get(i).getMac());
+                    LogUtil.d(TAG, "remove:" + remove);
+                }
+                LogUtil.d(TAG, "mPushId2:" + mPushId);
+
+            }
+        });
+        //监听下方button点击事件
+        builder.setPositiveButton(getString(R.string.sure), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                programPush();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mPushId.clear();
+            }
+        });
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
     /**
      * 选择相片
      */
@@ -373,6 +459,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 //      intent.setImageConfig(config);
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
     }
+
     /**
      * 相片返回
      *
@@ -429,6 +516,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 
     /**
      * 图片压缩
+     *
      * @param path
      */
     private void photoCompress(String path) {

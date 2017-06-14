@@ -26,6 +26,7 @@ import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
+import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity;
 
 import org.json.JSONException;
 
@@ -83,7 +84,7 @@ public class MyProgramFragment extends Fragment {
         tvComplete.setOnClickListener(mOnClickListener);
         title_view.findViewById(R.id.toolbar_push).setVisibility(View.GONE);
         menu.setOnClickListener(mOnClickListener);
-        TextView  title_content = (TextView) title_view.findViewById(R.id.toolbar_title);
+        TextView title_content = (TextView) title_view.findViewById(R.id.toolbar_title);
         title_content.setText(getString(R.string.program_list));
 
         //RecyclerView
@@ -113,6 +114,7 @@ public class MyProgramFragment extends Fragment {
         if (mAllProgram != null)
             mAdapter.update(mAllProgram);
     }
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -131,8 +133,9 @@ public class MyProgramFragment extends Fragment {
     BaseRecyclerViewAdapterClick.MyItemClick mMyItemClick = new BaseRecyclerViewAdapterClick.MyItemClick() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = new Intent(mActivity, MyProgramContentActivity.class);
+            Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
             intent.putExtra("data", mAllProgram.get(position));
+            intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());
             startActivityForResult(intent, mProgramRequestCode);
         }
 

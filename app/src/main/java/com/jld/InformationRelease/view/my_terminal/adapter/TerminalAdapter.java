@@ -13,7 +13,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.util.LogUtil;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 项目名称：InformationRelease
@@ -28,12 +28,12 @@ import java.util.List;
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
 
     private static final String TAG = "TerminalAdapter";
-    private List<TerminalBeanSimple> beans;
+    private ArrayList<TerminalBeanSimple> beans;
     private Context mContext;
     //是否处于编辑状态
     private boolean isCompile = false;
 
-    public TerminalAdapter(List<TerminalBeanSimple> beans, Context context) {
+    public TerminalAdapter(ArrayList<TerminalBeanSimple> beans, Context context) {
         this.beans = beans;
         mContext = context;
     }
@@ -142,7 +142,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         mClickListener = listener;
     }
 
-    public List<TerminalBeanSimple> getData() {
+    public ArrayList<TerminalBeanSimple> getData() {
         return beans;
     }
 
@@ -158,7 +158,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         return isCompile;
     }
 
-    public void setDataChange(List<TerminalBeanSimple> beans) {
+    public void setDataChange(ArrayList<TerminalBeanSimple> beans) {
         this.beans = beans;
         LogUtil.d(TAG, "setDataChange:" + beans);
         notifyDataSetChanged();

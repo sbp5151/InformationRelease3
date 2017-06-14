@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, IViewListen<BaseResponse> {
 
     private static final String TAG = "MainActivity";
-    private MyTerminalFragment mTerminal_fragment;
+    public MyTerminalFragment mTerminal_fragment;
     private MyProgramFragment mMyModelFragment;
     private SystemModelFragment mSystemModelFragment;
     private Fragment mScanCodeFragment;
@@ -75,10 +75,8 @@ public class MainActivity extends BaseActivity
     private static final int mScanRequestCode = 0x23;//二维码扫描数据返回
     public static final int mScanResultCode = 0x24;//二维码扫描数据返回
     private static final int BIND_REQUEST_TAG = 0x31;
-
     public ProgramBean mProgram;
     private ProgressDialog mBindDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +149,7 @@ public class MainActivity extends BaseActivity
 //                changeCompleteState();
 //            mTvComplete.setVisibility(View.GONE);
         }
-        if (id == R.id.menu_my_model) {//我的模板
+        if (id == R.id.menu_my_model) {//节目列表
             mMyModelFragment = (MyProgramFragment) fm.findFragmentByTag(MY_MODEL_TAG);
             if (mMyModelFragment == null) {
                 mMyModelFragment = new MyProgramFragment();

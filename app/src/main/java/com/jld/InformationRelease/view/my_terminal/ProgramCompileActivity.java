@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -35,11 +36,9 @@ import com.foamtrace.photopicker.intent.PhotoPreviewIntent;
 import com.google.gson.Gson;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
-import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
-import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
@@ -55,7 +54,6 @@ import com.jld.InformationRelease.view.my_terminal.preview.PreviewActivity_1;
 import java.io.File;
 import java.util.ArrayList;
 
-import static android.R.attr.tag;
 import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
 import static com.jld.InformationRelease.view.my_terminal.adapter.ProgramCompileAdapter.ITEM_TAG_IMG;
 import static com.jld.InformationRelease.view.my_terminal.adapter.ProgramCompileAdapter.ITEM_TAG_IMG_HEAD;
@@ -65,12 +63,13 @@ import static com.jld.InformationRelease.view.my_terminal.adapter.ProgramCompile
 /**
  * 三：节目编辑
  */
-public class ProgramCompileActivity extends BaseActivity implements IViewListen<BaseResponse> {
+public class ProgramCompileActivity extends BaseActivity {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
     public static final int RESULT_CODE_PICK_IMAGE = 0x02;
     public static final int REQUEST_PREVIEW_CODE = 0x03;
-
+    //封面选择
+    private static final int REQUEST_CODE_COVER = 0x04;
     private static final String TAG = "ProgramCompileActivity";
     private static final int REQUEST_TAG = 0x00;
     ArrayList<ProgramBean.Commodity> mCommodities = new ArrayList();
@@ -86,8 +85,11 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     private ImageButton mIb_tool;
     SharedPreferences sp;
     ProgramBean mProgramBean;
-    boolean mAgainCompile = false;//再次编辑进入
+    boolean mIsAgainCompile = false;//再次编辑进入
     private ArrayList<String> mPhotos;
+    private ArrayList<String> mLastImg = new ArrayList<>();
+    private ArrayList<String> mLastText = new ArrayList<>();
+    private String mLastCover = "";
     private ArrayList<TerminalBeanSimple> mTerminals;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -102,15 +104,23 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
         //再编辑 节目数据
         mProgramBean = (ProgramBean) getIntent().getSerializableExtra("program_data");
-        if (mProgramBean == null)
+        LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
+
+        if (mProgramBean == null) {
             mProgramBean = new ProgramBean();
-        else {
-            mAgainCompile = true;
+            modleId = "001";
+        } else {
+            mIsAgainCompile = true;
             modleId = mProgramBean.getModelId();
             mCheckMac = mProgramBean.getDeviceMacs();
+            //保存原始的img、text、cover用于是否保存判断
+            mLastImg.addAll(mProgramBean.getImages());
+            //tostring 保证last数据不是引用变量，不被更改
+            for (ProgramBean.Commodity com : mProgramBean.getTexts())
+                mLastText.add(com.toString());
+            mLastCover = mProgramBean.getCover();
         }
-        modleId = "001";
-        sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+        sp = getSharedPreferences(Constant.SHARE_KEY,MODE_PRIVATE);
         initView();
     }
 
@@ -139,13 +149,11 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 //        layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
         //initData
-        if (!mAgainCompile) {//新建节目初始化数据
+        if (!mIsAgainCompile) {//新建节目初始化数据
             if (!modleId.equals("002")) {// "002不添加文字"
                 mCommodities.add(new ProgramBean.Commodity("", ""));
             }
             mProgramBean.setTexts(mCommodities);
-//            mImgs.add("");
-//            mProgramBean.setImages(mImgs);
         }
 
         mAdapter = new ProgramCompileAdapter(mProgramBean, this);
@@ -169,6 +177,11 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
             @Override
             public void onItemLongClickListen(View view, int position) {
 
+            }
+
+            @Override
+            public void onItemCoverClickListen() {
+                getCover();
             }
         });
     }
@@ -204,47 +217,6 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
             mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
         }
     };
-    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            //距离顶部五个像素的view
-            View headView = recyclerView.findChildViewUnder(mHead_head.getMeasuredWidth() / 2, 1);
-            //距离第一个item一个像素的view
-            View transInfoView = recyclerView.findChildViewUnder(
-                    mHead_head.getMeasuredWidth() / 2, mHead_head.getMeasuredHeight() + 1);
-            Log.d(TAG, "transInfoView--:" + transInfoView);
-            int headView_tag = (int) headView.getTag();
-            int transInfoView_tag = (int) transInfoView.getTag();
-            Log.d(TAG, "itemTag--:" + tag);
-            //head
-            if (headView_tag == ITEM_TAG_IMG_HEAD || headView_tag == ITEM_TAG_TEXT_HEAD) {
-                //设置tag 点击区分
-                mHead_head.setTag(headView_tag);
-                TextView tv_view = (TextView) headView.findViewById(R.id.tv_compile_head_text);
-                mTv_head.setText(tv_view.getText().toString());
-            } else {//非head  各自显示自己的head
-                if (headView_tag == ITEM_TAG_IMG) {
-                    mHead_head.setTag(ITEM_TAG_IMG_HEAD);
-                    mTv_head.setText(getResources().getString(R.string.add_imgs));
-                } else if (headView_tag == ITEM_TAG_TEXT) {
-                    mHead_head.setTag(ITEM_TAG_TEXT_HEAD);
-                    mTv_head.setText(getResources().getString(R.string.add_commoditys));
-                }
-            }
-            if (transInfoView_tag == ITEM_TAG_TEXT_HEAD) {
-                int transY = transInfoView.getTop() - mHead_head.getMeasuredHeight();
-                Log.d(TAG, "transY:" + transY);
-                if (transInfoView.getTop() > 0) {//当商品head不再最顶部是移动主head
-                    mHead_head.setTranslationY(transY);
-                } else {
-                    mHead_head.setTranslationY(0);
-                }
-            } else//当把商品head移动到最顶端，恢复主head
-                mHead_head.setTranslationY(0);
-        }
-    };
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -264,7 +236,10 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                     }
                     break;
                 case R.id.title_back:
-                    finish();
+                    if (isDataChange())
+                        backSaveDialog();
+                    else
+                        finish();
                     break;
                 case R.id.pp_program_push://发布
                     mPopupWindow.dismiss();
@@ -287,52 +262,11 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                     terminalSelect();
                     break;
                 case R.id.pp_preview://预览
-                    mPopupWindow.dismiss();
-                    imgs = mAdapter.getImgDatas(false);
-                    data = mAdapter.getTextDatas(false);
-                    body = new ProgramBean();
-                    body.setTexts(data);//名称和价格
-                    body.setImages(imgs);//图片广告
-                    body.setModelId(modleId);//模板ID
-                    Gson gson = new Gson();
-                    String s1 = gson.toJson(body.getTexts());
-                    String s2 = gson.toJson(body.getImages());
-                    Log.d(TAG, "tojson1:" + s1);
-                    Log.d(TAG, "tojson2:" + s2);
-                    LogUtil.d(TAG, "pp_preview:" + body);
-                    if (body.getModelId().equals("001"))
-                        toActivity(PreviewActivity_1.class, body, "previewData");
+                    programPreview();
                     break;
                 case R.id.pp_save://保存
                     mPopupWindow.dismiss();
-                    sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-                    userID = sp.getString(UserConstant.USER_ID, "");
-                    if (TextUtils.isEmpty(userID)) {//账号不能为空
-                        ToastUtil.showToast(ProgramCompileActivity.this, getResources().getString(R.string.please_login), 3000);
-                        toActivity(LoginActivity.class);
-                        return;
-                    }
-                    imgs = mAdapter.getImgDatas(true);
-                    data = mAdapter.getTextDatas(true);
-                    body = new ProgramBean();
-                    body.setCreation_time(GeneralUtil.getTimeStr());
-                    body.setTexts(data);//名称和价格
-                    body.setImages(imgs);//图片广告
-                    body.setModelId(modleId);//模板ID
-                    body.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
-                    body.setUserid(userID);//账号
-                    body.setTable_id(mProgramBean.getTable_id());
-                    body.setState("0");
-                    try {
-                        mProgramDao = ProgramDao.getInstance(ProgramCompileActivity.this, userID);
-                        if (mAgainCompile)
-                            mProgramDao.updateInDataBaseId(body);
-                        else
-                            mProgramDao.addProgram(body);
-                        finish();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    saveProgram();
                     break;
                 case R.id.titlebar_tool://tool
                     showPopupwindow();
@@ -343,6 +277,126 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         }
     };
 
+    /**
+     * 数据是否变化
+     */
+    private boolean isDataChange() {
+        mAdapter.getImgDatas(true).add(0, mAdapter.getCover());
+        LogUtil.d(TAG, "mLastText:" + mLastText);
+        LogUtil.d(TAG, "mLastImg:" + mLastImg);
+        ArrayList<String> compareText = new ArrayList<>();
+        for (ProgramBean.Commodity com : mAdapter.getTextDatas(true))
+            compareText.add(com.toString());
+
+        if (mAdapter.getImgDatas(true).size() == mLastImg.size()) {
+            if (mAdapter.getImgDatas(true).containsAll(mLastImg)) {//img
+                if (mAdapter.getCover().equals(mLastCover)) {//cover
+                    if (compareText.size() == mLastText.size()) {//text
+                        if (compareText.containsAll(mLastText))
+                            return false;
+                        else
+                            return true;
+                    } else return true;
+                } else
+                    return true;
+
+            } else
+                return true;
+        } else
+            return true;
+    }
+
+    /**
+     * 节目预览
+     */
+    public void programPreview() {
+        mPopupWindow.dismiss();
+        ArrayList<String> imgs = mAdapter.getImgDatas(true);
+        ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
+        ProgramBean body = new ProgramBean();
+        body.setTexts(data);//名称和价格
+        body.setImages(imgs);//图片广告
+        body.setModelId(modleId);//模板ID
+        Gson gson = new Gson();
+        String s1 = gson.toJson(body.getTexts());
+        String s2 = gson.toJson(body.getImages());
+        Log.d(TAG, "tojson1:" + s1);
+        Log.d(TAG, "tojson2:" + s2);
+        LogUtil.d(TAG, "pp_preview:" + body);
+        if (body.getModelId().equals("001"))
+            toActivity(PreviewActivity_1.class, body, "previewData");
+    }
+
+    /**
+     * 退出是否保存节目提示
+     */
+    public void backSaveDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.hint))
+                .setMessage(getResources().getString(R.string.whether_save_program))
+                .setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        saveProgram();
+                    }
+                }).setNegativeButton(getResources().getString(R.string.no_save), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        builder.create().show();
+    }
+
+    /**
+     * 保存节目到数据库
+     */
+    public void saveProgram() {
+        sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+        String userID = sp.getString(UserConstant.USER_ID, "");
+        if (TextUtils.isEmpty(userID)) {//账号不能为空
+            ToastUtil.showToast(ProgramCompileActivity.this, getResources().getString(R.string.please_login), 3000);
+            toActivity(LoginActivity.class);
+            return;
+        }
+//        ArrayList<String> imgs = mAdapter.getImgDatas(true);
+//        ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
+//        ProgramBean body = new ProgramBean();
+        mProgramBean.setCreation_time(GeneralUtil.getTimeStr());
+        mProgramBean.getImages().remove(0);
+        mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
+//        body.setTexts(data);//名称和价格
+//        body.setImages(imgs);//图片广告
+        mProgramBean.setModelId(modleId);//模板ID
+        mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
+        mProgramBean.setUserid(userID);//账号
+//        body.setTable_id(mProgramBean.getTable_id());
+        mProgramBean.setState("0");
+        try {
+            mProgramDao = ProgramDao.getInstance(ProgramCompileActivity.this);
+            if (mIsAgainCompile)
+                mProgramDao.updateInDataBaseId(mProgramBean, userID);
+            else
+                mProgramDao.addProgram(mProgramBean, userID);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        /**
+         * 监听返回键保存数据
+         */
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isDataChange()) {
+                backSaveDialog();
+                return false;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     /**
      * 节目发布
@@ -353,28 +407,21 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
             return;
         }
         String userID = sp.getString(UserConstant.USER_ID, "");
-        ArrayList imgs = mAdapter.getImgDatas(true);
-        ArrayList data = mAdapter.getTextDatas(true);
-        ProgramBean body = new ProgramBean();
-        body.setCreation_time(GeneralUtil.getTimeStr());
-        body.setTexts(data);//名称和价格
-        body.setImages(imgs);//图片广告
-        LogUtil.d(TAG, "mCheckMac:" + mCheckMac);
-        body.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
-        body.setModelId(modleId);//模板ID
-        body.setUserid(userID);//账号
-        body.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
-        /**
-         * 保存数据库
-         */
-//                    try {
-//                        mProgramDao = ProgramDao.getInstance(ProgramCompileActivity.this, userID);
-//                        mProgramDao.addProgram(body);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
+//        ArrayList imgs = mAdapter.getImgDatas(true);
+//        ArrayList data = mAdapter.getTextDatas(true);
+//        ProgramBean body = new ProgramBean();
+        mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
+        mProgramBean.setCreation_time(GeneralUtil.getTimeStr());
+//        body.setTexts(data);//名称和价格
+//        body.setImages(imgs);//图片广告
+//        LogUtil.d(TAG, "mCheckMac:" + mCheckMac);
+        mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
+        mProgramBean.setModelId(modleId);//模板ID
+        mProgramBean.setUserid(userID);//账号
+        mProgramBean.setSign(MD5Util.getMD5(Constant.S_KEY + userID));//加密字符串
+        mProgramBean.getImages().remove(0);
         Intent intent = new Intent();
-        intent.putExtra("body", body);
+        intent.putExtra("body", mProgramBean);
         setResult(mProgramResultCode, intent);//编辑结果返回
         finish();
     }
@@ -383,8 +430,9 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
      * 终端选择
      */
     private void terminalSelect() {
+        LogUtil.d(TAG, "terminalSelect:"+mTerminals);
         if (mTerminals.size() <= 0) {
-            ToastUtil.showToast(this, getString(R.string.terminal_null), Toast.LENGTH_SHORT);
+            ToastUtil.showToast(this, getString(R.string.terminal_null), 3000);
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -402,7 +450,7 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         for (int i = 0; i < mTerminals.size(); i++) {
             if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
                 select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
-                if(mAgainCompile){//再编辑  默认选中以前选中过的设备
+                if (mIsAgainCompile) {//再编辑  默认选中以前选中过的设备
                     for (String str : mCheckMac) {
                         if (mTerminals.get(i).getMac().equals(str)) {
                             terminalBoolean[i] = true;
@@ -411,7 +459,9 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                 }
             }
         }
+        LogUtil.d(TAG, "select_item:"+select_item);
         final String[] select_item_arry = select_item.toArray(new String[0]);
+        LogUtil.d(TAG, "select_item_arry:"+select_item_arry);
 
         builder.setMultiChoiceItems(select_item_arry, terminalBoolean, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
@@ -424,7 +474,6 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                     LogUtil.d(TAG, "remove:" + remove);
                 }
                 LogUtil.d(TAG, "mPushId2:" + mCheckMac);
-
             }
         });
         //监听下方button点击事件
@@ -460,6 +509,18 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 //      intent.setSelectedPaths(imagePaths); // 已选中的照片地址， 用于回显选中状态
 //      intent.setImageConfig(config);
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+
+    }
+
+    /**
+     * 获取封面
+     */
+    public void getCover() {
+        PhotoPickerIntent intent = new PhotoPickerIntent(this);
+        intent.setSelectModel(SelectModel.MULTI);
+        intent.setShowCarema(true); // 是否显示拍照， 默认false
+        intent.setMaxTotal(1); // 最多选择照片数量，默认为9
+        startActivityForResult(intent, REQUEST_CODE_COVER);
     }
 
     /**
@@ -472,7 +533,8 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+        if (requestCode == REQUEST_CODE_PICK_IMAGE) {//轮播图返回
+            isCompressCover = false;
             if (resultCode == RESULT_OK && data != null) {
                 mPhotos = data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT);
                 LogUtil.d(TAG, "photos:" + mPhotos);
@@ -487,6 +549,21 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                         mPhotoCompileDialog.show();
                 }
             }
+        } else if (requestCode == REQUEST_CODE_COVER) {//封面返回
+            if (resultCode == RESULT_OK && data != null) {
+                mPhotos = data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT);
+                String coverPath = mPhotos.get(0);
+                isCompressCover = true;
+                LogUtil.d(TAG, "photos:" + mPhotos);
+                //获取图片集合并处理
+                mPhotoCompileDialog = new ProgressDialog(this);
+                mPhotoCompileDialog.setCancelable(false);
+                mPhotoCompileDialog.setCanceledOnTouchOutside(false);
+                mPhotoCompileDialog.setMessage(getResources().getString(R.string.loading));
+                if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
+                    mPhotoCompileDialog.show();
+                photoCompress(coverPath);
+            }
         }
         if (requestCode == REQUEST_PREVIEW_CODE) {//预览处理后的图片
             ArrayList<String> mPhotos = data.getStringArrayListExtra(PhotoPreviewActivity.EXTRA_RESULT);
@@ -494,6 +571,10 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
         }
     }
 
+    /**
+     * 是否压缩封面
+     */
+    boolean isCompressCover = false;
 
     public static final int PHOTO_COMPRESS = 0x11;
     private int current_photo = 0;
@@ -521,15 +602,14 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
      *
      * @param path
      */
-    private void photoCompress(String path) {
+    private void photoCompress(final String path) {
         LogUtil.d(TAG, "path:" + path);
-        if (path != null) {
+        if (!TextUtils.isEmpty(path)) {
             //所获取图片的bitmap
             Bitmap photoBmp = BitmapFactory.decodeFile(path);
             if (photoBmp != null) {
                 String[] split = path.split(File.separator);
                 String imgName = split[split.length - 1];
-
                 //创建miniphone文件夹
                 String miniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
                 File file = new File(miniPath);
@@ -554,8 +634,15 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
                 } else {
                     LogUtil.d(TAG, "不压缩:");
                     //添加图片并更新
-                    mAdapter.addImgItem(miniImgPath);
-                    mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+                    if (isCompressCover) {//封面
+                        mAdapter.mImgAdapter.addCover(miniImgPath);
+                        isCompressCover = false;
+                        if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
+                            mPhotoCompileDialog.dismiss();
+                    } else {
+                        mAdapter.addImgItem(miniImgPath);
+                        mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+                    }
                 }
             }
         }
@@ -566,44 +653,74 @@ public class ProgramCompileActivity extends BaseActivity implements IViewListen<
 
         @Override
         public void compressSucceed(String compressPath) {//成功并返回结果
-            //添加图片并更新
-            mAdapter.addImgItem(compressPath);
-            mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+            if (isCompressCover) {
+                mAdapter.mImgAdapter.addCover(compressPath);
+                isCompressCover = false;
+                if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
+                    mPhotoCompileDialog.dismiss();
+            } else {
+                //添加图片并更新
+                mAdapter.addImgItem(compressPath);
+                mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+            }
         }
 
         @Override
         public void compressError() {//失败
-            mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+            if (isCompressCover) {
+                isCompressCover = false;
+                if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
+                    mPhotoCompileDialog.dismiss();
+
+            } else
+                mHandler.sendEmptyMessage(PHOTO_COMPRESS);
         }
 
         @Override
         public void onStart() {//开始
+        }
+    };
+    /**
+     * 悬浮head
+     */
+    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
 
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            //距离顶部五个像素的view
+            View headView = recyclerView.findChildViewUnder(mHead_head.getMeasuredWidth() / 2, 1);
+            //距离第一个item一个像素的view
+            View transInfoView = recyclerView.findChildViewUnder(
+                    mHead_head.getMeasuredWidth() / 2, mHead_head.getMeasuredHeight() + 1);
+            int headView_tag = (int) headView.getTag();
+            int transInfoView_tag = (int) transInfoView.getTag();
+            //head
+            if (headView_tag == ITEM_TAG_IMG_HEAD || headView_tag == ITEM_TAG_TEXT_HEAD) {
+                //设置tag 点击区分
+                mHead_head.setTag(headView_tag);
+                TextView tv_view = (TextView) headView.findViewById(R.id.tv_compile_head_text);
+                mTv_head.setText(tv_view.getText().toString());
+            } else {//非head  各自显示自己的head
+                if (headView_tag == ITEM_TAG_IMG) {
+                    mHead_head.setTag(ITEM_TAG_IMG_HEAD);
+                    mTv_head.setText(getResources().getString(R.string.add_imgs));
+                } else if (headView_tag == ITEM_TAG_TEXT) {
+                    mHead_head.setTag(ITEM_TAG_TEXT_HEAD);
+                    mTv_head.setText(getResources().getString(R.string.add_commoditys));
+                }
+            }
+            if (transInfoView_tag == ITEM_TAG_TEXT_HEAD) {
+                int transY = transInfoView.getTop() - mHead_head.getMeasuredHeight();
+                Log.d(TAG, "transY:" + transY);
+                if (transInfoView.getTop() > 0) {//当商品head不再最顶部是移动主head
+                    mHead_head.setTranslationY(transY);
+                } else {
+                    mHead_head.setTranslationY(0);
+                }
+            } else//当把商品head移动到最顶端，恢复主head
+                mHead_head.setTranslationY(0);
         }
     };
 
-    @Override
-    public void showProgress(int requestTag) {
-        if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
-            mPhotoCompileDialog.show();
-        LogUtil.d("showProgress");
-    }
-
-    @Override
-    public void hideProgress(int requestTag) {
-        if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
-            mPhotoCompileDialog.dismiss();
-        LogUtil.d("showProgress");
-    }
-
-    @Override
-    public void loadDataSuccess(BaseResponse data, int requestTag) {
-        //TODO 推送成功
-    }
-
-    @Override
-    public void loadDataError(Throwable e, int requestTag) {
-        hideProgress(requestTag);
-        ToastUtil.showToast(this, e.getMessage().toString(), 3000);
-    }
 }

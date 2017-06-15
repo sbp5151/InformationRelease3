@@ -2,13 +2,9 @@ package com.jld.InformationRelease.view;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,7 +27,6 @@ import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
-import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -43,7 +38,6 @@ import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.util.zxing.activity.CaptureActivity;
 import com.jld.InformationRelease.view.my_program.MyProgramFragment;
 import com.jld.InformationRelease.view.my_terminal.MyTerminalFragment;
-import com.jld.InformationRelease.view.service.ProgramPushService;
 import com.jld.InformationRelease.view.settings.SettingFragment;
 import com.jld.InformationRelease.view.system_model.SystemModelFragment;
 
@@ -75,8 +69,8 @@ public class MainActivity extends BaseActivity
     private static final int mScanRequestCode = 0x23;//二维码扫描数据返回
     public static final int mScanResultCode = 0x24;//二维码扫描数据返回
     private static final int BIND_REQUEST_TAG = 0x31;
-    public ProgramBean mProgram;
     private ProgressDialog mBindDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,83 +206,14 @@ public class MainActivity extends BaseActivity
             } else {
                 LogUtil.d(TAG, "非法Mac地址");
             }
-        }else if(mScanRequestCode==requestCode){
+        } else if (mScanRequestCode == requestCode) {
             //返回我的终端
             mNavigationView.getMenu().getItem(0).setChecked(true);
             switchFragment(R.id.menu_my_terminal);
         }
     }
 
-    /**
-     * 创建后台服务上传节目
-     */
-    public void createProgramService() {
-        Intent intent = new Intent(this, ProgramPushService.class);
-        startService(intent);
-        bindService(intent, mCon, Context.BIND_AUTO_CREATE);
-    }
 
-    ServiceConnection mCon = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            ProgramPushService.MyBinder myBinder = (ProgramPushService.MyBinder) iBinder;
-            mProgram.setSign(MD5Util.getMD5(Constant.S_KEY + mProgram.getUserid()));
-            myBinder.sendPushData(mProgram);
-
-            //更新数据库为已上传状态
-            SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-            final ProgramDao baseHelper = ProgramDao.getInstance(MainActivity.this, sp.getString(UserConstant.USER_ID, ""));
-
-            myBinder.sendCompleteListener(new ProgramPushService.PushCompleteListener() {
-                @Override
-                public void updateSucceed(String programId) {
-                    //上传成功 解绑service
-                    unbindService(mCon);
-                    //更新数据库为已上传状态
-                    LogUtil.d(TAG, "发布成功:");
-                    try {
-                        //更新节目ID
-                        baseHelper.updateProgramId(mProgram.getCreation_time(), programId);
-                        //已上传状态
-                        baseHelper.updateState(mProgram.getCreation_time(), "1");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    ToastUtil.showToast(MainActivity.this, getString(R.string.push_succeed), 3000);
-                }
-
-                @Override
-                public void updateDefeated() {
-                    //上传失败，弹框提示是否重新上传
-//                    showAgainUpdate();
-                    //解绑service
-                    unbindService(mCon);
-                    //更新数据库为已上传状态
-                    LogUtil.d(TAG, "发布失败:");
-                    try {
-                        //上传失败状态
-                        baseHelper.updateState(mProgram.getCreation_time(), "-1");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    ToastUtil.showToast(MainActivity.this, getString(R.string.push_defeated), 3000);
-                }
-            });
-            //开始上传
-            myBinder.startPush();
-            try {
-                //保存到数据库
-                baseHelper.addProgram(mProgram);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-
-        }
-    };
 
     public void showSetNameDialog(final String mac) {
         View view = LayoutInflater.from(this).inflate(R.layout.set_name_dialog, null);
@@ -381,11 +306,5 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mCon != null) {
-            unbindService(mCon);
-        }
-    }
+
 }

@@ -101,5 +101,10 @@
     <string name="terminal_null">终端设备列表为空</string>
     <string name="terminal_id_no_null">设备ID不能为空</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="sure_delete_program">确定要删除这个节目？</string>
+    <string name="hint">提示</string>
+    <string name="whether_save_program">是否保存节目</string>
+    <string name="no_save">不保存</string>
+    <string name="program_back_push">正在后台上传....</string>
 
 </resources>

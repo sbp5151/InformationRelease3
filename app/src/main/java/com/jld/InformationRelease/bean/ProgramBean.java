@@ -1,5 +1,7 @@
 package com.jld.InformationRelease.bean;
 
+import com.jld.InformationRelease.util.LogUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ public class ProgramBean implements Serializable {
     /**
      * 图片集
      */
-    private ArrayList<String> images= new ArrayList<>();
+    private ArrayList<String> images = new ArrayList<>();
     /**
      * 商品名、价格
      */
@@ -24,11 +26,11 @@ public class ProgramBean implements Serializable {
     /**
      * 视频集
      */
-    private ArrayList<String> videos= new ArrayList<>();
+    private ArrayList<String> videos = new ArrayList<>();
     /**
      * 需要推送的终端mac地址
      */
-    private ArrayList<String> deviceMacs= new ArrayList<>();
+    private ArrayList<String> deviceMacs = new ArrayList<>();
 
     /**
      * 用户ID
@@ -67,6 +69,32 @@ public class ProgramBean implements Serializable {
      * 状态：0为未上传，1为已上传，-1为上传失败
      */
     private String state;
+
+    /**
+     * 是否未选中状态
+     */
+    private boolean isCheck;
+
+    /**
+     * 封面
+     */
+    private String cover = "";
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public boolean isCheck() {
+        return isCheck;
+    }
+
+    public void setCheck(boolean check) {
+        isCheck = check;
+    }
 
     public String getState() {
         return state;
@@ -140,6 +168,15 @@ public class ProgramBean implements Serializable {
                     "name='" + name + '\'' +
                     ", price='" + price + '\''
                     ;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            Commodity com = (Commodity) obj;
+            LogUtil.d("name:",name);
+            LogUtil.d("price:",price);
+            LogUtil.d("com.getName():",com.getName());
+            LogUtil.d("com.getPrice():",com.getPrice());
+            return name.equals(com.getName()) && price.equals(com.getPrice());
         }
     }
 
@@ -221,7 +258,9 @@ public class ProgramBean implements Serializable {
                 ", table_id=" + table_id +
                 ", tab='" + tab + '\'' +
                 ", modelId='" + modelId + '\'' +
-                ", upload_state='" + state + '\'' +
+                ", state='" + state + '\'' +
+                ", isCheck=" + isCheck +
+                ", cover='" + cover + '\'' +
                 '}';
     }
 }

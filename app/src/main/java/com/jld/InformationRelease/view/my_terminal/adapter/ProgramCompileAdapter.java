@@ -55,7 +55,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         mDatas = bean;
         LogUtil.d(TAG, "ProgramBean:" + bean);
         mContext = (ProgramCompileActivity) context;
-        mImgAdapter = new ProgramCompileImgItemAdapter(mContext, mDatas.getImages());
+        mImgAdapter = new ProgramCompileImgItemAdapter(mContext, mDatas.getImages(), mDatas.getCover());
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             comHolder.name.setText(commodity.getName());
             comHolder.price.setText(commodity.getPrice());
 
-            if (realPosition == (mDatas.getTexts().size() - 1)) {
+            if (realPosition == (mDatas.getTexts().size() - 1) && TextUtils.isEmpty(comHolder.name.getText())) {
                 //最底下item获得焦点
                 comHolder.name.requestFocus();
             }
@@ -215,6 +215,10 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         mImgAdapter.addData(imgPath);
     }
 
+    public ProgramBean getDatas() {
+        return mDatas;
+    }
+
     public void refreshImgs(ArrayList<String> photos) {
         if (photos != null && photos.size() > 20) {
             ToastUtil.showToast(mContext, mContext.getResources().getString(R.string.most_add_commoditys), 3000);
@@ -270,7 +274,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ArrayList<String> images = mImgAdapter.getDatas();
         Log.d(TAG, "imagessize:" + images.size());
         if (isClear) {
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); i++) {//封面不算
                 Log.d(TAG, "imagessize-i:" + i);
                 String img = images.get(i);
                 if (TextUtils.isEmpty(img)) {
@@ -293,10 +297,17 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    public String getImgData(int position){
+    /**
+     * 获取封面
+     */
+    public String getCover() {
+        return mImgAdapter.getCover();
+    }
 
+    public String getImgData(int position) {
         return mImgAdapter.getdata(position);
     }
+
     class TextHolder extends RecyclerView.ViewHolder {
 
         EditText name;

@@ -28,6 +28,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String tab = "tab";
     public static final String user_id = "user_id";
     public static final String macs = "mac";
+    public static final String cover = "cover";
 
     /**
      * 创建团成员数据库表
@@ -44,7 +45,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + texts + " varchar(2000),"//“商品”集合
                     + macs + " varchar(1000),"//mac集合
                     + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传
-                    + tab + " varchar(30)"//用户设置的标签
+                    + tab + " varchar(30),"//用户设置的标签
+                    + cover + " varchar(50)"//封面路径
                     + ");";
 
     public DataBaseHelper(Context context) {

@@ -14,7 +14,6 @@ public interface BaseRecyclerViewAdapterClick {
 
     public interface MyItemClick {
         public void onItemClick(View view, int position);
-
         public void onItemLongClick(View view, int position);
     }
 

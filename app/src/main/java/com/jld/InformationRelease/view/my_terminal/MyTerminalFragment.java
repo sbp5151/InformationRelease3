@@ -2,7 +2,6 @@ package com.jld.InformationRelease.view.my_terminal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -20,7 +19,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
@@ -201,17 +199,17 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
         }
     };
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (mProgramResultCode == resultCode && requestCode == mProgramRequestCode && data != null) {
-            ProgramBean mProgram = (ProgramBean) data.getSerializableExtra("body");
-            LogUtil.d(TAG, "program:" + mProgram);
-            //开启service上传节目
-            mActivity.mProgram = mProgram;
-            mActivity.createProgramService();
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (mProgramResultCode == resultCode && requestCode == mProgramRequestCode && data != null) {
+//            ProgramBean mProgram = (ProgramBean) data.getSerializableExtra("body");
+//            LogUtil.d(TAG, "program:" + mProgram);
+//            //开启service上传节目
+//            mActivity.mProgram = mProgram;
+//            mActivity.createProgramService();
+//        }
+//    }
 
 
     public void changeCompleteState() {

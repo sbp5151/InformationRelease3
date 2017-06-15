@@ -47,10 +47,17 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
                 case UPDATE_IMG:
                     LogUtil.d(TAG, "UPDATE_IMG:" + mUpdateImages.size());
                     LogUtil.d(TAG, "UPDATE_IMG:" + update_img_num);
-
                     if (update_img_num < mUpdateImages.size()) {
-                        mFilePresenter.updateFile(mUpdateImages.get(update_img_num), IMG_UPDATE);
-                        update_img_num++;
+                        String imgurl = mUpdateImages.get(update_img_num);
+                        LogUtil.d(TAG, "imgurl:" + imgurl);
+                        if (imgurl.contains("http://admsgimg.torsun.cn")) {
+                            mImgUrl.add(imgurl);//上传过不再上传
+                            update_img_num++;
+                            mHandler.sendEmptyMessage(UPDATE_IMG);
+                        } else {
+                            update_img_num++;
+                            mFilePresenter.updateFile(imgurl, IMG_UPDATE);
+                        }
                     } else {
                         mBody.getImages().clear();
                         for (String url : mImgUrl) {
@@ -77,6 +84,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         LogUtil.d(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         LogUtil.d(TAG, "onBind");
@@ -84,6 +92,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             mMyBinder = new MyBinder();
         return mMyBinder;
     }
+
     @Override
     public boolean onUnbind(Intent intent) {
         LogUtil.d(TAG, "onUnbind");
@@ -95,7 +104,6 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     public void onDestroy() {
         super.onDestroy();
         LogUtil.d(TAG, "onDestroy");
-
     }
 
     @Override
@@ -123,6 +131,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
+        LogUtil.d(TAG, "loadDataError:" + e.getMessage());
         mCompleteListener.updateDefeated();
     }
 
@@ -161,8 +170,10 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     public void updateProgram() {
         UploadProgramPresenter presenter = new UploadProgramPresenter(this, this);
         LogUtil.d(TAG, "updateProgram：" + mBody);
+        mBody.setProgramId(null);
         presenter.uploadProgram(mBody, PROGRAM_UPDATE);
     }
+
     public interface PushCompleteListener {
         void updateSucceed(String programId);// 上传成功
 

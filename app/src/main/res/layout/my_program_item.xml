@@ -16,8 +16,9 @@
             android:layout_margin="10dp"
         />
 
-        <RelativeLayout android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+        <RelativeLayout android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_model_time"
                 android:layout_width="match_parent"
@@ -34,7 +35,16 @@
             />
 
         </RelativeLayout>
-
+        <View android:layout_width="1px"
+              android:layout_height="match_parent"
+              android:background="@android:color/darker_gray"/>
+        <ImageView
+            android:id="@+id/iv_program_item_delete"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:src="@drawable/program_delete_click"
+        />
     </LinearLayout>
 
 </RelativeLayout>

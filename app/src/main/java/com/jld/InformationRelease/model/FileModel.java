@@ -120,10 +120,12 @@ public class FileModel {
                     }
                     @Override
                     public void onError(Throwable e) {
+                        callback.requestError(e,requestTag);
                         LogUtil.d(TAG, "onError:"+e);
                     }
                     @Override
                     public void onComplete() {
+                        callback.requestComplete(requestTag);
                         LogUtil.d(TAG, "onComplete");
 
                     }

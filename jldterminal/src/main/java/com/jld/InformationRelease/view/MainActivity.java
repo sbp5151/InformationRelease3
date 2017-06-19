@@ -17,7 +17,6 @@ import com.google.gson.JsonSyntaxException;
 import com.jld.InformationRelease.JPushReceiver;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
-import com.jld.InformationRelease.base.BaseProgramFragment;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.base.IViewToPresenter;
 import com.jld.InformationRelease.base.SimpleIViewToPresenter;
@@ -32,9 +31,10 @@ import com.jld.InformationRelease.presenter.UploadScreenPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.DeviceUtil;
 import com.jld.InformationRelease.util.GeneralUtil;
-import com.jld.InformationRelease.util.MD5Util;
+import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ModelIds;
 import com.jld.InformationRelease.util.VolumeUtil;
+import com.jld.InformationRelease.view.fragment.DefaultFragment;
 import com.jld.InformationRelease.view.fragment.ProgramFragment_1;
 import com.jld.InformationRelease.view.fragment.ProgramFragment_2;
 
@@ -53,12 +53,14 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LogUtil.d(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFrameLayout = (FrameLayout) findViewById(R.id.framelayout_main);
         //注册极光推送监听
         JPushReceiver.sendListener(this);
         mPdialog = new ProgressDialog(this);
+        replaceFragment(null);
     }
 
     /**
@@ -69,7 +71,6 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void pushMessage(String pushMsg) {
-
         Gson gson = new Gson();
         PushResponse response;
         try {
@@ -89,10 +90,9 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                 break;
             case Constant.PUSH_PROGRAM://节目推送
                 //加载节目更新
-                String programID = response.getMsg();//节目ID
+                String programID = response.getProgramID();//节目ID
                 LoadProgramPresenter presenter = new LoadProgramPresenter(this, MainActivity.this);
-                String md5 = MD5Util.getMD5(programID + Constant.S_KEY);
-                presenter.LoadProgram(md5, LOAD_PROGRAM_TAG);
+                presenter.LoadProgram(programID, LOAD_PROGRAM_TAG);
                 break;
             case Constant.SHUTDOWN://关机
                 DeviceUtil.showDown();
@@ -209,30 +209,60 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
+        LogUtil.d(TAG, "loadDataError:" + e.getMessage());
         if (requestTag == LOAD_PROGRAM_TAG) {
             Toast.makeText(this, getString(R.string.load_program_error), Toast.LENGTH_SHORT).show();
         }
     }
 
-
     //节目替换
     private void replaceFragment(ProgramResponseBean data) {
+        LogUtil.d(TAG, "replaceFragment:" + data);
+        if (data != null) {
+            //保存数据
+            String play_data = new Gson().toJson(data);
+            SharedPreferences.Editor sp_edit = getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
+            sp_edit.putString(Constant.PLAY_DATA, play_data);
+            sp_edit.apply();
+        } else {
+            String play_data = getSharedPreferences(Constant.share_key, MODE_PRIVATE).getString(Constant.PLAY_DATA, "");
+            if (!TextUtils.isEmpty(play_data)) {
+                data = new Gson().fromJson(play_data, ProgramResponseBean.class);
+                LogUtil.d(TAG, "data:" + data);
+                if (data == null) {//没有数据加载默认布局
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    DefaultFragment defaultFragment = new DefaultFragment();
+                    ft.replace(R.id.framelayout_main, defaultFragment);
+                    ft.commit();
+                    return;
+                }
+            } else{
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                DefaultFragment defaultFragment = new DefaultFragment();
+                ft.replace(R.id.framelayout_main, defaultFragment);
+                ft.commit();
+                return;
+            }
+        }
 
-        String modelId = data.getModelId();
-        BaseProgramFragment fragment = null;
+        //展示数据
+        String modelId = data.getItem().getModelId();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
         switch (modelId) {
             case ModelIds.modle_001:
-                fragment =  ProgramFragment_1.getInstance(data);
+                ProgramFragment_1 fragment1 = ProgramFragment_1.getInstance(data);
+                ft.replace(R.id.framelayout_main, fragment1);
                 break;
             case ModelIds.modle_002:
-                fragment =  ProgramFragment_2.getInstance(data);
+                ProgramFragment_2 fragment2 = ProgramFragment_2.getInstance(data);
+                ft.replace(R.id.framelayout_main, fragment2);
                 break;
             default:
                 return;
         }
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.framelayout_main, fragment);
         ft.commit();
     }
 }

@@ -65,6 +65,10 @@ public class URLConstant {
      * 设备绑定接口
      */
     public static final String BIND_DEVICE = "/device/binding";
+    /**
+     * 设备解绑接口
+     */
+    public static final String UNBIND_DEVICE = "/device/unbind";
 
     /**
      * 12、验证码请求接口

@@ -7,6 +7,6 @@
     <ImageView
         android:id="@+id/iv_viewpager_item"
         android:layout_width="match_parent"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
         android:layout_height="match_parent"/>
 </LinearLayout>

@@ -9,6 +9,7 @@ import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
+import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
 import com.jld.InformationRelease.bean.response_bean.UpdateProgramResponse;
 import com.jld.InformationRelease.interfaces.IPresenterListen;
@@ -26,7 +27,7 @@ import retrofit2.Retrofit;
  * @creator boping
  * @create-time 2017/4/20 14:39
  */
-public class TerminalFunctionModel{
+public class TerminalFunctionModel {
 
     private final Retrofit mRetrofit;
     private final TerminalFunctionService mTerminalFunctionService;
@@ -50,8 +51,21 @@ public class TerminalFunctionModel{
         mTerminalFunctionService.binding(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<BaseResponse>(callback,requestTag));
+                .subscribe(new BaseObserver2<BaseResponse>(callback, requestTag));
+    }
 
+    /**
+     * 设备解绑
+     *
+     * @param body
+     * @param callback
+     * @param requestTag
+     */
+    public void retrofitUnbind(UnbindRequest body, final IPresenterListen<BaseResponse> callback, final int requestTag) {
+        mTerminalFunctionService.unbind(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver2<BaseResponse>(callback, requestTag));
     }
 
     /**
@@ -65,7 +79,7 @@ public class TerminalFunctionModel{
 
         mTerminalFunctionService.push(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<UpdateProgramResponse>(callback,requestTag){
+                .subscribe(new BaseObserver<UpdateProgramResponse>(callback, requestTag) {
                     @Override
                     public void onNext(UpdateProgramResponse value) {
                         if (value != null && value.getResult().equals("0")) {//成功
@@ -90,7 +104,7 @@ public class TerminalFunctionModel{
 
         mTerminalFunctionService.showdown_restart(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<BaseResponse>(callback,requestTag));
+                .subscribe(new BaseObserver2<BaseResponse>(callback, requestTag));
 
     }
 
@@ -105,7 +119,7 @@ public class TerminalFunctionModel{
 
         mTerminalFunctionService.time_showdown(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<BaseResponse>(callback,requestTag));
+                .subscribe(new BaseObserver2<BaseResponse>(callback, requestTag));
 
     }
 
@@ -120,7 +134,7 @@ public class TerminalFunctionModel{
 
         mTerminalFunctionService.volume_adjust(body).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver2<BaseResponse>(callback,requestTag));
+                .subscribe(new BaseObserver2<BaseResponse>(callback, requestTag));
     }
 
 }

@@ -19,10 +19,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.interfaces.IViewListen;
+import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.presenter.UpdateTerminalPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
@@ -36,25 +38,27 @@ import com.jld.InformationRelease.view.my_terminal.adapter.TerminalAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jld.InformationRelease.model.UserModel.TAG;
-
 /**
  * 一：我的设备
  */
-public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRecyclerViewItemClickListener, IViewListen<GetTerminalResponse> {
+public class MyTerminalFragment extends Fragment implements
+        TerminalAdapter.OnRecyclerViewItemClickListener, IViewListen<Object> {
 
     private RecyclerView mRecyclerView;
     private MainActivity mActivity;
     private ArrayList<TerminalBeanSimple> terminals = new ArrayList<>();
     public TerminalAdapter mAdapter;
-    private static final int UPDATE_TERMINAL = 0x21;
     private ProgressDialog mDialog;
     private ImageButton mPush;
     private TextView mTvComplete;
     private TextView mTitle_tx;
     private PopupWindow mPopupWindow;
-    public static final int mProgramResultCode = 0x22;//节目编辑数据返回
     public static final int mProgramRequestCode = 0x21;//节目编辑数据返回
+    public static final int mProgramResultCode = 0x22;//节目编辑数据返回
+    public static final int UNBIND_REQUEST_TAG = 0x23;//解绑数据返回
+    private static final int UPDATE_TERMINAL = 0x24;//获取设备数据
+    private String mUserId;
+    public static final String TAG = "MyTerminalFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,18 +96,27 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
 
     }
 
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        LogUtil.d(TAG, "hidden:" + hidden);
+        if (!hidden)
+            initData();
+    }
+
     private void initData() {
         //加载所有绑定的终端设备
         UpdateTerminalPresenter presenter = new UpdateTerminalPresenter(this, mActivity);
         UpdateTerminalRequest requestBody = new UpdateTerminalRequest();
         SharedPreferences sp = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE);
-        String userId = sp.getString(UserConstant.USER_ID, "");
-        if (TextUtils.isEmpty(userId)) {
+        mUserId = sp.getString(UserConstant.USER_ID, "");
+        if (TextUtils.isEmpty(mUserId)) {
             ToastUtil.showToast(mActivity, getString(R.string.please_login), 3000);
             return;
         }
-        requestBody.setUserId(userId);
-        requestBody.setSign(MD5Util.getMD5(Constant.S_KEY + userId));
+        requestBody.setUserId(mUserId);
+        requestBody.setSign(MD5Util.getMD5(Constant.S_KEY + mUserId));
         presenter.updateTerminal(requestBody, UPDATE_TERMINAL);
     }
 
@@ -132,7 +145,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
         View contentView = mActivity.getLayoutInflater().inflate(R.layout.popupwindow_layout, null);
-        contentView.findViewById(R.id.pp_program_push).setOnClickListener(ppOnClickListener);
+        contentView.findViewById(R.id.pp_program_unbind).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_showdown).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_restart).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_time_showdown).setOnClickListener(ppOnClickListener);
@@ -165,33 +178,34 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
                 return;
             }
             switch (view.getId()) {
-                case R.id.pp_program_push://节目推送
+                case R.id.pp_program_unbind://节目推送
                     mPopupWindow.dismiss();
-//                    LogUtil.d(TAG, "pushId:" + pushId);
-//                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
-//                    intent.putExtra("pushId", pushId);
-////                    startActivity(intent);
-//                    startActivityForResult(intent, mProgramRequestCode);
-//                    toActivity(ProgramCompileActivity.class);
+                    // TODO: 2017/6/17 解绑
+                    UnbindRequest body = new UnbindRequest();
+                    body.setDeviceMacs(pushId);
+                    body.setUserId(mUserId);
+                    body.setSign(MD5Util.getMD5(Constant.S_KEY + mUserId));
+                    TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyTerminalFragment.this);
+                    presenter.unbind(body, UNBIND_REQUEST_TAG);
                     break;
                 case R.id.pp_showdown://关机
-                    ToastUtil.showToast(mActivity, "关机", 3000);
+                    ToastUtil.showToast(mActivity, getString(R.string.function_developed), 3000);
                     mPopupWindow.dismiss();
                     break;
                 case R.id.pp_restart://重启
-                    ToastUtil.showToast(mActivity, "重启", 3000);
+                    ToastUtil.showToast(mActivity, getString(R.string.function_developed), 3000);
                     mPopupWindow.dismiss();
                     break;
                 case R.id.pp_time_showdown://定时开关机
-                    ToastUtil.showToast(mActivity, "定时开关机", 3000);
+                    ToastUtil.showToast(mActivity, getString(R.string.function_developed), 3000);
                     mPopupWindow.dismiss();
                     break;
                 case R.id.pp_volume_adjust://音量调节
-                    ToastUtil.showToast(mActivity, "音量调节", 3000);
+                    ToastUtil.showToast(mActivity, getString(R.string.function_developed), 3000);
                     mPopupWindow.dismiss();
                     break;
                 case R.id.pp_get_screen://获取截屏
-                    ToastUtil.showToast(mActivity, "获取截屏", 3000);
+                    ToastUtil.showToast(mActivity, getString(R.string.function_developed), 3000);
                     mPopupWindow.dismiss();
                     break;
             }
@@ -228,7 +242,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
 
     @Override
     public void onItemClick(View view, int position) {
-        ToastUtil.showToast(mActivity, position + "", 3000);
+//        ToastUtil.showToast(mActivity, position + "", 3000);
     }
 
     @Override
@@ -249,6 +263,7 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
 
     /**
      * 获取被选中的设备终端Mac地址
+     *
      * @return
      */
     public ArrayList<String> getCheckMac() {
@@ -277,11 +292,16 @@ public class MyTerminalFragment extends Fragment implements TerminalAdapter.OnRe
     }
 
     @Override
-    public void loadDataSuccess(GetTerminalResponse data, int requestTag) {
+    public void loadDataSuccess(Object data, int requestTag) {
         LogUtil.d(TAG, "GetTerminalResponse:" + data);
-        //获取数据成功，更新界面
-        ArrayList<TerminalBeanSimple> items = data.getItems();
-        mAdapter.setDataChange(items);
+        if (UNBIND_REQUEST_TAG == requestTag) {
+            initData();
+        } else if (requestTag == UPDATE_TERMINAL) {
+            GetTerminalResponse response = (GetTerminalResponse) data;
+            //获取数据成功，更新界面
+            ArrayList<TerminalBeanSimple> items = response.getItems();
+            mAdapter.setDataChange(items);
+        }
     }
 
     @Override

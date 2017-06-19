@@ -10,21 +10,36 @@
                   android:layout_height="match_parent"
                   android:orientation="horizontal">
         <ImageView
-            android:id="@+id/iv_model_icon"
+            android:id="@+id/iv_program_icon"
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
         />
-
+        <View android:layout_width="1px"
+              android:background="#ddd"
+              android:layout_height="match_parent"/>
         <RelativeLayout android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
-            <TextView
-                android:id="@+id/tv_model_time"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="18dp"/>
+
+                <TextView
+                    android:id="@+id/tv_program_tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="left|center"
+                    android:paddingLeft="10dp"
+                    android:text="节目测试"
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp"/>
+
+                <TextView
+                    android:id="@+id/tv_program_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom|right"
+                    android:paddingRight="10dp"
+                    android:textSize="14dp"/>
+
             <ImageView
                 android:id="@+id/iv_upload_defeat"
                 android:layout_width="wrap_content"

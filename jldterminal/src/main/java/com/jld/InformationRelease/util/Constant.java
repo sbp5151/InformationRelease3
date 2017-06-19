@@ -20,10 +20,19 @@ public class Constant {
      * 极光推送别名是否已设置
      */
     public static final String JPush_alias_set = "JPush_alias_set_";
+
+    /**
+     * 保存最近显示的数据
+     */
+    public static final String PLAY_DATA = "play_data";
     /**
      * 设备是否已被绑定 布尔值
      */
     public static final String DEVICE_ISBINDING = "device_is_binding";
+    /**
+     * 设备ID
+     */
+    public static final String DEVICE_ID = "device_id";
 
 
     /**

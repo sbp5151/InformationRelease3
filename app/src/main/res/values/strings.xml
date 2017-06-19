@@ -35,8 +35,6 @@
     <string name="scanCode">扫描添加</string>
     <string name="setting">设置</string>
     <string name="action_settings">设置</string>
-    <string name="navigation_drawer_open">open</string>
-    <string name="navigation_drawer_close">close</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -106,5 +104,11 @@
     <string name="whether_save_program">是否保存节目</string>
     <string name="no_save">不保存</string>
     <string name="program_back_push">正在后台上传....</string>
+    <string name="showdown">关机</string>
+    <string name="reboot">重启</string>
+    <string name="timing_switch_machine">定时开关机</string>
+    <string name="volume_adjustment">音量调节</string>
+    <string name="get_screenshots">获取截屏</string>
+    <string name="function_developed">此功能待开发...</string>
 
 </resources>

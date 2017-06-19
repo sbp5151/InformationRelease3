@@ -13,6 +13,7 @@ import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.GetModelPresenter;
 import com.jld.InformationRelease.util.ToastUtil;
+import com.jld.InformationRelease.view.my_program.ProgramCompileActivity;
 import com.jld.InformationRelease.view.my_terminal.adapter.ModelAdapter;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
         mDialog = new ProgressDialog(this);
     }
 
-    ModelAdapter.ModeItemClickListener mClickListener = new ModelAdapter.ModeItemClickListener(){
+    ModelAdapter.ModeItemClickListener mClickListener = new ModelAdapter.ModeItemClickListener() {
 
         @Override
         public void onItemClick(View view, int position) {
@@ -62,7 +63,8 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
 
         }
     };
-    public void initData(){
+
+    public void initData() {
         GetModelPresenter presenter = new GetModelPresenter(this, this);
         presenter.getModel(LOAD_MODEL);
     }
@@ -86,6 +88,6 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
     @Override
     public void loadDataError(Throwable e, int requestTag) {
         mDialog.dismiss();
-        ToastUtil.showToast(this,e.getMessage().toString(),3000);
+        ToastUtil.showToast(this, e.getMessage().toString(), 3000);
     }
 }

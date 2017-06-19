@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  */
 public class VpImg1Adapter extends PagerAdapter {
 
-
+    public static final String TAG = "VpImg1Adapter";
     ArrayList<ImageView> mViews = new ArrayList<>();
     ArrayList<String> mImgUlrs;
     Context mContext;
@@ -35,30 +36,25 @@ public class VpImg1Adapter extends PagerAdapter {
         }
     }
 
-    public VpImg1Adapter(Context context) {
-        mContext = context;
-        for (String img : mImgUlrs) {
-            ImageView imageView1 = new ImageView(mContext);
-            imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            mViews.add(imageView1);
-        }
-    }
-
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
-        container.addView(mViews.get(position));
-        return mViews.get(position);
+        LogUtil.d(TAG,"instantiateItem:"+position);
+        ViewGroup parent = (ViewGroup) mViews.get(position % mViews.size()).getParent();
+        if (parent != null) {
+            parent.removeAllViews();
+        }
+        container.addView(mViews.get(position % mViews.size()));
+        return mViews.get(position % mViews.size());
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView(mViews.get(position));
+        container.removeView((View) object);
     }
 
     @Override
     public int getCount() {
-        return mViews.size();
+        return Integer.MAX_VALUE;
     }
 
     @Override

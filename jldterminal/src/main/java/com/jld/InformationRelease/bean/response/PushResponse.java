@@ -28,6 +28,18 @@ public class PushResponse extends BaseResponse {
      * 节目ID
      */
     private String programID;
+    /**
+     * 设备ID
+     */
+    private String deviceID;
+
+    public String getDeviceID() {
+        return deviceID;
+    }
+
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
+    }
 
     public String getVolume() {
         return volume;
@@ -68,6 +80,7 @@ public class PushResponse extends BaseResponse {
                 ", ontime='" + ontime + '\'' +
                 ", offtime='" + offtime + '\'' +
                 ", programID='" + programID + '\'' +
+                ", deviceID='" + deviceID + '\'' +
                 '}';
     }
 }

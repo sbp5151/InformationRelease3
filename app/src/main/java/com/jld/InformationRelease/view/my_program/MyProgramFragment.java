@@ -37,7 +37,6 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
-import com.jld.InformationRelease.view.my_terminal.ProgramCompileActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 
 import org.json.JSONException;
@@ -136,6 +135,7 @@ public class MyProgramFragment extends Fragment {
         mIv_add = (ImageView) view.findViewById(R.id.imagev_add_trouteam);
         mIv_add.setOnClickListener(mOnClickListener);
     }
+
 
     public void initData() {
         ProgramDao programDao = ProgramDao.getInstance(mActivity);
@@ -307,14 +307,6 @@ public class MyProgramFragment extends Fragment {
 
         }
     };
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mCon != null) {
-            mActivity.unbindService(mCon);
-        }
-    }
 
     /**
      * 按钮动画

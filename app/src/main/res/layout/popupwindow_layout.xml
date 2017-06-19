@@ -11,26 +11,13 @@
         android:background="@drawable/popupwindow_back"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/pp_program_push"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/item_height"
-            android:gravity="center"
-            android:text="节目推送"
-            android:visibility="gone"
-            android:textColor="@drawable/popupwindow_textcolor_click"
-            android:textSize="16dp"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@android:color/darker_gray"/>
         <TextView
             android:id="@+id/pp_showdown"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_height"
             android:gravity="center"
-            android:text="关机"
+            android:text="@string/showdown"
             android:textColor="@drawable/popupwindow_textcolor_click"
             android:textSize="16dp"/>
         <View
@@ -42,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_height"
             android:gravity="center"
-            android:text="重启"
+            android:text="@string/reboot"
             android:textColor="@drawable/popupwindow_textcolor_click"
             android:textSize="16dp"/>
         <View
@@ -54,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_height"
             android:gravity="center"
-            android:text="定时开关机"
+            android:text="@string/timing_switch_machine"
             android:textColor="@drawable/popupwindow_textcolor_click"
             android:textSize="16dp"/>
         <View
@@ -66,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_height"
             android:gravity="center"
-            android:text="音量调节"
+            android:text="@string/volume_adjustment"
             android:textColor="@drawable/popupwindow_textcolor_click"
             android:textSize="16dp"/>
         <View
@@ -79,8 +66,21 @@
             android:layout_height="@dimen/item_height"
             android:gravity="center"
             android:textColor="@drawable/popupwindow_textcolor_click"
-            android:text="获取截屏"
+            android:text="@string/get_screenshots"
             android:textSize="16dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/pp_program_unbind"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_height"
+            android:gravity="center"
+            android:text="设备解绑"
+            android:textColor="@drawable/popupwindow_textcolor_click"
+            android:textSize="16dp"/>
+
 
     </LinearLayout>
 </LinearLayout>

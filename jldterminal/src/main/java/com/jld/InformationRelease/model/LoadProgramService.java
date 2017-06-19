@@ -4,7 +4,7 @@ import com.jld.InformationRelease.bean.response.ProgramResponseBean;
 import com.jld.InformationRelease.util.URLConstant;
 
 import io.reactivex.Observable;
-import retrofit2.http.Field;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
@@ -19,10 +19,41 @@ public interface LoadProgramService {
 
     /**
      * 节目加载
-     * @param programId
      * @return
      */
     @POST(URLConstant.LOAD_PROGRAM_URL)
-    Observable<ProgramResponseBean> loadProgram(@Field("programId") String programId);
+    Observable<ProgramResponseBean> loadProgram(
+            @Body() LoadProgramBody body);
+
+
+    class LoadProgramBody{
+
+        private String sign;
+        private String programId;
+
+        public String getSign() {
+            return sign;
+        }
+
+        public void setSign(String sign) {
+            this.sign = sign;
+        }
+
+        public String getProgramid() {
+            return programId;
+        }
+
+        public void setProgramid(String programid) {
+            this.programId = programid;
+        }
+
+        @Override
+        public String toString() {
+            return "LoadProgramBody{" +
+                    "sign='" + sign + '\'' +
+                    ", programid='" + programId + '\'' +
+                    '}';
+        }
+    }
 
 }

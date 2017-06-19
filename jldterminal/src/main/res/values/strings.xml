@@ -5,6 +5,7 @@
     <string name="load_program_error">节目加载错误</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_fragment">等待节目推送</string>
     <string name="volume_error">设置音量错误</string>
+    <string name="connect_service">正在连接后台服务器...</string>
 </resources>

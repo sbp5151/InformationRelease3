@@ -7,6 +7,7 @@ import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
+import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.model.TerminalFunctionModel;
@@ -19,8 +20,8 @@ import com.jld.InformationRelease.model.TerminalFunctionModel;
  * @creator boping
  * @create-time 2017/4/20 14:27
  * <p>
- *
- *
+ * <p>
+ * <p>
  * 对设备终端的所有的操作功能
  */
 public class TerminalFunctionPresenter extends BasePresenterImpl<BaseResponse> {
@@ -47,9 +48,14 @@ public class TerminalFunctionPresenter extends BasePresenterImpl<BaseResponse> {
         mTerminalFunctionModel.retrofitBinding(body, this, requestTag);
     }
 
-
-    public void updateFile(){
-
+    /**
+     * 设备解绑
+     *
+     * @param body
+     * @param requestTag
+     */
+    public void unbind(UnbindRequest body, int requestTag) {
+        mTerminalFunctionModel.retrofitUnbind(body, this, requestTag);
     }
 
     /**

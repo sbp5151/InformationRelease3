@@ -40,6 +40,6 @@ public class FilePresenter extends BasePresenterImpl<FileResponseBean> {
 
     public void updateFiles(ArrayList<String> imgPath, int requesTag) {
 
-        mFileModel.updateFiles(imgPath,this,requesTag);
+        mFileModel.updateFiles(imgPath, this, requesTag);
     }
 }

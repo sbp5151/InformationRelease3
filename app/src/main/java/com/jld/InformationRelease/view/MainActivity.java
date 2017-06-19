@@ -1,14 +1,19 @@
 package com.jld.InformationRelease.view;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -25,7 +30,6 @@ import android.widget.PopupWindow;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
-import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
@@ -69,6 +73,7 @@ public class MainActivity extends BaseActivity
     private static final int mScanRequestCode = 0x23;//二维码扫描数据返回
     public static final int mScanResultCode = 0x24;//二维码扫描数据返回
     private static final int BIND_REQUEST_TAG = 0x31;
+    private static final int REQUEST_CAMERA_PERMISSION = 0x32;//获取相机权限
     private ProgressDialog mBindDialog;
 
     @Override
@@ -161,8 +166,14 @@ public class MainActivity extends BaseActivity
                 ft.show(mSystemModelFragment);
             }
         } else if (id == R.id.menu_scan_code) {//扫描添加
-            Intent intent = new Intent(this, CaptureActivity.class);
-            startActivityForResult(intent, mScanRequestCode);
+            if (ContextCompat.checkSelfPermission(MainActivity.this,
+                    android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//没有获得权限
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            } else {//已获取权限了
+                Intent intent = new Intent(this, CaptureActivity.class);
+                startActivityForResult(intent, mScanRequestCode);
+            }
         } else if (id == R.id.menu_setting) {//设置
             mSettingFragment = (SettingFragment) fm.findFragmentByTag(SETTING_TAG);
             if (mSettingFragment == null) {
@@ -182,6 +193,15 @@ public class MainActivity extends BaseActivity
             ft.hide(entry.getValue());
         }
         ft.commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {//获取相机权限
+            Intent intent = new Intent(this, CaptureActivity.class);
+            startActivityForResult(intent, mScanRequestCode);
+        }
     }
 
     /**
@@ -206,13 +226,13 @@ public class MainActivity extends BaseActivity
             } else {
                 LogUtil.d(TAG, "非法Mac地址");
             }
-        } else if (mScanRequestCode == requestCode) {
+        }
+        if (mScanRequestCode == requestCode) {
             //返回我的终端
             mNavigationView.getMenu().getItem(0).setChecked(true);
             switchFragment(R.id.menu_my_terminal);
         }
     }
-
 
 
     public void showSetNameDialog(final String mac) {
@@ -289,7 +309,6 @@ public class MainActivity extends BaseActivity
     public void loadDataSuccess(BaseResponse data, int requestTag) {
         LogUtil.d(TAG, "loadDataSuccess:" + requestTag);
         if (requestTag == BIND_REQUEST_TAG) {
-
             ToastUtil.showToast(this, data.getMsg(), 3000);
             if (mSetNameDialog.isShowing())
                 mSetNameDialog.dismiss();

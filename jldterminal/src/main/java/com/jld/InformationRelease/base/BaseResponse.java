@@ -30,6 +30,7 @@ public class BaseResponse {
         return "BaseResponse{" +
                 "result='" + result + '\'' +
                 ", msg='" + msg + '\'' +
+                ", deviceID='" + '\'' +
                 '}';
     }
 

@@ -13,9 +13,9 @@ public class ModelIds {
     /**
      * 价格图片
      */
-    public static final String modle_001 = "jld_model_001";
+    public static final String modle_001 = "1";
     /**
      * 图片
      */
-    public static final String modle_002 = "jld_model_002";
+    public static final String modle_002 = "2";
 }

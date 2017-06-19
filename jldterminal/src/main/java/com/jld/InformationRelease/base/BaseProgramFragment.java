@@ -33,9 +33,11 @@ public class BaseProgramFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mData = (ProgramResponseBean) savedInstanceState.getSerializable("data");
-        }else{
+
+        Bundle bundle = getArguments();//从activity传过来的Bundle
+        if (bundle != null) {
+            mData = (ProgramResponseBean) bundle.getSerializable("data");
+        } else {
             try {
                 throw new Exception("ProgramFragment需要传入参数");
             } catch (Exception e) {

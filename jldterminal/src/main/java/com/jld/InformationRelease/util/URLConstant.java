@@ -9,9 +9,9 @@ package com.jld.InformationRelease.util;
  * @create-time 2017/4/11 16:36
  */
 public class URLConstant {
+    public static final String BASE_HTTP_URL = "http://admsg.torsun.cn";
 
-    public static final String BASE_HTTP_URL = "http://112.74.215.42";
-    public static final String LOAD_PROGRAM_URL = "";
+    public static final String LOAD_PROGRAM_URL = "/program/one";
     /**
      * 1、上传文件接口
      */
@@ -20,4 +20,8 @@ public class URLConstant {
      * 2、上传截屏接口
      */
     public static final String UPLOAD_SCREEN = "/user/userimg";
+    /**
+     * 在线心跳包接口
+     */
+    public static final String HEART_BEAT = "/user/userimg";
 }

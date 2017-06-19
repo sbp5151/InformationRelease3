@@ -22,8 +22,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -82,18 +81,20 @@ public class CaptureActivity extends BaseActivity implements Callback {
 
 		//titlebar
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-		View view = findViewById(R.id.scan_title_bar);
-		LinearLayout back = (LinearLayout) view.findViewById(R.id.title_back);
-		TextView center = (TextView) view.findViewById(R.id.title_center);
-		TextView reght = (TextView) findViewById(R.id.title_right);
-		reght.setVisibility(View.INVISIBLE);
-		center.setText(getString(R.string.scan_bind));
+//		View view = findViewById(R.id.scan_title_bar);
+//		LinearLayout back = (LinearLayout) view.findViewById(R.id.title_back);
+//		TextView center = (TextView) view.findViewById(R.id.title_center);
+//		TextView reght = (TextView) findViewById(R.id.title_right);
+//		reght.setVisibility(View.INVISIBLE);
+//		center.setText(getString(R.string.scan_bind));
+		ImageView back = (ImageView) findViewById(R.id.iv_scan_back);
 		back.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Intent resultIntent = new Intent();
 				CaptureActivity.this.setResult(0, resultIntent);
 				finish();
+
 			}
 		});
 		hasSurface = false;

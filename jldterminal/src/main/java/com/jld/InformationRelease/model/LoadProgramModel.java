@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.jld.InformationRelease.base.IPresenterToModel;
 import com.jld.InformationRelease.bean.response.ProgramResponseBean;
+import com.jld.InformationRelease.util.Constant;
+import com.jld.InformationRelease.util.LogUtil;
+import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.RetrofitManager;
 
 import io.reactivex.Observer;
@@ -22,6 +25,7 @@ import retrofit2.Retrofit;
  */
 public class LoadProgramModel {
 
+    public static final String TAG = "LoadProgramModel";
     private final LoadProgramService mProgramService;
 
     public LoadProgramModel(Context context) {
@@ -31,8 +35,11 @@ public class LoadProgramModel {
     }
 
     public void loadProgram(String programId, final IPresenterToModel<ProgramResponseBean> callBack, final int requestTag) {
-
-        mProgramService.loadProgram(programId)
+        String md5 = MD5Util.getMD5(Constant.S_KEY + programId);
+        LoadProgramService.LoadProgramBody body = new LoadProgramService.LoadProgramBody();
+        body.setSign(md5);
+        body.setProgramid(programId);
+        mProgramService.loadProgram(body)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<ProgramResponseBean>() {
@@ -43,6 +50,7 @@ public class LoadProgramModel {
 
                     @Override
                     public void onNext(ProgramResponseBean value) {
+                        LogUtil.d(TAG,"onNext:"+value);
                         if (value != null && value.getResult().equals("0")) {//成功
                             callBack.requestSuccess(value, requestTag);//多态
                         } else if (value != null) {//失败

@@ -10,12 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.AnimationUtil;
+import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_terminal.adapter.RvNameAdapter;
 import com.jld.InformationRelease.view.my_terminal.adapter.VpImg1Adapter;
@@ -30,6 +33,7 @@ public class PreviewActivity_1 extends AppCompatActivity {
     private static final long IMG_CHANGE_TIME = 3000;
     private ViewPager mVp_img;
     private ProgramBean mPreviewData;
+    public static final String TAG = "PreviewActivity_1";
     Handler mHandler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
         @Override
@@ -38,12 +42,7 @@ public class PreviewActivity_1 extends AppCompatActivity {
             switch (msg.what) {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
-                        int currentItem = mVp_img.getCurrentItem();
-                        if (currentItem == (mPreviewData.getImages().size() - 1))
-                            currentItem = 0;
-                        else
-                            currentItem++;
-                        mVp_img.setCurrentItem(currentItem);
+                        mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
                     }
                     break;
@@ -56,6 +55,7 @@ public class PreviewActivity_1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview_1);
         mPreviewData = (ProgramBean) getIntent().getSerializableExtra("previewData");
+        LogUtil.d(TAG, "mPreviewData:" + mPreviewData);
         if (mPreviewData == null) {
             ToastUtil.showToast(this, getResources().getString(R.string.data_exception), Toast.LENGTH_SHORT);
             return;
@@ -64,17 +64,24 @@ public class PreviewActivity_1 extends AppCompatActivity {
             initView1();
         else if (mPreviewData.getModelId().equals("002"))
             initView2();
-
-        mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+        if (mPreviewData.getImages().size() > 1)//多张图片才轮播
+            mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
     }
 
     public void initView2() {
         //中间
         mVp_img = (ViewPager) findViewById(R.id.vp_img);
         //切换动画
-        AnimationUtil.setAnimation(1, mVp_img, this);
-        VpImg1Adapter imgAdapter = new VpImg1Adapter(mPreviewData.getImages(), this);
-        mVp_img.setAdapter(imgAdapter);
+        if (mPreviewData.getImages().size() > 0) {
+            AnimationUtil.setAnimation(1, mVp_img, this);
+            VpImg1Adapter imgAdapter = new VpImg1Adapter(mPreviewData.getImages(), this);
+            mVp_img.setAdapter(imgAdapter);
+        }
+        //背景图片
+        ImageView lv_back = (ImageView) findViewById(R.id.iv_preview_back);
+        Glide.with(this)
+                .load(mPreviewData.getCover())
+                .into(lv_back).getRequest();
 
         //隐藏左边
         LinearLayout commodity1 = (LinearLayout) findViewById(R.id.ll_preview_left);
@@ -85,29 +92,34 @@ public class PreviewActivity_1 extends AppCompatActivity {
         commodity2.setVisibility(View.GONE);
 
     }
+
     public void initView1() {
         //中间
         mVp_img = (ViewPager) findViewById(R.id.vp_img);
         //切换动画
-        AnimationUtil.setAnimation(1, mVp_img, this);
-        VpImg1Adapter imgAdapter = new VpImg1Adapter(mPreviewData.getImages(), this);
-        mVp_img.setAdapter(imgAdapter);
-
+        if (mPreviewData.getImages().size() > 0) {
+            AnimationUtil.setAnimation(1, mVp_img, this);
+            VpImg1Adapter imgAdapter = new VpImg1Adapter(mPreviewData.getImages(), this);
+            mVp_img.setAdapter(imgAdapter);
+        }
         ArrayList<ProgramBean.Commodity> commoditys = mPreviewData.getTexts();
         ArrayList<ProgramBean.Commodity> leftCommodity = new ArrayList<>();
         ArrayList<ProgramBean.Commodity> rightCommodity = new ArrayList<>();
 
+        ImageView lv_back = (ImageView) findViewById(R.id.iv_preview_back);
+        Glide.with(this)
+                .load(mPreviewData.getCover())
+                .into(lv_back);
         //左边给10个，其余给右边
-        if (commoditys.size() > 10) {
+        if (commoditys.size() > 8) {
             for (int i = 0; i < commoditys.size(); i++) {
-                if (i < 10)
+                if (i < 8)
                     leftCommodity.add(commoditys.get(i));
                 else
                     rightCommodity.add(commoditys.get(i));
             }
         } else
             leftCommodity = commoditys;
-
 
         //左边
         RecyclerView commodity1 = (RecyclerView) findViewById(R.id.rv_commodity_1);
@@ -122,5 +134,12 @@ public class PreviewActivity_1 extends AppCompatActivity {
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
         commodity2.setLayoutManager(layoutManager2);
         commodity2.setAdapter(nameAdapter2);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mPreviewData.getImages().size() > 1)//多张图片才轮播
+            mHandler.removeMessages(CHANGE_IMG);
     }
 }

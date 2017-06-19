@@ -162,7 +162,11 @@
         <activity android:name=".view.MainActivity">
         </activity>
 
-
+        <service
+            android:name=".service.HeartBeatService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

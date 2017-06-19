@@ -5,6 +5,7 @@ import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
 import com.jld.InformationRelease.bean.request_bean.ShowdownRestartRequestBean;
 import com.jld.InformationRelease.bean.request_bean.TimeShowdownRequestBean;
+import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.VolumeAdjustRequestBean;
 import com.jld.InformationRelease.bean.response_bean.UpdateProgramResponse;
 import com.jld.InformationRelease.util.URLConstant;
@@ -32,6 +33,14 @@ public interface TerminalFunctionService {
     @POST(URLConstant.BIND_DEVICE)
     Observable<BaseResponse> binding(@Body BindingRequest body);
 
+    /**
+     * 设备解绑
+     *
+     * @param body
+     * @return
+     */
+    @POST(URLConstant.UNBIND_DEVICE)
+    Observable<BaseResponse> unbind(@Body UnbindRequest body);
     /**
      * 节目推送
      *

@@ -59,7 +59,7 @@ public class ProgramBean implements Serializable {
     /**
      * 用户输入的标签
      */
-    private String tab;
+    private String tab="";
     /**
      * 模板ID
      */

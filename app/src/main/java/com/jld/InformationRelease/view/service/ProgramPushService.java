@@ -26,6 +26,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     private static final String TAG = "ProgramPushService";
     private static final int IMG_UPDATE = 0x11;//图片上传请求码
     private static final int PROGRAM_UPDATE = 0x12;//节目上传请求码
+    private static final int UPLOAD_COVER_REQUEST = 0x13;//上传封面
     private static final int UPDATE_IMG = 0x01;//上传图片
     private boolean mImgIsUpdate = false;//图片是否上传完成
     /**
@@ -118,7 +119,14 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     @Override
     public void loadDataSuccess(BaseResponse data, int requestTag) {
         LogUtil.d(TAG, "loadDataSuccess:" + requestTag);
-        if (requestTag == PROGRAM_UPDATE) {
+        if (requestTag == UPLOAD_COVER_REQUEST) {//封面上传完成，再上传轮播图
+            mBody.setCover(data.getMsg());
+            if (mBody.getImages().size() > 0) {
+                mHandler.sendEmptyMessage(UPDATE_IMG);
+            } else {//如果图片为空，或者图片上传过（上传失败重新上传），则直接上传节目
+                updateProgram();
+            }
+        } else if (requestTag == PROGRAM_UPDATE) {
             UpdateProgramResponse response = (UpdateProgramResponse) data;
             mCompleteListener.updateSucceed(response.getData());
         } else if (requestTag == IMG_UPDATE) {//上传图片成功
@@ -148,19 +156,23 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         }
 
         /**
-         * 上传图片
+         * 开始上传
          */
         public void startPush() {
             Gson gson = new Gson();
             String toJson = gson.toJson(mBody);
             LogUtil.d(TAG, "tojson:" + toJson);
-            if (mBody.getImages().size() > 0) {
-                mFilePresenter = new FilePresenter(ProgramPushService.this, ProgramPushService.this);
-                mUpdateImages = mBody.getImages();
-                mHandler.sendEmptyMessage(UPDATE_IMG);
-            } else {//如果图片为空，或者图片上传过（上传失败重新上传），则直接上传节目
-                updateProgram();
-            }
+            mFilePresenter = new FilePresenter(ProgramPushService.this, ProgramPushService.this);
+            mUpdateImages = mBody.getImages();
+            //上传封面
+            if (mBody.getCover().equals("") || mBody.getCover().contains("http://admsgimg.torsun.cn")) {//封面为空或者上传过则直接上传轮播图
+                if (mBody.getImages().size() > 0) {
+                    mHandler.sendEmptyMessage(UPDATE_IMG);
+                } else {//如果图片为空，或者图片上传过（上传失败重新上传），则直接上传节目
+                    updateProgram();
+                }
+            } else//否则上传
+                mFilePresenter.updateFile(mBody.getCover(), UPLOAD_COVER_REQUEST);
         }
     }
 

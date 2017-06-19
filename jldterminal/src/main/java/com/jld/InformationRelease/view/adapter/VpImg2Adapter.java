@@ -23,18 +23,6 @@ import java.util.ArrayList;
 public class VpImg2Adapter extends PagerAdapter {
 
     private static final String TAG = "VpImg2Adapter";
-//    public String[] imgs = {
-//            "http://img5.imgtn.bdimg.com/it/u=1468260657,247068170&fm=23&gp=0.jpg",
-//            "http://img0.imgtn.bdimg.com/it/u=451958898,471147024&fm=23&gp=0.jpg",
-//            "http://img3.imgtn.bdimg.com/it/u=132629542,1898058257&fm=23&gp=0.jpg",
-//            "http://img5.imgtn.bdimg.com/it/u=111513702,2478467957&fm=23&gp=0.jpg",
-//            "http://img2.imgtn.bdimg.com/it/u=1375571120,3184739842&fm=23&gp=0.jpg",
-//            "http://img5.imgtn.bdimg.com/it/u=1252360603,2690701606&fm=23&gp=0.jpg",
-//            "http://img4.imgtn.bdimg.com/it/u=954349616,2203639406&fm=23&gp=0.jpg",
-//    };
-//    public int[] mImgs = {R.mipmap.img1, R.mipmap.img2, R.mipmap.img3,
-//            R.mipmap.img4, R.mipmap.img5};
-
     public ArrayList<ImageView> mViews = new ArrayList<>();
     public Context mContext;
     public ArrayList<String> imgs;
@@ -65,25 +53,25 @@ public class VpImg2Adapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Log.d(TAG, "instantiateItem" + position);
-        ImageView imageView = mViews.get(position);
+        Log.d(TAG, "instantiateItem" + position % mViews.size());
+        ImageView imageView = mViews.get(position % mViews.size());
         Glide.with(mContext)
-                .load(imgs.get(position))
+                .load(imgs.get(position % mViews.size()))
                 .into(imageView);
         container.addView(imageView);
-        return mViews.get(position);
+        return mViews.get(position % mViews.size());
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.d(TAG, "destroyItem" + position);
-        ImageView imageView = mViews.get(position);
+        Log.d(TAG, "destroyItem" + position % mViews.size());
+        ImageView imageView = mViews.get(position % mViews.size());
         container.removeView(imageView);
     }
 
     @Override
     public int getCount() {
-        return mViews.size();
+        return Integer.MAX_VALUE;
     }
 
     @Override

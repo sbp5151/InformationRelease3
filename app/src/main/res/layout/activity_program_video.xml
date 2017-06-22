@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:fitsSystemWindows="true"
+    tools:context="com.jld.InformationRelease.view.my_program.program.ProgramVideoActivity">
+   <RelativeLayout android:layout_width="match_parent"
+                   android:layout_height="match_parent">
+
+
+       <include
+           android:id="@+id/program_video_title"
+           layout="@layout/my_titlebar"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/title_height"/>
+       <android.support.v7.widget.RecyclerView
+           android:id="@+id/rv_program_video_content"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_below="@+id/program_video_title"
+       />
+       <ImageView
+           android:id="@+id/iv_add_video"
+           android:alpha="0.8"
+           android:layout_width="70dp"
+           android:layout_height="70dp"
+           android:layout_alignParentBottom="true"
+           android:layout_alignParentRight="true"
+           android:layout_marginRight="7dip"
+           android:paddingBottom="7dip"
+           android:src="@mipmap/add_program" />
+   </RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

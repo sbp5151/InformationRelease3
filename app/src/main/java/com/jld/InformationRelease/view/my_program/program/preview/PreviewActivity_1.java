@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_terminal.preview;
+package com.jld.InformationRelease.view.my_program.program.preview;
 
 import android.os.Build;
 import android.os.Bundle;

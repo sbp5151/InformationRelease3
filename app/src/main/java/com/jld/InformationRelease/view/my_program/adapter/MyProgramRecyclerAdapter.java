@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_program;
+package com.jld.InformationRelease.view.my_program.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

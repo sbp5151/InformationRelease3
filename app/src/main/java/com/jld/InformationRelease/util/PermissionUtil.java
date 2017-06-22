@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_program.ProgramCompileActivity.REQUEST_READ_EXTERNAL_STORAGE;
+import static com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity.REQUEST_READ_EXTERNAL_STORAGE;
 
 /**
  * 项目名称：InformationRelease

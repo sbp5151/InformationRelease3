@@ -51,7 +51,7 @@ public class FileModel {
     private Context mContext;
     public static final String MULTIPART_FORM_DATA = "multipart/form-data";
     public static final String TEXT_FORM_DATA = "text/plain";
-    public static final String IMAGE_FORM_DATA = "image/*";
+    public static final String IMAGE_FORM_DATA = "video/*";
     private final MediaType mTextType;
     private final MediaType mFileType;
     private final MediaType mImageType;
@@ -97,9 +97,9 @@ public class FileModel {
         RequestBody sign = RequestBody.create(mTextType, md5Sig);
         /**file*/
         File file = new File(filePath);
-        RequestBody fileBody = RequestBody.create(mImageType, file);
+        RequestBody fileBody = RequestBody.create(mFileType, file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
-        mFileService.updateFile(sign,filePart)
+        mFileService.updateFile(sign, filePart)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BaseResponse>() {
@@ -107,6 +107,7 @@ public class FileModel {
                     public void onSubscribe(Disposable d) {
                         LogUtil.d(TAG, "onSubscribe");
                     }
+
                     @Override
                     public void onNext(BaseResponse value) {
                         LogUtil.d(TAG, "onNext:" + value);
@@ -118,11 +119,13 @@ public class FileModel {
                             callback.requestError(new Exception("获取数据错误，请重试！"), requestTag);
                         }
                     }
+
                     @Override
                     public void onError(Throwable e) {
-                        callback.requestError(e,requestTag);
-                        LogUtil.d(TAG, "onError:"+e);
+                        callback.requestError(e, requestTag);
+                        LogUtil.d(TAG, "onError:" + e);
                     }
+
                     @Override
                     public void onComplete() {
                         callback.requestComplete(requestTag);
@@ -139,7 +142,7 @@ public class FileModel {
      *
      * @return 返回响应的内容
      */
-    public void uploadFile2(String imgPath) {
+    public static void uploadFile2(String imgPath,PushFileListener listener) {
         String end = "\r\n";
         String twoHyphens = "--";
         String boundary = "******";
@@ -150,7 +153,7 @@ public class FileModel {
                     .openConnection();// http连接
             // 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
             // 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
-            httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
+            httpURLConnection.setChunkedStreamingMode(1024 * 1024);// 1M
             // 允许输入输出流
             httpURLConnection.setDoInput(true);
             httpURLConnection.setDoOutput(true);
@@ -190,17 +193,28 @@ public class FileModel {
             InputStreamReader isr = new InputStreamReader(is, "utf-8");
             BufferedReader br = new BufferedReader(isr);
             String result = br.readLine();
-
             LogUtil.d(TAG, "水水水水result = " + result);
             dos.close();
             is.close();
             if (!TextUtils.isEmpty(result)) {
                 JSONObject json = new JSONObject(result);
+                String result1 = json.getString("result");
                 String iamgurl = json.getString("msg");
+                if(result1.equals("0")){
+                    listener.pushSucceed(iamgurl);
+                }else{
+                    listener.pushDefeat(result1);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            listener.pushDefeat(e.getLocalizedMessage());
         }
+    }
+
+    public interface PushFileListener{
+         void pushSucceed(String fileUrl);
+         void pushDefeat(String defeat);
     }
 
 }

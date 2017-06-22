@@ -12,8 +12,11 @@ import android.view.View;
  */
 public interface BaseRecyclerViewAdapterClick {
 
-    public interface MyItemClick {
+    public interface MyItemClickListener {
         public void onItemClick(View view, int position);
+    }
+
+    public interface MyItemLongClickListener {
         public void onItemLongClick(View view, int position);
     }
 
@@ -22,5 +25,9 @@ public interface BaseRecyclerViewAdapterClick {
      *
      * @param onItemSelectClick
      */
-    public void setMyItemSelectClick(MyItemClick onItemSelectClick);
+    public void setMyOnClickListener(MyItemClickListener onItemSelectClick);
+
+    public void setMyOnLongClickListener(MyItemLongClickListener onItemSelectClick);
+
+
 }

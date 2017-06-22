@@ -1,7 +1,11 @@
 package com.jld.InformationRelease.util;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.jld.InformationRelease.util.animationlibrary.AccordionTransformer;
 import com.jld.InformationRelease.util.animationlibrary.BackgroundToForegroundTransformer;
@@ -31,7 +35,30 @@ import com.jld.InformationRelease.util.animationlibrary.ZoomOutTranformer;
 public class AnimationUtil {
 
     private static ViewPagerScroller sScroller;
-
+    /**
+     * 按钮动画
+     *
+     * @param imageView
+     * @param duration
+     */
+    public static void togetherRun(View imageView, int duration) {
+        if (null == imageView) {
+            return;
+        }
+        if (duration <= 0) {
+            duration = 400;
+        }
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(imageView, "scaleX",
+                1.0f, 0.8f, 1.1f, 1.0f);
+        ObjectAnimator anim2 = ObjectAnimator.ofFloat(imageView, "scaleY",
+                1.0f, 0.8f, 1.1f, 1.0f);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.setDuration(duration);
+        animSet.setInterpolator(new LinearInterpolator());
+        //两个动画同时执行
+        animSet.playTogether(anim1, anim2);
+        animSet.start();
+    }
     public static void setAnimation(int a, ViewPager viewPager, Context context) {
         if (a == 17) {
             a = 1;

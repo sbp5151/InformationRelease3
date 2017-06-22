@@ -23,7 +23,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String program_id = "program_id";
     public static final String imgs = "imgs";
     public static final String texts = "texts";
-    public static final String vodeos = "vodeos";
+    public static final String videos = "videos";
     public static final String upload_state = "upload_state";
     public static final String tab = "tab";
     public static final String user_id = "user_id";
@@ -41,7 +41,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + model_id + " varchar(30),"//模板ID
                     + program_id + " varchar(30) UNIQUE,"//节目ID 唯一
                     + imgs + " varchar(1000),"//图片集合
-                    + vodeos + " varchar(1000),"//视频集合
+                    + videos + " varchar(1000),"//视频集合
                     + texts + " varchar(2000),"//“商品”集合
                     + macs + " varchar(1000),"//mac集合
                     + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传

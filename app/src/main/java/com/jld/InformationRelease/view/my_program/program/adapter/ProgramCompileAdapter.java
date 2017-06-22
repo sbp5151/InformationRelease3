@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_program;
+package com.jld.InformationRelease.view.my_program.program.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,7 +17,7 @@ import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
-import com.jld.InformationRelease.view.my_terminal.adapter.ProgramCompileImgItemAdapter;
+import com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity;
 
 import java.util.ArrayList;
 
@@ -43,9 +43,10 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public static final int ITEM_TAG_TEXT = 4;
     public ProgramCompileImgItemAdapter mImgAdapter;
     private String[] names = {
-            "草莓奶茶","巧克力奶茶","香芋奶茶","哈密瓜奶茶","木瓜奶茶","椰子奶茶"
-            ,"咖啡奶茶","西瓜奶茶","香蕉奶茶","柳橙奶茶","葡萄奶茶","双皮奶"
-            ,"烧仙草","抹茶奶昔","草莓奶昔","香芋奶昔"};
+            "草莓奶茶", "巧克力奶茶", "香芋奶茶", "哈密瓜奶茶", "木瓜奶茶", "椰子奶茶"
+            , "咖啡奶茶", "西瓜奶茶", "香蕉奶茶", "柳橙奶茶", "葡萄奶茶", "双皮奶"
+            , "烧仙草", "抹茶奶昔", "草莓奶昔", "香芋奶昔"};
+
     // item类型
     private enum ITEM_TYPE {
         ITEM_TYPE_TEXT,//文字
@@ -54,21 +55,21 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ITEM_TYPE_IMG_HEAD,//图片head
     }
 
-    public ProgramCompileAdapter(ProgramBean bean, Context context,boolean isNew) {
+    public ProgramCompileAdapter(ProgramBean bean, Context context, boolean isNew) {
         mDatas = bean;
         LogUtil.d(TAG, "ProgramBean:" + bean);
         mContext = (ProgramCompileActivity) context;
         mImgAdapter = new ProgramCompileImgItemAdapter(mContext, mDatas.getImages(), mDatas.getCover());
-        if(isNew){//假数据
+        if (isNew) {//假数据
             ArrayList<ProgramBean.Commodity> texts = mDatas.getTexts();
             texts.remove(0);
             for (int i = 0; i < names.length; i++) {
 
                 ProgramBean.Commodity commodity = new ProgramBean.Commodity();
                 commodity.setName(names[i]);
-                if(i>10){
+                if (i < 10) {
                     commodity.setPrice("8");
-                }else{
+                } else {
                     commodity.setPrice("10");
                 }
                 texts.add(commodity);

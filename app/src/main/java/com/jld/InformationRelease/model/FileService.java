@@ -13,6 +13,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Streaming;
 
 /**
  * 项目名称：InformationRelease2
@@ -31,6 +32,7 @@ public interface FileService {
      * @return
      */
     @Multipart
+    @Streaming
     @POST(URLConstant.PUSH_FILE)
     Observable<BaseResponse> updateFile(
             @Part("sign") RequestBody sign,

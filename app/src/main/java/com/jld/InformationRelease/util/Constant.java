@@ -21,5 +21,14 @@ public class Constant {
      */
     public static final String SHARE_KEY = "jld_share_key";
 
-
+    //奶茶模板
+    public static final String NAICHA_MODEL_1="1";
+    //幻灯片模板
+    public static final String IMAGE_MODEL="2";
+    //视频广告模板
+    public static final String VIDEO_MODEL="3";
+    /**
+     * 保存终端设备
+     */
+    public static final String MY_TERMINAL = "my_terminal";
 }

@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_terminal.adapter;
+package com.jld.InformationRelease.view.my_program.program.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -29,11 +29,11 @@ public class ProgramCompileImgItemAdapter extends RecyclerView.Adapter<ProgramCo
     private ArrayList<String> mDatas;
     public static final String TAG = "ProgramCompileImgItemAdapter";
 
-    public ProgramCompileImgItemAdapter(Context context, ArrayList<String> datas,String cover) {
+    public ProgramCompileImgItemAdapter(Context context, ArrayList<String> datas, String cover) {
         mContext = context;
         this.mDatas = datas;
-        LogUtil.d(TAG,"cover:"+cover);
-        mDatas.add(0,cover);//封面
+        LogUtil.d(TAG, "cover:" + cover);
+        mDatas.add(0, cover);//封面
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ProgramCompileImgItemAdapter extends RecyclerView.Adapter<ProgramCo
     @Override
     public void onBindViewHolder(final ProgramCompileImgItemAdapter.MyHolder holder, int position) {
         if (position == 0) {//封面
-            LogUtil.d(TAG,"cover:"+mDatas.get(position));
+            LogUtil.d(TAG, "cover:" + mDatas.get(position));
             holder.mCover.setVisibility(View.VISIBLE);
             Glide.with(mContext)
                     .load(mDatas.get(position))
@@ -94,12 +94,12 @@ public class ProgramCompileImgItemAdapter extends RecyclerView.Adapter<ProgramCo
     }
 
     public ArrayList<String> getDatas() {
-        LogUtil.d(TAG,"------mDatas:"+mDatas);
+        LogUtil.d(TAG, "------mDatas:" + mDatas);
         ArrayList<String> imgs = new ArrayList<>();//去除封面
         for (int i = 1; i < mDatas.size(); i++) {
             imgs.add(mDatas.get(i));
         }
-        LogUtil.d(TAG,"------imgs:"+imgs);
+        LogUtil.d(TAG, "------imgs:" + imgs);
         return imgs;
     }
 
@@ -115,11 +115,15 @@ public class ProgramCompileImgItemAdapter extends RecyclerView.Adapter<ProgramCo
     public void addCover(String coverPath) {
         mDatas.remove(0);
         mDatas.add(0, coverPath);
+        LogUtil.d(TAG, "mDatas:" + mDatas.get(0));
         notifyDataSetChanged();
     }
-    public String getCover(){
+
+    public String getCover() {
+        LogUtil.d(TAG, "mDatas:" + mDatas);
         return mDatas.get(0);
     }
+
     public void refreshData(ArrayList<String> imgPaths) {
         imgPaths.add(0, mDatas.get(0));//保留封面
         mDatas.clear();

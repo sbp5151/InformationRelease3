@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_terminal.adapter;
+package com.jld.InformationRelease.view.my_program.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
+import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
 
     public ModelAdapter(ArrayList<GetModelResponse.Model> beans, Context context) {
         this.beans = beans;
+        LogUtil.d(TAG, "beans:" + beans);
         mContext = context;
     }
 
@@ -100,9 +102,11 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
     public List<GetModelResponse.Model> getData() {
         return beans;
     }
-    public GetModelResponse.Model getModel(int position){
+
+    public GetModelResponse.Model getModel(int position) {
         return beans.get(position);
     }
+
     public void setDataChange(ArrayList<GetModelResponse.Model> beans) {
         this.beans = beans;
         notifyDataSetChanged();

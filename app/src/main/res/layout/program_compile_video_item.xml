@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="70dp"
+              android:background="@color/background_dark"
+              android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_video_item_path"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/video_path"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="6dp"
+        android:singleLine="true"
+    />
+    <LinearLayout android:layout_width="60dp"
+                  android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btn_video_item_path_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/video_select"
+            android:text="@string/select"/>
+    </LinearLayout>
+</LinearLayout>

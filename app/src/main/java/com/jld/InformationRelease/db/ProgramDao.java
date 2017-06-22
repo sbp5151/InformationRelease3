@@ -7,12 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -27,6 +26,7 @@ import static com.jld.InformationRelease.db.DataBaseHelper.table_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.texts;
 import static com.jld.InformationRelease.db.DataBaseHelper.upload_state;
 import static com.jld.InformationRelease.db.DataBaseHelper.user_id;
+import static com.jld.InformationRelease.db.DataBaseHelper.videos;
 
 /**
  * 项目名称：InformationRelease
@@ -96,33 +96,34 @@ public class ProgramDao {
             ProgramBean bean = new ProgramBean();
             String commoditys = cursor.getString(cursor.getColumnIndex(DataBaseHelper.texts));
             String model_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.model_id));
+            String tab = cursor.getString(cursor.getColumnIndex(DataBaseHelper.tab));
             String program_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.program_id));
             String is_load = cursor.getString(cursor.getColumnIndex(DataBaseHelper.upload_state));
             String imgs = cursor.getString(cursor.getColumnIndex(DataBaseHelper.imgs));
+            String video = cursor.getString(cursor.getColumnIndex(DataBaseHelper.videos));
             String mac = cursor.getString(cursor.getColumnIndex(DataBaseHelper.macs));
             int table_id = cursor.getInt(cursor.getColumnIndex(DataBaseHelper.table_id));
             String user_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.user_id));
             String creation_time = cursor.getString(cursor.getColumnIndex(DataBaseHelper.creation_time));
             String cover = cursor.getString(cursor.getColumnIndex(DataBaseHelper.cover));
-            //commodity
-            JSONArray array = new JSONArray(commoditys);
-            ArrayList<ProgramBean.Commodity> commodities = new ArrayList<>();
-            for (int i = 0; i < array.length(); i++) {
-                ProgramBean.Commodity commodity = new ProgramBean.Commodity();
-                JSONObject o = array.getJSONObject(i);
-                commodity.setName(o.getString("name"));
-                commodity.setPrice(o.getString("price"));
-                commodities.add(commodity);
+            //text
+            if (!TextUtils.isEmpty(commoditys)) {
+                ArrayList<ProgramBean.Commodity> commodities = new Gson().fromJson(commoditys, new TypeToken<ArrayList<ProgramBean.Commodity>>() {
+                }.getType());
+                bean.setTexts(commodities);
             }
-            bean.setTexts(commodities);
+            //videos
+            if (!TextUtils.isEmpty(video)) {
+                ArrayList<String> videos = new Gson().fromJson(video, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                bean.setVideos(videos);
+            }
             //imgs
-            ArrayList<String> arImg = new ArrayList<>();
-            JSONArray imgarry = new JSONArray(imgs);
-            for (int i = 0; i < imgarry.length(); i++) {
-                String o = (String) imgarry.get(i);
-                arImg.add(o);
+            if (!TextUtils.isEmpty(imgs)) {
+                ArrayList<String> arImg = new Gson().fromJson(imgs, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                bean.setImages(arImg);
             }
-            bean.setImages(arImg);
             //cover
             bean.setCover(cover);
             //model_id
@@ -137,14 +138,14 @@ public class ProgramDao {
             bean.setCreation_time(creation_time);
             //user_id
             bean.setUserid(user_id);
+            //tab
+            bean.setTab(tab);
             //mac
-            ArrayList<String> macs = new ArrayList<>();
-            JSONArray macarry = new JSONArray(mac);
-            for (int i = 0; i < macarry.length(); i++) {
-                String o = (String) macarry.get(i);
-                macs.add(o);
+            if (!TextUtils.isEmpty(mac)) {
+                ArrayList<String> macs = new Gson().fromJson(mac, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                bean.setDeviceMacs(macs);
             }
-            bean.setDeviceMacs(macs);
             data.add(bean);
         }
         return data;
@@ -175,14 +176,14 @@ public class ProgramDao {
      */
     public void updateInProgram(ProgramBean bean, String userID) throws Exception {
         LogUtil.d(TAG, "updateInProgram:" + bean);
-        if (bean == null || TextUtils.isEmpty(bean.getTable_id()+""))
+        if (bean == null || TextUtils.isEmpty(bean.getTable_id() + ""))
             throw new Exception("空指针异常");
         SQLiteDatabase wDb = mDb.getWritableDatabase();
         wDb.beginTransaction();
         ContentValues content = getContentValues(bean, userID);
         content.put(program_id, bean.getProgramId());
         content.put(upload_state, bean.getState());
-        wDb.update(TABLE_NAME, content, table_id + "=?", new String[]{bean.getTable_id()+""});
+        wDb.update(TABLE_NAME, content, table_id + "=?", new String[]{bean.getTable_id() + ""});
         wDb.setTransactionSuccessful();
         wDb.endTransaction();
     }
@@ -225,6 +226,10 @@ public class ProgramDao {
                 new Object[]{programId, tableId});
     }
 
+    public void updateProgramTab() {
+
+    }
+
     /**
      * 根据数据库ID更新节目
      */
@@ -247,10 +252,11 @@ public class ProgramDao {
         content.put(model_id, bean.getModelId());
         content.put(program_id, bean.getProgramId());
         content.put(imgs, mGson.toJson(bean.getImages()));
+        content.put(videos, mGson.toJson(bean.getVideos()));
         content.put(texts, mGson.toJson(bean.getTexts()));
         content.put(macs, mGson.toJson(bean.getDeviceMacs()));
         content.put(upload_state, bean.getState());
-        content.put(tab, mGson.toJson(bean.getTab()));
+        content.put(tab, bean.getTab());
         content.put(DataBaseHelper.cover, bean.getCover());
         return content;
     }

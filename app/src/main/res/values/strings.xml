@@ -110,5 +110,15 @@
     <string name="volume_adjustment">音量调节</string>
     <string name="get_screenshots">获取截屏</string>
     <string name="function_developed">此功能待开发...</string>
+    <string name="input_program_tab">请输入节目标识</string>
+    <string name="program_hint">节目标识</string>
+    <string name="select_model">模板选择</string>
+    <string name="add">增加</string>
+    <string name="select">选择</string>
+    <string name="add_video_max">最对添加10个视频广告</string>
+    <string name="play_path_null">没有播放数据</string>
+    <string name="play_first">第一个</string>
+    <string name="please_compile">请编辑节目</string>
+    <string name="video_size_too_big">选择的文件大于100M</string>
 
 </resources>

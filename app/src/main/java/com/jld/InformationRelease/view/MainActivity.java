@@ -54,7 +54,7 @@ public class MainActivity extends BaseActivity
 
     private static final String TAG = "MainActivity";
     public MyTerminalFragment mTerminal_fragment;
-    private MyProgramFragment mMyModelFragment;
+    private MyProgramFragment mMyProgramFragment;
     private SystemModelFragment mSystemModelFragment;
     private Fragment mScanCodeFragment;
     private SettingFragment mSettingFragment;
@@ -148,13 +148,13 @@ public class MainActivity extends BaseActivity
 //            mTvComplete.setVisibility(View.GONE);
         }
         if (id == R.id.menu_my_model) {//节目列表
-            mMyModelFragment = (MyProgramFragment) fm.findFragmentByTag(MY_MODEL_TAG);
-            if (mMyModelFragment == null) {
-                mMyModelFragment = new MyProgramFragment();
-                maps.put(id, mMyModelFragment);
-                ft.add(R.id.main_fragment, mMyModelFragment, MY_MODEL_TAG);
+            mMyProgramFragment = (MyProgramFragment) fm.findFragmentByTag(MY_MODEL_TAG);
+            if (mMyProgramFragment == null) {
+                mMyProgramFragment = new MyProgramFragment();
+                maps.put(id, mMyProgramFragment);
+                ft.add(R.id.main_fragment, mMyProgramFragment, MY_MODEL_TAG);
             } else {
-                ft.show(mMyModelFragment);
+                ft.show(mMyProgramFragment);
             }
         } else if (id == R.id.menu_system_model) {//系统模板
             mSystemModelFragment = (SystemModelFragment) fm.findFragmentByTag(SYSTEM_MODEL_TAG);
@@ -313,8 +313,8 @@ public class MainActivity extends BaseActivity
             if (mSetNameDialog.isShowing())
                 mSetNameDialog.dismiss();
             //刷新界面
-            if (mMyModelFragment != null && mMyModelFragment.mAdapter != null)
-                mMyModelFragment.initData();
+            if (mTerminal_fragment != null && mTerminal_fragment.mAdapter != null)
+                mTerminal_fragment.initData();
         }
     }
 
@@ -324,6 +324,4 @@ public class MainActivity extends BaseActivity
             ToastUtil.showToast(this, e.getMessage(), 3000);
         }
     }
-
-
 }

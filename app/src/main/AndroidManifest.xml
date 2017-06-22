@@ -52,7 +52,7 @@
             android:name=".view.login_register.RegisterActivity"
             android:label="@string/title_activity_register">
         </activity>
-        <activity android:name=".view.my_program.ProgramCompileActivity"/>
+        <activity android:name=".view.my_program.program.ProgramCompileActivity"/>
         <activity android:name=".util.zxing.activity.CaptureActivity">
         </activity>
 
@@ -62,10 +62,10 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".view.my_terminal.SelectModelActivity">
+        <activity android:name=".view.my_program.SelectModelActivity">
         </activity>
         <activity
-            android:name=".view.my_terminal.preview.PreviewActivity_1"
+            android:name=".view.my_program.program.preview.PreviewActivity_1"
             android:screenOrientation="landscape"/>
         <!-- photo select -->
         <activity
@@ -75,6 +75,18 @@
         <activity
             android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
             android:theme="@style/PhotoPickerTheme"/>
+        <activity android:name=".view.my_program.program.ProgramVideoActivity"
+        >
+        </activity>
+        <activity android:name=".view.my_program.program.ProgramImageActivity">
+        </activity>
+        <activity android:name=".view.my_program.program.BaseProgramCompileActivity">
+        </activity>
+        <activity android:name=".view.my_program.program.preview.ProgramVideoPreview"
+                  android:screenOrientation="landscape"
+                  android:theme="@style/AppTheme.NoBar"
+        >
+        </activity>
     </application>
 
 </manifest>

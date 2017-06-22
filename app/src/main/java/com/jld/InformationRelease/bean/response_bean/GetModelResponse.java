@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class GetModelResponse extends BaseResponse {
 
 
-    private ArrayList<Model> models;
+    private ArrayList<Model> models = new ArrayList();
 
     public ArrayList<Model> getModels() {
         return models;
@@ -32,7 +32,7 @@ public class GetModelResponse extends BaseResponse {
                 '}';
     }
 
-    public class Model {
+    public  class Model {
         /**
          * 模板ID
          */

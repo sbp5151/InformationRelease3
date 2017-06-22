@@ -1,8 +1,6 @@
 package com.jld.InformationRelease.view.my_program;
 
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +20,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,12 +28,16 @@ import android.widget.TextView;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.db.ProgramDao;
+import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
+import com.jld.InformationRelease.view.my_program.adapter.MyProgramRecyclerAdapter;
+import com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_program.program.ProgramVideoActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 
 import org.json.JSONException;
@@ -66,7 +67,7 @@ public class MyProgramFragment extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case NEW_PROGRAM:
-                    Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
+                    Intent intent = new Intent(mActivity, SelectModelActivity.class);
                     intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
                     startActivityForResult(intent, mProgramRequestCode);
                     break;
@@ -81,13 +82,13 @@ public class MyProgramFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         LogUtil.d(TAG, "hidden:" + hidden);
-        initData();
-        if (mAllProgram != null)
-            mAdapter.update(mAllProgram);
+        if (!hidden)
+            initData();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        LogUtil.d(TAG, "onCreate:");
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
     }
@@ -95,6 +96,8 @@ public class MyProgramFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LogUtil.d(TAG, "onCreateView:");
+
         View view = inflater.inflate(R.layout.fragment_my_model, container, false);
         SharedPreferences sp = mActivity.getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mUserid = sp.getString(UserConstant.USER_ID, "");
@@ -103,13 +106,21 @@ public class MyProgramFragment extends Fragment {
             return view;
         }
         initView(view);
+        initData();
         return view;
     }
 
     @Override
     public void onStart() {
-        super.onStart();
+        LogUtil.d(TAG, "onStart:");
         initData();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtil.d(TAG, "onStop:");
     }
 
     private void initView(View view) {
@@ -171,7 +182,7 @@ public class MyProgramFragment extends Fragment {
                     mAdapter.changeCompileState();
                     break;
                 case R.id.imagev_add_trouteam://新建节目单
-                    togetherRun(mIv_add, 270);
+                    AnimationUtil.togetherRun(mIv_add, 270);
                     mHandler.sendEmptyMessageDelayed(NEW_PROGRAM, 270);
                     break;
             }
@@ -181,10 +192,24 @@ public class MyProgramFragment extends Fragment {
         @Override
         public void onItemClickListen(View view, int position) {
             if (!mAdapter.getCompileState()) {//在编辑状态不让点击
-                Intent intent = new Intent(mActivity, ProgramCompileActivity.class);
-                intent.putExtra("program_data", mAllProgram.get(position));//节目数据
-                intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
-                startActivityForResult(intent, mProgramRequestCode);
+
+                ProgramBean programBean = mAllProgram.get(position);
+                Intent intent;
+                switch (programBean.getModelId()) {
+                    case Constant.VIDEO_MODEL:
+                        intent = new Intent(mActivity, ProgramVideoActivity.class);
+                        intent.putExtra("program_data", programBean);//节目数据
+                        startActivityForResult(intent, mProgramRequestCode);
+                        break;
+                    case Constant.IMAGE_MODEL:
+                        break;
+                    case Constant.NAICHA_MODEL_1:
+                        intent = new Intent(mActivity, ProgramCompileActivity.class);
+                        intent.putExtra("program_data", programBean);//节目数据
+//                        intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
+                        startActivityForResult(intent, mProgramRequestCode);
+                        break;
+                }
             }
         }
 
@@ -223,6 +248,7 @@ public class MyProgramFragment extends Fragment {
         if (requestCode == mProgramRequestCode && resultCode == mProgramResultCode) {
             //再发布
             ProgramBean body = (ProgramBean) data.getSerializableExtra("body");
+            LogUtil.d(TAG, "onActivityResult:" + body);
             if (body != null) {
                 mProgram = body;
                 LogUtil.d(TAG, "获取返回的节目数据：" + mProgram);
@@ -243,6 +269,7 @@ public class MyProgramFragment extends Fragment {
         mActivity.bindService(intent, mCon, Context.BIND_AUTO_CREATE);
     }
 
+    private boolean isUnbind;
     ServiceConnection mCon = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -260,6 +287,7 @@ public class MyProgramFragment extends Fragment {
                     mTvComplete.setVisibility(View.VISIBLE);
                     //上传成功 解绑service
                     mActivity.unbindService(mCon);
+                    isUnbind = true;
                     //更新数据库为已上传状态
                     LogUtil.d(TAG, "发布成功:");
                     try {
@@ -283,6 +311,7 @@ public class MyProgramFragment extends Fragment {
                     mTvComplete.setVisibility(View.VISIBLE);
                     //解绑service
                     mActivity.unbindService(mCon);
+                    isUnbind = true;
                     //更新数据库为已上传状态
                     LogUtil.d(TAG, "发布失败:");
                     try {
@@ -302,34 +331,17 @@ public class MyProgramFragment extends Fragment {
             //开始上传
             myBinder.startPush();
         }
+
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
 
         }
     };
 
-    /**
-     * 按钮动画
-     *
-     * @param imageView
-     * @param duration
-     */
-    public static void togetherRun(ImageView imageView, int duration) {
-        if (null == imageView) {
-            return;
-        }
-        if (duration <= 0) {
-            duration = 400;
-        }
-        ObjectAnimator anim1 = ObjectAnimator.ofFloat(imageView, "scaleX",
-                1.0f, 0.8f, 1.1f, 1.0f);
-        ObjectAnimator anim2 = ObjectAnimator.ofFloat(imageView, "scaleY",
-                1.0f, 0.8f, 1.1f, 1.0f);
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.setDuration(duration);
-        animSet.setInterpolator(new LinearInterpolator());
-        //两个动画同时执行
-        animSet.playTogether(anim1, anim2);
-        animSet.start();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!isUnbind)
+            mActivity.unbindService(mCon);
     }
 }

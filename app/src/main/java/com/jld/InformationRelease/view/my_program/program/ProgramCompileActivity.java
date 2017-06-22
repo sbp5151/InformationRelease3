@@ -1,4 +1,4 @@
-package com.jld.InformationRelease.view.my_program;
+package com.jld.InformationRelease.view.my_program.program;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -38,8 +38,9 @@ import com.foamtrace.photopicker.PhotoPreviewActivity;
 import com.foamtrace.photopicker.SelectModel;
 import com.foamtrace.photopicker.intent.PhotoPickerIntent;
 import com.foamtrace.photopicker.intent.PhotoPreviewIntent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
@@ -51,22 +52,23 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
-import com.jld.InformationRelease.view.my_terminal.adapter.ProgramCompileImgItemAdapter;
-import com.jld.InformationRelease.view.my_terminal.preview.PreviewActivity_1;
+import com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileAdapter;
+import com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileImgItemAdapter;
+import com.jld.InformationRelease.view.my_program.program.preview.PreviewActivity_1;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileAdapter.ITEM_TAG_IMG;
+import static com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileAdapter.ITEM_TAG_IMG_HEAD;
+import static com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT;
+import static com.jld.InformationRelease.view.my_program.program.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT_HEAD;
 import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
-import static com.jld.InformationRelease.view.my_program.ProgramCompileAdapter.ITEM_TAG_IMG;
-import static com.jld.InformationRelease.view.my_program.ProgramCompileAdapter.ITEM_TAG_IMG_HEAD;
-import static com.jld.InformationRelease.view.my_program.ProgramCompileAdapter.ITEM_TAG_TEXT;
-import static com.jld.InformationRelease.view.my_program.ProgramCompileAdapter.ITEM_TAG_TEXT_HEAD;
 
 /**
- * 三：节目编辑
+ * 奶茶价格表 节目编辑
  */
-public class ProgramCompileActivity extends BaseActivity {
+public class ProgramCompileActivity extends BaseProgramCompileActivity {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0x01;
     //外部存储读取权限申请
@@ -74,12 +76,14 @@ public class ProgramCompileActivity extends BaseActivity {
     public static final int REQUEST_PREVIEW_CODE = 0x03;
     //封面选择
     private static final int REQUEST_CODE_COVER = 0x04;
+
+    public static final String MODEL_ID = "1";
     private static final String TAG = "ProgramCompileActivity";
     ArrayList<ProgramBean.Commodity> mCommodities = new ArrayList();
     ArrayList<String> mCheckMac = new ArrayList();
     private ProgramCompileAdapter mAdapter;
     private ProgressDialog mPhotoCompileDialog;
-    public String modleId;
+    public String modleId = Constant.NAICHA_MODEL_1;
     private RecyclerView mRecyclerView;
     private View mHead_head;
     private TextView mTv_head;
@@ -87,13 +91,13 @@ public class ProgramCompileActivity extends BaseActivity {
     private PopupWindow mPopupWindow;
     private ImageButton mIb_tool;
     SharedPreferences sp;
-    ProgramBean mProgramBean;
     boolean mIsAgainCompile = false;//再次编辑进入
     private ArrayList<String> mPhotos;
     private ArrayList<String> mLastImg = new ArrayList<>();
     private ArrayList<String> mLastText = new ArrayList<>();
     private String mLastCover = "";
-    private ArrayList<TerminalBeanSimple> mTerminals;
+    //节目标识
+    private String mProgram_tab = "";
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -101,17 +105,16 @@ public class ProgramCompileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         LogUtil.d(TAG, "onCreate");
         setContentView(R.layout.activity_program_compile);
-        //获取节目模板ID
-        modleId = (String) getIntent().getSerializableExtra("modelid");
         //获取终端设备数据
-        mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
+//        mTerminals = getIntent().getParcelableArrayListExtra("terminal_data");
         //再编辑 节目数据
         mProgramBean = (ProgramBean) getIntent().getSerializableExtra("program_data");
         LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
 
         if (mProgramBean == null) {
             mProgramBean = new ProgramBean();
-            modleId = "001";
+            mProgramBean.setModelId(MODEL_ID);
+            setTabDialog();
         } else {
             mIsAgainCompile = true;
             modleId = mProgramBean.getModelId();
@@ -153,12 +156,10 @@ public class ProgramCompileActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         //initData
         if (!mIsAgainCompile) {//新建节目初始化数据
-            if (!modleId.equals("002")) {// "002不添加文字"
-                mCommodities.add(new ProgramBean.Commodity("", ""));
-            }
+            mCommodities.add(new ProgramBean.Commodity("", ""));
             mProgramBean.setTexts(mCommodities);
         }
-        mAdapter = new ProgramCompileAdapter(mProgramBean, this,!mIsAgainCompile);
+        mAdapter = new ProgramCompileAdapter(mProgramBean, this, !mIsAgainCompile);
         mRecyclerView.setAdapter(mAdapter);
         //滑动监听
         mRecyclerView.addOnScrollListener(mOnScrollListener);
@@ -193,27 +194,6 @@ public class ProgramCompileActivity extends BaseActivity {
         });
     }
 
-    public void showPopupwindow() {
-        mPopupWindow = new PopupWindow(this);
-        View contentView = getLayoutInflater().inflate(R.layout.program_popupwindow_layout, null);
-        contentView.findViewById(R.id.pp_program_push).setOnClickListener(mOnClickListener);
-        contentView.findViewById(R.id.pp_preview).setOnClickListener(mOnClickListener);
-        contentView.findViewById(R.id.pp_save).setOnClickListener(mOnClickListener);
-        mPopupWindow.setContentView(contentView);
-        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth(GeneralUtil.dip2px(this, 100));
-        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
-        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
-        mPopupWindow.showAsDropDown(mIb_tool, GeneralUtil.dip2px(this, 21), GeneralUtil.dip2px(this, -21));
-        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mIb_tool.setClickable(true);
-                mIb_tool.setEnabled(true);
-            }
-        });
-    }
 
     ProgramCompileAdapter.MyItemClick mMyItemClick = new ProgramCompileAdapter.MyItemClick() {
 
@@ -275,6 +255,7 @@ public class ProgramCompileActivity extends BaseActivity {
                     terminalSelect();
                     break;
                 case R.id.pp_preview://预览
+                    mPopupWindow.dismiss();
                     programPreview();
                     break;
                 case R.id.pp_save://保存
@@ -336,7 +317,6 @@ public class ProgramCompileActivity extends BaseActivity {
      * 节目预览
      */
     public void programPreview() {
-        mPopupWindow.dismiss();
         ArrayList<String> imgs = mAdapter.getImgDatas(true);
         ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
         ProgramBean body = new ProgramBean();
@@ -370,6 +350,32 @@ public class ProgramCompileActivity extends BaseActivity {
         builder.create().show();
     }
 
+
+    /**
+     * 推送、预览、保存
+     */
+    public void showPopupwindow() {
+        mPopupWindow = new PopupWindow(this);
+        View contentView = getLayoutInflater().inflate(R.layout.program_popupwindow_layout, null);
+        contentView.findViewById(R.id.pp_program_push).setOnClickListener(mOnClickListener);
+        contentView.findViewById(R.id.pp_preview).setOnClickListener(mOnClickListener);
+        contentView.findViewById(R.id.pp_save).setOnClickListener(mOnClickListener);
+        mPopupWindow.setContentView(contentView);
+        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        mPopupWindow.setWidth(GeneralUtil.dip2px(this, 100));
+        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
+        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
+        mPopupWindow.showAsDropDown(mIb_tool, GeneralUtil.dip2px(this, 21), GeneralUtil.dip2px(this, -21));
+        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                mIb_tool.setClickable(true);
+                mIb_tool.setEnabled(true);
+            }
+        });
+    }
+
     /**
      * 保存节目到数据库
      */
@@ -385,8 +391,8 @@ public class ProgramCompileActivity extends BaseActivity {
 //        ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
 //        ProgramBean body = new ProgramBean();
         mProgramBean.setCreation_time(GeneralUtil.getTimeStr());
-        mProgramBean.getImages().remove(0);
         mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
+        mProgramBean.getImages().remove(0);
 //        body.setLift_texts(data);//名称和价格
 //        body.setImages(imgs);//图片广告
         mProgramBean.setModelId(modleId);//模板ID
@@ -444,16 +450,26 @@ public class ProgramCompileActivity extends BaseActivity {
         mProgramBean.getImages().remove(0);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
+        LogUtil.d(TAG, "programPush:" + mProgramBean);
         setResult(mProgramResultCode, intent);//编辑结果返回
         finish();
     }
+
+    ArrayList<TerminalBeanSimple> mTerminals = null;
 
     /**
      * 终端选择
      */
     private void terminalSelect() {
-        LogUtil.d(TAG, "terminalSelect:" + mTerminals);
-        if (mTerminals.size() <= 0) {
+        String terminalJson = sp.getString(Constant.MY_TERMINAL, "");
+        LogUtil.d(TAG, "terminalJson:" + terminalJson);
+        if (!TextUtils.isEmpty(terminalJson)) {
+            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<TerminalBeanSimple>>() {
+            }.getType());
+        }
+        LogUtil.d(TAG, "mTerminals:" + mTerminals);
+
+        if (mTerminals == null || mTerminals.size() <= 0) {
             ToastUtil.showToast(this, getString(R.string.terminal_null), 3000);
             return;
         }
@@ -467,7 +483,6 @@ public class ProgramCompileActivity extends BaseActivity {
         for (int i = 0; i < terminalBoolean.length; i++) {
             terminalBoolean[i] = false;
         }
-
         ArrayList<String> select_item = new ArrayList<>();
         for (int i = 0; i < mTerminals.size(); i++) {
             if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
@@ -654,7 +669,7 @@ public class ProgramCompileActivity extends BaseActivity {
                     //图片压缩RxJava
                     presenter.bitmapCompress(photoBmp, miniImgPath);
                 } else {
-                    LogUtil.d(TAG, "不压缩:");
+                    LogUtil.d(TAG, "不压缩:" + isCompressCover);
                     //添加图片并更新
                     if (isCompressCover) {//封面
                         mAdapter.mImgAdapter.addCover(miniImgPath);

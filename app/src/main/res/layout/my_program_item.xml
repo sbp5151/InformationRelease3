@@ -27,7 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="left|center"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="30dp"
                     android:text="节目测试"
                     android:textColor="@android:color/black"
                     android:textSize="18dp"/>
@@ -38,6 +38,7 @@
                     android:layout_height="match_parent"
                     android:gravity="bottom|right"
                     android:paddingRight="10dp"
+                    android:text="2018/11/12/3"
                     android:textSize="14dp"/>
 
             <ImageView
@@ -58,6 +59,7 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:padding="16dp"
+            android:visibility="gone"
             android:src="@drawable/program_delete_click"
         />
     </LinearLayout>

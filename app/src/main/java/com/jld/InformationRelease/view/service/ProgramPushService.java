@@ -12,9 +12,11 @@ import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.UpdateProgramResponse;
 import com.jld.InformationRelease.interfaces.IViewListen;
+import com.jld.InformationRelease.model.FileModel;
 import com.jld.InformationRelease.presenter.FilePresenter;
 import com.jld.InformationRelease.presenter.UploadProgramPresenter;
 import com.jld.InformationRelease.util.LogUtil;
+import com.jld.InformationRelease.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,10 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     private static final int IMG_UPDATE = 0x11;//图片上传请求码
     private static final int PROGRAM_UPDATE = 0x12;//节目上传请求码
     private static final int UPLOAD_COVER_REQUEST = 0x13;//上传封面
+    private static final int VIDEO_UPDATE = 0x14;//上传视频
     private static final int UPDATE_IMG = 0x01;//上传图片
+    private static final int UPDATE_VIDEO = 0x02;//上传视频
+    private static final int UPDATE_VIDEO_DEFEAT = 0x03;//上传视频失败
     private boolean mImgIsUpdate = false;//图片是否上传完成
     /**
      * 上传完成监听
@@ -39,6 +44,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     ProgramBean mBody;
     private MyBinder mMyBinder;
     private int update_img_num = 0;
+    private int update_video_num = 0;
 
     Handler mHandler = new Handler() {
         @Override
@@ -51,8 +57,8 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
                     if (update_img_num < mUpdateImages.size()) {
                         String imgurl = mUpdateImages.get(update_img_num);
                         LogUtil.d(TAG, "imgurl:" + imgurl);
-                        if (imgurl.contains("http://admsgimg.torsun.cn")) {
-                            mImgUrl.add(imgurl);//上传过不再上传
+                        if (imgurl.contains("http://admsgimg.torsun.cn")) {//上传过不再上传
+                            mImgUrl.add(imgurl);
                             update_img_num++;
                             mHandler.sendEmptyMessage(UPDATE_IMG);
                         } else {
@@ -67,12 +73,39 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
                         updateProgram();
                     }
                     break;
+                case UPDATE_VIDEO://上传视频
+                    LogUtil.d(TAG, "UPDATE_VIDEO:" + update_video_num);
+                    if (update_video_num < mUpdateVideos.size()) {
+                        final String videoUrl = mUpdateVideos.get(update_video_num);
+                        update_video_num++;
+                        LogUtil.d(TAG, "videoUrl:" + videoUrl);
+                        if (videoUrl.contains("http://admsgimg.torsun.cn")) {//上传过不再上传
+                            mVideoUrl.add(videoUrl);
+                            mHandler.sendEmptyMessage(UPDATE_VIDEO);
+                        } else {
+                            pushFile(videoUrl);
+                        }
+                    } else {
+                        mBody.getVideos().clear();
+                        for (String url : mVideoUrl) {
+                            mBody.getVideos().add(url);
+                        }
+                        updateProgram();
+                    }
+                    break;
+                case UPDATE_VIDEO_DEFEAT://视频上传失败
+                    String defeat = (String) msg.obj;
+                    ToastUtil.showToast(ProgramPushService.this, defeat, 3000);
+                    mCompleteListener.updateDefeated();
+                    break;
             }
         }
     };
     private FilePresenter mFilePresenter;
     private ArrayList<String> mUpdateImages;
+    private ArrayList<String> mUpdateVideos;
     private ArrayList<String> mImgUrl = new ArrayList<>();
+    private ArrayList<String> mVideoUrl = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -130,10 +163,14 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             UpdateProgramResponse response = (UpdateProgramResponse) data;
             mCompleteListener.updateSucceed(response.getData());
         } else if (requestTag == IMG_UPDATE) {//上传图片成功
-            mImgIsUpdate = true;
             mImgUrl.add(data.getMsg());
             //下一张
             mHandler.sendEmptyMessage(UPDATE_IMG);
+        } else if (requestTag == VIDEO_UPDATE) {
+            mVideoUrl.add(data.getMsg());
+            //下一张
+            update_video_num++;
+            mHandler.sendEmptyMessage(UPDATE_VIDEO);
         }
     }
 
@@ -163,6 +200,12 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             String toJson = gson.toJson(mBody);
             LogUtil.d(TAG, "tojson:" + toJson);
             mFilePresenter = new FilePresenter(ProgramPushService.this, ProgramPushService.this);
+            mUpdateVideos = mBody.getVideos();
+            LogUtil.d(TAG, "mUpdateVideos:" + mUpdateVideos);
+            if (mUpdateVideos.size() > 0) {//上传视频文件
+                mHandler.sendEmptyMessage(UPDATE_VIDEO);
+                return;
+            }
             mUpdateImages = mBody.getImages();
             //上传封面
             if (mBody.getCover().equals("") || mBody.getCover().contains("http://admsgimg.torsun.cn")) {//封面为空或者上传过则直接上传轮播图
@@ -186,9 +229,42 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         presenter.uploadProgram(mBody, PROGRAM_UPDATE);
     }
 
+    /**
+     * 上传结果监听
+     */
     public interface PushCompleteListener {
         void updateSucceed(String programId);// 上传成功
 
         void updateDefeated();// 上传失败
+    }
+
+    /**
+     * 上传视频文件
+     *
+     * @param path
+     */
+    public void pushFile(final String path) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileModel.uploadFile2(path, new FileModel.PushFileListener() {
+                    @Override
+                    public void pushSucceed(String fileUrl) {
+                        LogUtil.d(TAG, "pushSucceed:" + fileUrl);
+                        mVideoUrl.add(fileUrl);
+                        mHandler.sendEmptyMessage(UPDATE_VIDEO);
+                    }
+
+                    @Override
+                    public void pushDefeat(String defeat) {
+                        LogUtil.d(TAG, "pushDefeat:" + defeat);
+                        Message message = new Message();
+                        message.obj = defeat;
+                        message.what = UPDATE_VIDEO_DEFEAT;
+                        mHandler.sendMessage(message);
+                    }
+                });
+            }
+        }).start();
     }
 }

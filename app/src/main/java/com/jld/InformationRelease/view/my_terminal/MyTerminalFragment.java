@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
@@ -105,7 +106,7 @@ public class MyTerminalFragment extends Fragment implements
             initData();
     }
 
-    private void initData() {
+    public void initData() {
         //加载所有绑定的终端设备
         UpdateTerminalPresenter presenter = new UpdateTerminalPresenter(this, mActivity);
         UpdateTerminalRequest requestBody = new UpdateTerminalRequest();
@@ -276,21 +277,6 @@ public class MyTerminalFragment extends Fragment implements
         return checkMac;
     }
 
-    /**
-     * 获取在线终端Mac地址
-     *
-     * @return
-     */
-    public ArrayList<String> getOnlineMac() {
-        List<TerminalBeanSimple> data = mAdapter.getData();
-        ArrayList<String> onlineMac = new ArrayList<>();
-        for (TerminalBeanSimple bean : data) {
-            if (bean.getState().equals("1"))
-                onlineMac.add(bean.getMac());
-        }
-        return onlineMac;
-    }
-
     @Override
     public void loadDataSuccess(Object data, int requestTag) {
         LogUtil.d(TAG, "GetTerminalResponse:" + data);
@@ -300,6 +286,10 @@ public class MyTerminalFragment extends Fragment implements
             GetTerminalResponse response = (GetTerminalResponse) data;
             //获取数据成功，更新界面
             ArrayList<TerminalBeanSimple> items = response.getItems();
+
+            SharedPreferences.Editor edit = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE).edit();
+            edit.putString(Constant.MY_TERMINAL,new Gson().toJson(items));
+            edit.apply();
             mAdapter.setDataChange(items);
         }
     }

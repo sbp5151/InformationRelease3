@@ -33,7 +33,7 @@ public class RetrofitManager {
     //长缓存有效期为7天
     public static final int CACHE_STALE_LONG = 60 * 60 * 24 * 7;
     //网络访问超时
-    public static final int NETWORK_TIMEOUT = 40;
+    public static final int NETWORK_TIMEOUT = 60;
     private static RetrofitManager mRetrofitManager;
     private Context mContext;
     private static OkHttpClient mOkHttpClient;
@@ -66,14 +66,12 @@ public class RetrofitManager {
         if (mOkHttpClient == null) {
             synchronized (RetrofitManager.class) {
                 if (mOkHttpClient == null) {
-
                     File cacheFile = new File(mContext.getCacheDir(), "HttpCache");
                     if (cacheFile.exists())
                         cacheFile.mkdirs();
                     // 指定缓存路径,缓存大小100Mb
                     Cache cache = new Cache(new File(cacheFile, "HttpCache"),
-                            1024 * 1024 * 100);
-
+                            1024 * 1024 * 5);
                     mOkHttpClient = new OkHttpClient.Builder()
                             .cache(cache)
                             .addInterceptor(mRewriteCacheControlInterceptor)

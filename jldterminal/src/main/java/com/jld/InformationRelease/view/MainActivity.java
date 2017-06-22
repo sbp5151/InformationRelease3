@@ -2,6 +2,7 @@ package com.jld.InformationRelease.view;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -37,6 +38,7 @@ import com.jld.InformationRelease.util.VolumeUtil;
 import com.jld.InformationRelease.view.fragment.DefaultFragment;
 import com.jld.InformationRelease.view.fragment.ProgramFragment_1;
 import com.jld.InformationRelease.view.fragment.ProgramFragment_2;
+import com.jld.InformationRelease.view.fragment.ProgramVideoFragment;
 
 import java.io.File;
 
@@ -53,7 +55,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LogUtil.d(TAG,"onCreate");
+        LogUtil.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFrameLayout = (FrameLayout) findViewById(R.id.framelayout_main);
@@ -237,7 +239,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                     ft.commit();
                     return;
                 }
-            } else{
+            } else {
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 DefaultFragment defaultFragment = new DefaultFragment();
@@ -251,14 +253,24 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         String modelId = data.getItem().getModelId();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        MainActivity.this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
         switch (modelId) {
-            case ModelIds.modle_001:
+            case ModelIds.NAICHA_MODEL_1:
                 ProgramFragment_1 fragment1 = ProgramFragment_1.getInstance(data);
                 ft.replace(R.id.framelayout_main, fragment1);
                 break;
-            case ModelIds.modle_002:
+            case ModelIds.IMAGE_MODEL:
                 ProgramFragment_2 fragment2 = ProgramFragment_2.getInstance(data);
                 ft.replace(R.id.framelayout_main, fragment2);
+
+                break;
+            case ModelIds.VIDEO_MODEL:
+                ProgramVideoFragment videoFragment = new ProgramVideoFragment(data.getItem().getVideos());
+                ft.replace(R.id.framelayout_main, videoFragment);
+                MainActivity.this.setRequestedOrientation(//通过程序改变屏幕显示的方向
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR);//横屏
                 break;
             default:
                 return;

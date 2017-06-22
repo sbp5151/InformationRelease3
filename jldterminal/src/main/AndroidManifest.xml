@@ -159,7 +159,10 @@
             android:value="d47c2686e4fe96ee37a2b55f"/> <!-- </>值来自开发者平台取得的AppKey -->
         <activity android:name=".view.QRCodeActivity">
         </activity>
-        <activity android:name=".view.MainActivity">
+        <activity
+            android:name=".view.MainActivity"
+            android:screenOrientation="portrait"> <!-- 设定进去的为竖屏格式 -->
+
         </activity>
 
         <service
@@ -167,6 +170,15 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

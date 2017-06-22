@@ -46,7 +46,7 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
         /**
          * 视频集合
          */
-        private ArrayList<NamePriceBean> videos;
+        private ArrayList<String> videos;
         /**
          * 需要推送的终端mac地址
          */
@@ -69,11 +69,11 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
            this.cover = cover;
        }
 
-       public ArrayList<NamePriceBean> getVideos() {
+       public ArrayList<String> getVideos() {
             return videos;
         }
 
-        public void setVideos(ArrayList<NamePriceBean> videos) {
+        public void setVideos(ArrayList<String> videos) {
             this.videos = videos;
         }
 

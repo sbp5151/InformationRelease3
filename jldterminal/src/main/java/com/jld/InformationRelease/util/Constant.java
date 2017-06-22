@@ -35,6 +35,7 @@ public class Constant {
     public static final String DEVICE_ID = "device_id";
 
 
+
     /**
      * 绑定成功返回码
      */

@@ -10,12 +10,11 @@ package com.jld.InformationRelease.util;
  */
 public class ModelIds {
 
-    /**
-     * 价格图片
-     */
-    public static final String modle_001 = "1";
-    /**
-     * 图片
-     */
-    public static final String modle_002 = "2";
+
+    //奶茶模板
+    public static final String NAICHA_MODEL_1="1";
+    //幻灯片模板
+    public static final String IMAGE_MODEL="2";
+    //视频广告模板
+    public static final String VIDEO_MODEL="3";
 }

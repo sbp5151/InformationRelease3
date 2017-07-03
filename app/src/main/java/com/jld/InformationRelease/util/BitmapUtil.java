@@ -14,14 +14,16 @@ import net.bither.util.NativeUtil;
  */
 public class BitmapUtil {
 
+
+
     /**
-     * @param bit 需要压缩的bitmap
+     * @param bit           需要压缩的bitmap
      * @param fileNameBytes 压缩后保存文件的地址
-     * @param optimize  是否采用哈弗曼表数据计算，品质相差5-10倍，但对设备性能有所要求
+     * @param optimize      是否采用哈弗曼表数据计算，品质相差5-10倍，但对设备性能有所要求
      * @return
      */
     public static String compressBitmap(Bitmap bit, String fileNameBytes,
-                                                boolean optimize){
-      return   NativeUtil.compressBitmap(bit,fileNameBytes,optimize);
+                                        boolean optimize) {
+        return NativeUtil.compressBitmap(bit, fileNameBytes, optimize);
     }
 }

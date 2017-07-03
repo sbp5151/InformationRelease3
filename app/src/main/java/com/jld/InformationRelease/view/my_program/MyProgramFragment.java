@@ -36,7 +36,8 @@ import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
 import com.jld.InformationRelease.view.my_program.adapter.MyProgramRecyclerAdapter;
-import com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_program.program.ProgramImageActivity;
+import com.jld.InformationRelease.view.my_program.program.ProgramTextActivity;
 import com.jld.InformationRelease.view.my_program.program.ProgramVideoActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
 
@@ -173,10 +174,10 @@ public class MyProgramFragment extends Fragment {
                     break;
                 case R.id.toolbar_complete:
                     if (mAdapter.getCompileState()) {//取消编辑
-                        mTvComplete.setText(getResources().getString(R.string.completer));
+                        mTvComplete.setText(getResources().getString(R.string.compile));
                         mIv_add.setVisibility(View.VISIBLE);
                     } else {//编辑
-                        mTvComplete.setText(getResources().getString(R.string.cancle));
+                        mTvComplete.setText(getResources().getString(R.string.complete));
                         mIv_add.setVisibility(View.GONE);
                     }
                     mAdapter.changeCompileState();
@@ -194,21 +195,22 @@ public class MyProgramFragment extends Fragment {
             if (!mAdapter.getCompileState()) {//在编辑状态不让点击
 
                 ProgramBean programBean = mAllProgram.get(position);
-                Intent intent;
+                LogUtil.d(TAG,"programBean:"+programBean);
+                Intent intent = null;
                 switch (programBean.getModelId()) {
                     case Constant.VIDEO_MODEL:
                         intent = new Intent(mActivity, ProgramVideoActivity.class);
-                        intent.putExtra("program_data", programBean);//节目数据
-                        startActivityForResult(intent, mProgramRequestCode);
                         break;
                     case Constant.IMAGE_MODEL:
+                        intent = new Intent(mActivity, ProgramImageActivity.class);
                         break;
                     case Constant.NAICHA_MODEL_1:
-                        intent = new Intent(mActivity, ProgramCompileActivity.class);
-                        intent.putExtra("program_data", programBean);//节目数据
-//                        intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
-                        startActivityForResult(intent, mProgramRequestCode);
+                        intent = new Intent(mActivity, ProgramTextActivity.class);
                         break;
+                }
+                if (intent != null) {
+                    intent.putExtra("program_data", programBean);//节目数据
+                    startActivityForResult(intent, mProgramRequestCode);
                 }
             }
         }
@@ -289,7 +291,7 @@ public class MyProgramFragment extends Fragment {
                     mActivity.unbindService(mCon);
                     isUnbind = true;
                     //更新数据库为已上传状态
-                    LogUtil.d(TAG, "发布成功:");
+                    LogUtil.d(TAG, "发布成功:"+mProgram);
                     try {
                         //保存到数据库
                         mProgram.setState("1");//上传成功状态
@@ -341,7 +343,7 @@ public class MyProgramFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!isUnbind)
+        if (isUnbind)
             mActivity.unbindService(mCon);
     }
 }

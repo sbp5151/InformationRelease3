@@ -17,7 +17,7 @@ import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
-import com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_program.program.ProgramTextActivity;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private static final String TAG = "ProgramCompileAdapter";
     private ProgramBean mDatas;
-    private ProgramCompileActivity mContext;
+    private ProgramTextActivity mContext;
     //item tag
     public static final int ITEM_TAG_IMG_HEAD = 1;
     public static final int ITEM_TAG_TEXT_HEAD = 2;
@@ -58,7 +58,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public ProgramCompileAdapter(ProgramBean bean, Context context, boolean isNew) {
         mDatas = bean;
         LogUtil.d(TAG, "ProgramBean:" + bean);
-        mContext = (ProgramCompileActivity) context;
+        mContext = (ProgramTextActivity) context;
         mImgAdapter = new ProgramCompileImgItemAdapter(mContext, mDatas.getImages(), mDatas.getCover());
         if (isNew) {//假数据
             ArrayList<ProgramBean.Commodity> texts = mDatas.getTexts();

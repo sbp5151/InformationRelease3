@@ -18,7 +18,7 @@ import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_program.adapter.ModelAdapter;
-import com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity;
+import com.jld.InformationRelease.view.my_program.program.ProgramTextActivity;
 import com.jld.InformationRelease.view.my_program.program.ProgramImageActivity;
 import com.jld.InformationRelease.view.my_program.program.ProgramVideoActivity;
 
@@ -98,7 +98,7 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
             Intent intent = null;
             switch (modelid) {
                 case Constant.NAICHA_MODEL_1://奶茶
-                    intent = new Intent(SelectModelActivity.this, ProgramCompileActivity.class);
+                    intent = new Intent(SelectModelActivity.this, ProgramTextActivity.class);
                     break;
                 case Constant.IMAGE_MODEL://幻灯片
                     intent = new Intent(SelectModelActivity.this, ProgramImageActivity.class);

@@ -1,5 +1,6 @@
 package com.jld.InformationRelease.util.zxing.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -36,6 +37,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
+import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.zxing.camera.CameraManager;
 import com.jld.InformationRelease.util.zxing.decoding.CaptureActivityHandler;
 import com.jld.InformationRelease.util.zxing.decoding.InactivityTimer;
@@ -47,6 +49,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 import static android.R.attr.data;
 import static com.jld.InformationRelease.view.MainActivity.mScanResultCode;
 
@@ -56,8 +61,11 @@ import static com.jld.InformationRelease.view.MainActivity.mScanResultCode;
  * @author zhangguoyu
  * 
  */
+@RuntimePermissions
 public class CaptureActivity extends BaseActivity implements Callback {
 
+
+	private final static String TAG = "CaptureActivity";
 	private boolean playBeep;
 	private boolean vibrate;
 	private boolean hasSurface;
@@ -73,6 +81,8 @@ public class CaptureActivity extends BaseActivity implements Callback {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		LogUtil.d(TAG,"onCreate");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 		}
@@ -94,7 +104,6 @@ public class CaptureActivity extends BaseActivity implements Callback {
 				Intent resultIntent = new Intent();
 				CaptureActivity.this.setResult(0, resultIntent);
 				finish();
-
 			}
 		});
 		hasSurface = false;
@@ -132,7 +141,8 @@ public class CaptureActivity extends BaseActivity implements Callback {
 		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
-			initCamera(surfaceHolder);
+//			initCamera(surfaceHolder);
+			CaptureActivityPermissionsDispatcher.initCameraWithCheck(CaptureActivity.this,surfaceHolder);
 		} else {
 			surfaceHolder.addCallback(this);
 			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -319,7 +329,8 @@ public class CaptureActivity extends BaseActivity implements Callback {
 //		}
 //	}
 
-	private void initCamera(SurfaceHolder surfaceHolder) {
+	@NeedsPermission(Manifest.permission.CAMERA)
+	public void initCamera(SurfaceHolder surfaceHolder) {
 		try {
 			CameraManager.get().openDriver(surfaceHolder);
 		} catch (IOException ioe) {
@@ -343,7 +354,8 @@ public class CaptureActivity extends BaseActivity implements Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		if (!hasSurface) {
 			hasSurface = true;
-			initCamera(holder);
+//			initCamera(holder);
+			CaptureActivityPermissionsDispatcher.initCameraWithCheck(CaptureActivity.this,holder);
 		}
 
 	}

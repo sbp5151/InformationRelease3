@@ -17,6 +17,9 @@ import com.jld.InformationRelease.util.ToastUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * 视频预览
+ */
 public class ProgramVideoPreview extends AppCompatActivity {
 
     private MediaPlayer mMediaPlayer;

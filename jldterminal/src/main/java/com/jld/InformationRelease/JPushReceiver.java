@@ -64,6 +64,8 @@ public class JPushReceiver extends BroadcastReceiver {
             Log.w(TAG, "[MyReceiver]" + intent.getAction() + " connected state change to " + connected);
             if (!MyApplication.JPush_Alias_Succeed) {//设置别名
                 String mac = MacUtil.getMac();
+                if(mac==null)
+                    return;
                 JPushInterface.setAlias(context, mac, new TagAliasCallback() {
                     @Override
                     public void gotResult(int i, String s, Set<String> set) {
@@ -73,7 +75,8 @@ public class JPushReceiver extends BroadcastReceiver {
                         Log.d("JPush", "s:" + s);
                         if (0 == i) {
                             Log.d("JPush", "设置别名成功！");
-                            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.set_alias_succeed), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
                             edit.putInt(Constant.JPush_alias_set, i).apply();
                             MyApplication.JPush_Alias_Succeed = true;
                         } else

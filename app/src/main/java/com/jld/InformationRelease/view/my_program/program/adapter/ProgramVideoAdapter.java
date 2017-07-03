@@ -71,6 +71,13 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
         }
     }
 
+    public void removeItem(int position){
+        if (mDada != null) {
+            mDada.remove(position);
+//            notifyItemChanged(mDada.size() - 1);
+            notifyDataSetChanged();
+        }
+    }
     public void setPath(int position, String path) {
         if (mDada != null && position < mDada.size()) {
             mDada.set(position, path);

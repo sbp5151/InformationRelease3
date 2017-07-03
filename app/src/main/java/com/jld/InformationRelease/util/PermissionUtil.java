@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_program.program.ProgramCompileActivity.REQUEST_READ_EXTERNAL_STORAGE;
 
 /**
  * 项目名称：InformationRelease
@@ -20,6 +19,7 @@ import static com.jld.InformationRelease.view.my_program.program.ProgramCompileA
  */
 public class PermissionUtil {
 
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 0x02;
 
     public static void getPermission(Activity context, String[] permissions, int requesTag, GetPermissionListen listen) {
 

@@ -62,7 +62,6 @@ public class QRCodeActivity extends BaseActivity implements JPushReceiver.JPushL
             e.printStackTrace();
         }
         JPushReceiver.sendListener(this);
-
         SharedPreferences sp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
         int anInt = sp.getInt(Constant.JPush_alias_set, -1);
         if(anInt!=0){//没有设置别名，等待设置

@@ -42,7 +42,8 @@
     <string name="terminal_state_online">在线</string>
     <string name="terminal_state_showdown">关机</string>
     <string name="terminal_state_fault">故障</string>
-    <string name="completer">编辑</string>
+    <string name="compile">编辑</string>
+    <string name="complete">完成</string>
     <string name="cancle">取消</string>
     <string name="program_compile">节目编辑</string>
     <string name="push">推送</string>
@@ -120,5 +121,11 @@
     <string name="play_first">第一个</string>
     <string name="please_compile">请编辑节目</string>
     <string name="video_size_too_big">选择的文件大于100M</string>
+    <string name="video_type_nonsupport">文件格式不支持</string>
+    <string name="add_image_max">最多添加20张轮播图</string>
+    <string name="setTab_dialog_title">请输入节目名称</string>
+    <string name="default_program_tab">新建节目</string>
+    <string name="please_input_tab">请输入节目名称</string>
+    <string name="data_is_null">数据为空</string>
 
 </resources>

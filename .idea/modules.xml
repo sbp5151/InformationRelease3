@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/InformationRelease.iml" filepath="$PROJECT_DIR$/InformationRelease.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/installdemo/installdemo.iml" filepath="$PROJECT_DIR$/installdemo/installdemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/jldterminal/jldterminal.iml" filepath="$PROJECT_DIR$/jldterminal/jldterminal.iml" />
     </modules>
   </component>

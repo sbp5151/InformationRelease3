@@ -52,7 +52,7 @@
             android:name=".view.login_register.RegisterActivity"
             android:label="@string/title_activity_register">
         </activity>
-        <activity android:name=".view.my_program.program.ProgramCompileActivity"/>
+        <activity android:name=".view.my_program.program.ProgramTextActivity"/>
         <activity android:name=".util.zxing.activity.CaptureActivity">
         </activity>
 
@@ -65,7 +65,7 @@
         <activity android:name=".view.my_program.SelectModelActivity">
         </activity>
         <activity
-            android:name=".view.my_program.program.preview.PreviewActivity_1"
+            android:name=".view.my_program.program.preview.ProgramTextPreview"
             android:screenOrientation="landscape"/>
         <!-- photo select -->
         <activity
@@ -75,18 +75,20 @@
         <activity
             android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
             android:theme="@style/PhotoPickerTheme"/>
-        <activity android:name=".view.my_program.program.ProgramVideoActivity"
-        >
+        <activity android:name=".view.my_program.program.ProgramVideoActivity">
         </activity>
         <activity android:name=".view.my_program.program.ProgramImageActivity">
         </activity>
         <activity android:name=".view.my_program.program.BaseProgramCompileActivity">
         </activity>
-        <activity android:name=".view.my_program.program.preview.ProgramVideoPreview"
-                  android:screenOrientation="landscape"
-                  android:theme="@style/AppTheme.NoBar"
-        >
+        <activity
+            android:name=".view.my_program.program.preview.ProgramVideoPreview"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoBar">
         </activity>
+        <activity android:name=".view.my_program.program.preview.ProgramImagePreview"
+                  android:screenOrientation="landscape"
+                  android:theme="@style/AppTheme.NoBar"/>
     </application>
 
 </manifest>

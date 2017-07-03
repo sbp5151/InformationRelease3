@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
-        android:text="@string/completer"
+        android:text="@string/compile"
         android:textColor="@drawable/textcolor_click"
         android:textSize="@dimen/bar_right_size"
         />

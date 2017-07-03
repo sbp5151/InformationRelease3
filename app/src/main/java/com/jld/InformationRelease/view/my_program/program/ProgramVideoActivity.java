@@ -1,35 +1,24 @@
 package com.jld.InformationRelease.view.my_program.program;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseRecyclerViewAdapterClick;
 import com.jld.InformationRelease.bean.ProgramBean;
-import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.Constant;
@@ -54,26 +43,10 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
     private static final int GET_VIDEO_RESULT = 0x01;
     private RecyclerView mRecyclerView;
     private ArrayList<String> mVideoPath = new ArrayList<>();
-    private ArrayList<String> mSaveVideoPath = new ArrayList<>();
+    private ArrayList<String> mLastPath = new ArrayList<>();
     private ProgramVideoAdapter mAdapter;
     private View mAdd;
-    ArrayList<TerminalBeanSimple> mTerminals;
-
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-
-            }
-        }
-    };
     private int mAddPathPosition;
-    private PopupWindow mPopupWindow;
-    private ImageButton mIb_tool;
-    private boolean mIsAgainCompile = false;
-    private ArrayList<String> mCheckMac = new ArrayList<>();
-    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +57,15 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         if (mProgramBean == null) {
             mProgramBean = new ProgramBean();
             mProgramBean.setModelId(Constant.VIDEO_MODEL);
+            setTabDialog();
         } else {
             mIsAgainCompile = true;
             mCheckMac = mProgramBean.getDeviceMacs();
             mVideoPath = mProgramBean.getVideos();//提取视频路径
+            mLastPath.addAll(mVideoPath);
         }
+        setPopupWindowListener(mPopupWindowListener);
         initView();
-        mSaveVideoPath.addAll(mVideoPath);
-        sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
     }
 
     public void initView() {
@@ -118,8 +92,11 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new ProgramVideoAdapter(mVideoPath, this);
         mRecyclerView.setAdapter(mAdapter);
-        if (!mIsAgainCompile)
+        if (!mIsAgainCompile) {
+//            chooseVideo();//自动进入添加界面
             mAdapter.addItem();
+//            mAddPathPosition = 0;
+        }
         mAdapter.setMyOnClickListener(new BaseRecyclerViewAdapterClick.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -135,7 +112,6 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
      * @return
      */
     public ArrayList<String> getNoNullPath() {
-
         ArrayList<String> noNullPath = new ArrayList<>();
         for (String path : mVideoPath) {
             if (!TextUtils.isEmpty(path))
@@ -159,7 +135,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // 选取图片的返回值
+        // 选取视频的返回值
         if (requestCode == GET_VIDEO_RESULT) {
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getData();
@@ -175,10 +151,22 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
                 LogUtil.e("v_size=" + v_size);
                 LogUtil.e("v_size=M" + Integer.parseInt(v_size) / 1024 / 1024);
                 LogUtil.e("v_type=" + v_type);
-                if (Integer.parseInt(v_size) / 1024 / 1024 > 100) {
-                    ToastUtil.showToast(ProgramVideoActivity.this, getString(R.string.video_size_too_big), 3000);
+                String[] split = v_type.split("/");
+                LogUtil.e("split[0]=" + split[0]);
+                LogUtil.e("split[1]=" + split[1]);
+                if (split[0].equals("video") && (split[1].equals("mp4") || split[1].equals("3gp") || split[1].equals("mov"))) {
+                    if (split[0].equals("video") && Integer.parseInt(v_size) / 1024 / 1024 > 100) {
+                        ToastUtil.showToast(ProgramVideoActivity.this, getString(R.string.video_size_too_big), 3000);
+                    } else {
+                        mAdapter.setPath(mAddPathPosition, v_path);
+                    }
                 } else
-                    mAdapter.setPath(mAddPathPosition, v_path);
+                    ToastUtil.showToast(ProgramVideoActivity.this, getString(R.string.video_type_nonsupport), 3000);
+
+            } else {
+                LogUtil.d(TAG, "返回数据为空" + mAddPathPosition);
+                LogUtil.d(TAG, "返回数据为空" + mAdapter.getItemCount());
+                mAdapter.removeItem(mAddPathPosition);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -197,30 +185,31 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
                 case R.id.iv_add_video://添加
                     AnimationUtil.togetherRun(mAdd, 270);
                     if (mAdapter.getItemCount() < 10) {
+                        chooseVideo();//自动进入添加界面
                         mAdapter.addItem();
+                        mAddPathPosition = mAdapter.getItemCount() - 1;
                     } else
                         ToastUtil.showToast(ProgramVideoActivity.this, getString(R.string.add_video_max), 3000);
                     break;
                 case R.id.titlebar_tool:
                     showPopupwindow();
                     break;
-                case R.id.pp_program_push://发布
-                    mPopupWindow.dismiss();
-                    if (getNoNullPath().size() > 0)
-                        terminalSelect();
-                    else
-                        ToastUtil.showToast(ProgramVideoActivity.this, getResources().getString(R.string.please_compile), 3000);
-                    break;
-                case R.id.pp_preview://预览
-                    mPopupWindow.dismiss();
-                    Intent intent = new Intent(ProgramVideoActivity.this, ProgramVideoPreview.class);
-                    intent.putStringArrayListExtra("videoPath", getNoNullPath());
-                    startActivity(intent);
-                    break;
-                case R.id.pp_save://保存
-                    mPopupWindow.dismiss();
-                    saveProgram();
-                    break;
+//                case R.id.pp_program_push://发布
+//                    mPopupWindow.dismiss();
+//                    if (getNoNullPath().size() > 0)
+//                        terminalSelect();
+//                    else
+//                        ToastUtil.showToast(ProgramVideoActivity.this, getResources().getString(R.string.please_compile), 3000);
+//                    break;
+//                case R.id.pp_preview://预览
+//                    Intent intent = new Intent(ProgramVideoActivity.this, ProgramVideoPreview.class);
+//                    intent.putStringArrayListExtra("videoPath", getNoNullPath());
+//                    startActivity(intent);
+//                    break;
+//                case R.id.pp_save://保存
+//                    mPopupWindow.dismiss();
+//                    saveProgram();
+//                    break;
             }
         }
     };
@@ -228,7 +217,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
     /**
      * 发布
      */
-    public void pushData() {
+    public void programPush() {
         SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         String userID = sp.getString(UserConstant.USER_ID, "");
         if (TextUtils.isEmpty(userID)) {//账号不能为空
@@ -256,125 +245,26 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
     }
 
     /**
-     * 终端选择
-     */
-    private void terminalSelect() {
-        String terminalJson = sp.getString(Constant.MY_TERMINAL, "");
-        LogUtil.d(TAG, "terminalJson:" + terminalJson);
-        if (!TextUtils.isEmpty(terminalJson)) {
-            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<TerminalBeanSimple>>() {
-            }.getType());
-        }
-        LogUtil.d(TAG, "mTerminals:" + mTerminals);
-
-        if (mTerminals == null || mTerminals.size() <= 0) {
-            ToastUtil.showToast(this, getString(R.string.terminal_null), 3000);
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.select_device_dialog_title));
-        /**
-         * 设置内容区域为多选列表项
-         */
-        //默认选择都为false
-        boolean[] terminalBoolean = new boolean[mTerminals.size()];
-        for (int i = 0; i < terminalBoolean.length; i++) {
-            terminalBoolean[i] = false;
-        }
-        ArrayList<String> select_item = new ArrayList<>();
-        for (int i = 0; i < mTerminals.size(); i++) {
-            if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
-                select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
-                if (mIsAgainCompile) {//再编辑  默认选中以前选中过的设备
-                    for (String str : mCheckMac) {
-                        if (mTerminals.get(i).getMac().equals(str)) {
-                            terminalBoolean[i] = true;
-                        }
-                    }
-                }
-            }
-        }
-        LogUtil.d(TAG, "select_item:" + select_item);
-        final String[] select_item_arry = select_item.toArray(new String[0]);
-        LogUtil.d(TAG, "select_item_arry:" + select_item_arry);
-
-        builder.setMultiChoiceItems(select_item_arry, terminalBoolean, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                LogUtil.d(TAG, "mPushId1:" + mCheckMac);
-                if (b)
-                    mCheckMac.add(mTerminals.get(i).getMac());
-                else {
-                    boolean remove = mCheckMac.remove(mTerminals.get(i).getMac());
-                    LogUtil.d(TAG, "remove:" + remove);
-                }
-                LogUtil.d(TAG, "mPushId2:" + mCheckMac);
-            }
-        });
-        //监听下方button点击事件
-        builder.setPositiveButton(getString(R.string.sure), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                pushData();
-            }
-        });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mCheckMac.clear();
-            }
-        });
-        builder.setCancelable(true);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-    }
-
-    /**
      * 数据是否改变
      *
      * @return
      */
     public boolean isDataChange() {
-
-        if (mSaveVideoPath.size() == mVideoPath.size()) {
-
-            for (int i = 0; i < mSaveVideoPath.size(); i++) {
-                if (!mSaveVideoPath.get(i).equals(mVideoPath.get(i)))
+        if (mLastPath.size() == mVideoPath.size()) {
+            for (int i = 0; i < mLastPath.size(); i++) {
+                if (!mLastPath.get(i).equals(mVideoPath.get(i)))
                     return true;
             }
             return false;
         } else
-            return true;
-    }
-
-    /**
-     * 退出是否保存节目提示
-     */
-    public void backSaveDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.hint))
-                .setMessage(getResources().getString(R.string.whether_save_program))
-                .setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        saveProgram();
-                    }
-                }).setNegativeButton(getResources().getString(R.string.no_save), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-            }
-        });
-        builder.create().show();
+            return false;
     }
 
     /**
      * 保存节目到数据库
      */
     public void saveProgram() {
-        SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-        String userID = sp.getString(UserConstant.USER_ID, "");
+        String userID = mSp.getString(UserConstant.USER_ID, "");
         if (TextUtils.isEmpty(userID)) {//账号不能为空
             ToastUtil.showToast(this, getResources().getString(R.string.please_login), 3000);
             toActivity(LoginActivity.class);
@@ -398,42 +288,21 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         }
     }
 
-    /**
-     * 推送、预览、保存
-     */
-    public void showPopupwindow() {
-        mPopupWindow = new PopupWindow(this);
-        View contentView = getLayoutInflater().inflate(R.layout.program_popupwindow_layout, null);
-        contentView.findViewById(R.id.pp_program_push).setOnClickListener(mOnClickListener);
-        contentView.findViewById(R.id.pp_preview).setOnClickListener(mOnClickListener);
-        contentView.findViewById(R.id.pp_save).setOnClickListener(mOnClickListener);
-        mPopupWindow.setContentView(contentView);
-        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth(GeneralUtil.dip2px(this, 100));
-        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
-        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
-        mPopupWindow.showAsDropDown(mIb_tool, GeneralUtil.dip2px(this, 21), GeneralUtil.dip2px(this, -21));
-        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mIb_tool.setClickable(true);
-                mIb_tool.setEnabled(true);
-            }
-        });
-    }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        /**
-         * 监听返回键保存数据
-         */
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isDataChange()) {
-                backSaveDialog();
-                return false;
-            }
+    PopupWindowListener mPopupWindowListener = new PopupWindowListener() {
+        @Override
+        public void onPreview() {
+            Intent intent = new Intent(ProgramVideoActivity.this, ProgramVideoPreview.class);
+            intent.putStringArrayListExtra("videoPath", getNoNullPath());
+            startActivity(intent);
         }
-        return super.onKeyDown(keyCode, event);
-    }
+
+        @Override
+        public void onProgramPush() {
+            if (getNoNullPath().size() > 0)
+                terminalSelect();
+            else
+                ToastUtil.showToast(ProgramVideoActivity.this, getResources().getString(R.string.please_compile), 3000);
+        }
+    };
 }

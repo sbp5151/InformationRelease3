@@ -141,7 +141,6 @@ public class MyTerminalFragment extends Fragment implements
             }
         }
     };
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
@@ -152,23 +151,56 @@ public class MyTerminalFragment extends Fragment implements
         contentView.findViewById(R.id.pp_time_showdown).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_volume_adjust).setOnClickListener(ppOnClickListener);
         contentView.findViewById(R.id.pp_get_screen).setOnClickListener(ppOnClickListener);
+
         mPopupWindow.setContentView(contentView);
-        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);
         mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth((int) getResources().getDimension(R.dimen.push_popup_width));
+        mPopupWindow.setWidth(GeneralUtil.dip2px(mActivity, 100));
         mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//背景透明
-
-        mPopupWindow.showAsDropDown(mPush, 0, GeneralUtil.dip2px(mActivity, -21));
-        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mPush.setClickable(true);
-                mPush.setEnabled(true);
-            }
-        });
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
+        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
+        mPopupWindow.showAsDropDown(mPush, GeneralUtil.dip2px(mActivity, 21), GeneralUtil.dip2px(mActivity, -21));
+//        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+//            @Override
+//            public void onDismiss() {
+//                mPush.setClickable(true);
+//                mPush.setEnabled(true);
+//            }
+//        });
     }
-
+    /**
+     * 推送、预览、保存
+     */
+//    public void showPopupwindow() {
+//        final PopupWindow mPopupWindow = new PopupWindow(mActivity);
+//        View contentView = mActivity.getLayoutInflater().inflate(R.layout.popupwindow_layout, null);
+////        contentView.findViewById(R.id.pp_program_push).setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View view) {
+////                mPopupWindow.dismiss();
+////
+////            }
+////        });
+////        contentView.findViewById(R.id.pp_preview).setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View view) {
+////                mPopupWindow.dismiss();
+////
+////            }
+////        });
+////        contentView.findViewById(R.id.pp_save).setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View view) {
+////                mPopupWindow.dismiss();
+////            }
+////        });
+//        mPopupWindow.setContentView(contentView);
+//        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+//        mPopupWindow.setWidth(GeneralUtil.dip2px(mActivity, 100));
+//        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
+//        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
+//        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
+//        mPopupWindow.showAsDropDown(mPush, GeneralUtil.dip2px(mActivity, 21), GeneralUtil.dip2px(mActivity, -21));
+//    }
     View.OnClickListener ppOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -231,7 +263,7 @@ public class MyTerminalFragment extends Fragment implements
         if (isCheck()) {//取消
             setCheck(false);
             mPush.setVisibility(View.GONE);
-            mTvComplete.setText(getResources().getString(R.string.completer));
+            mTvComplete.setText(getResources().getString(R.string.compile));
             mTitle_tx.setText(getString(R.string.device_list));
         } else {//编辑状态
             setCheck(true);

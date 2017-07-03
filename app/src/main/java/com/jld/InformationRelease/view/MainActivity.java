@@ -1,19 +1,14 @@
 package com.jld.InformationRelease.view;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -166,14 +161,7 @@ public class MainActivity extends BaseActivity
                 ft.show(mSystemModelFragment);
             }
         } else if (id == R.id.menu_scan_code) {//扫描添加
-            if (ContextCompat.checkSelfPermission(MainActivity.this,
-                    android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {//没有获得权限
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-            } else {//已获取权限了
-                Intent intent = new Intent(this, CaptureActivity.class);
-                startActivityForResult(intent, mScanRequestCode);
-            }
+            startScan();
         } else if (id == R.id.menu_setting) {//设置
             mSettingFragment = (SettingFragment) fm.findFragmentByTag(SETTING_TAG);
             if (mSettingFragment == null) {
@@ -193,15 +181,13 @@ public class MainActivity extends BaseActivity
             ft.hide(entry.getValue());
         }
         ft.commit();
+
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {//获取相机权限
-            Intent intent = new Intent(this, CaptureActivity.class);
-            startActivityForResult(intent, mScanRequestCode);
-        }
+    public void startScan(){
+        LogUtil.d(TAG,"startScan");
+        Intent intent = new Intent(this, CaptureActivity.class);
+        startActivityForResult(intent, mScanRequestCode);
     }
 
     /**
@@ -237,9 +223,9 @@ public class MainActivity extends BaseActivity
 
     public void showSetNameDialog(final String mac) {
         View view = LayoutInflater.from(this).inflate(R.layout.set_name_dialog, null);
-        final EditText setName = (EditText) view.findViewById(R.id.et_set_name);
-        Button confirm = (Button) view.findViewById(R.id.btn_confirm);
-        ImageView close = (ImageView) view.findViewById(R.id.iv_set_name_close);
+        final EditText setName = (EditText) view.findViewById(R.id.dialog1_content);
+        Button confirm = (Button) view.findViewById(R.id.dialog1_confirm);
+        ImageView close = (ImageView) view.findViewById(R.id.dialog1_close);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

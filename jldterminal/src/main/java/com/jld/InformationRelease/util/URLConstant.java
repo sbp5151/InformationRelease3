@@ -24,4 +24,11 @@ public class URLConstant {
      * 在线心跳包接口
      */
     public static final String HEART_BEAT = "/user/userimg";
+
+    /**
+     * 节目加载成功反馈
+     */
+    public static final String PROGRAM_BACK = "/program/getpushdevicepro";
+
+
 }

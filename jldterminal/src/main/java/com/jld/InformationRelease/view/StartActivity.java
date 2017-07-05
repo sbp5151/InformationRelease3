@@ -32,7 +32,7 @@ public class StartActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        mHandler.sendEmptyMessageDelayed(TO_LOGIN_ACTIVITY, 1500);
+        mHandler.sendEmptyMessageDelayed(TO_LOGIN_ACTIVITY, 2000);
         SharedPreferences sp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
         mIsBinding = sp.getBoolean(Constant.DEVICE_ISBINDING, false);
     }

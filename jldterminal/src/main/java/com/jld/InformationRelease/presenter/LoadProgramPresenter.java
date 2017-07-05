@@ -17,9 +17,7 @@ import com.jld.InformationRelease.model.LoadProgramModel;
  */
 public class LoadProgramPresenter extends BasePresenterImpl<ProgramResponseBean> {
 
-
     private final LoadProgramModel mProgramModel;
-
     /**
      * 构造方法
      *

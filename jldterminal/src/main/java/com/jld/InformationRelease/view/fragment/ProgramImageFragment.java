@@ -27,12 +27,12 @@ import java.util.Random;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProgramFragment_2 extends Fragment {
+public class ProgramImageFragment extends Fragment {
 
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
-    private static final int IMG_CHANGE_TIME = 20000;
+    private static final int IMG_CHANGE_TIME = 6000;
     private ViewPager mVp_img;
     Handler mHandler = new Handler() {
 
@@ -43,15 +43,11 @@ public class ProgramFragment_2 extends Fragment {
             switch (msg.what) {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
-                        int currentItem = mVp_img.getCurrentItem();
-                        if (currentItem == (mImgAdapter.imgs.size() - 1))
-                            currentItem = 0;
-                        else
-                            currentItem++;
                         int i = mRandom.nextInt(16);
                         AnimationUtil.setAnimation(i + 1,mVp_img,mContext);
                         Log.d("random:",""+i);
-                        mVp_img.setCurrentItem(currentItem,true);
+                        Log.d("currentItem:",""+(mVp_img.getCurrentItem() + 1));
+                        mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
                     }
                     break;
@@ -62,7 +58,7 @@ public class ProgramFragment_2 extends Fragment {
     private Spinner mSp_animation;
     private Random mRandom;
 
-    private ProgramFragment_2() {
+    private ProgramImageFragment() {
         super();
     }
 
@@ -70,9 +66,9 @@ public class ProgramFragment_2 extends Fragment {
     protected FragmentActivity mContext;
     protected ProgramResponseBean mData;
 
-    public static ProgramFragment_2 getInstance(ProgramResponseBean data) {
+    public static ProgramImageFragment getInstance(ProgramResponseBean data) {
         //数据传递
-        ProgramFragment_2 fragment1 = new ProgramFragment_2();
+        ProgramImageFragment fragment1 = new ProgramImageFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("data", data);
         fragment1.setArguments(bundle);
@@ -82,7 +78,6 @@ public class ProgramFragment_2 extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle bundle = getArguments();//从activity传过来的Bundle
         if (bundle != null) {
             mData = (ProgramResponseBean) bundle.getSerializable("data");
@@ -93,6 +88,7 @@ public class ProgramFragment_2 extends Fragment {
                 e.printStackTrace();
             }
         }
+        mRandom = new Random();
         mContext = getActivity();
     }
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)

@@ -28,6 +28,7 @@ import com.jld.InformationRelease.model.GetScreenModel;
 import com.jld.InformationRelease.presenter.FilePresenter;
 import com.jld.InformationRelease.presenter.GetScreenPresenter;
 import com.jld.InformationRelease.presenter.LoadProgramPresenter;
+import com.jld.InformationRelease.presenter.ProgramLoadSucceedPresenter;
 import com.jld.InformationRelease.presenter.UploadScreenPresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.DeviceUtil;
@@ -36,15 +37,18 @@ import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ModelIds;
 import com.jld.InformationRelease.util.VolumeUtil;
 import com.jld.InformationRelease.view.fragment.DefaultFragment;
-import com.jld.InformationRelease.view.fragment.ProgramFragment_1;
-import com.jld.InformationRelease.view.fragment.ProgramFragment_2;
+import com.jld.InformationRelease.view.fragment.ProgramTextFragment;
+import com.jld.InformationRelease.view.fragment.ProgramImageFragment;
 import com.jld.InformationRelease.view.fragment.ProgramVideoFragment;
 
 import java.io.File;
 
 public class MainActivity extends BaseActivity implements JPushReceiver.JPushListener, IViewToPresenter<ProgramResponseBean> {
 
+    //加载节目请求标识
     private static final int LOAD_PROGRAM_TAG = 0x12;
+    //节目加载成功反馈请求标识
+    private static final int LOAD_PROGRAM_BACK = 0x13;
     private static final String TAG = "MainActivity";
     private static final int UPLOAD_SCREEN_REQUESTID = 0x21;
     private static final int GET_SCREEN_URL_REQUESTTAG = 0x22;
@@ -52,6 +56,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     private String[] names2 = {"芒果奶昔", "草莓奶昔", "芦荟奶昔", "蓝莓奶昔", "水蜜桃奶昔", "哈密瓜奶昔"};
     private ProgressDialog mPdialog;
     private FrameLayout mFrameLayout;
+    private String mProgramID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +97,11 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                 break;
             case Constant.PUSH_PROGRAM://节目推送
                 //加载节目更新
-                String programID = response.getProgramID();//节目ID
+                //节目ID
+                mProgramID = response.getProgramID();
+                LogUtil.d(TAG, "mProgramID:" + mProgramID);
                 LoadProgramPresenter presenter = new LoadProgramPresenter(this, MainActivity.this);
-                presenter.LoadProgram(programID, LOAD_PROGRAM_TAG);
+                presenter.LoadProgram(mProgramID, LOAD_PROGRAM_TAG);
                 break;
             case Constant.SHUTDOWN://关机
                 DeviceUtil.showDown();
@@ -197,7 +204,6 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     @Override
     public void hideProgress(int requestTag) {
-
     }
 
     //节目加载成功
@@ -206,6 +212,13 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         if (requestTag == LOAD_PROGRAM_TAG) {
             Toast.makeText(this, getString(R.string.load_program_succeed), Toast.LENGTH_SHORT).show();
             replaceFragment(data);
+            //加载成功数据反馈
+            SharedPreferences sp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
+            String deviceId = sp.getString(Constant.DEVICE_ID, "");
+            ProgramLoadSucceedPresenter presenter = new ProgramLoadSucceedPresenter(this, MainActivity.this);
+            presenter.programLoadSucceedBack(mProgramID, deviceId, LOAD_PROGRAM_BACK);
+        } else if (requestTag == LOAD_PROGRAM_BACK) {
+            LogUtil.d(TAG, "反馈成功");
         }
     }
 
@@ -214,6 +227,8 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         LogUtil.d(TAG, "loadDataError:" + e.getMessage());
         if (requestTag == LOAD_PROGRAM_TAG) {
             Toast.makeText(this, getString(R.string.load_program_error), Toast.LENGTH_SHORT).show();
+        } else if (requestTag == LOAD_PROGRAM_BACK) {
+            LogUtil.d(TAG, "反馈失败");
         }
     }
 
@@ -258,13 +273,12 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
         switch (modelId) {
             case ModelIds.NAICHA_MODEL_1:
-                ProgramFragment_1 fragment1 = ProgramFragment_1.getInstance(data);
+                ProgramTextFragment fragment1 = ProgramTextFragment.getInstance(data);
                 ft.replace(R.id.framelayout_main, fragment1);
                 break;
             case ModelIds.IMAGE_MODEL:
-                ProgramFragment_2 fragment2 = ProgramFragment_2.getInstance(data);
+                ProgramImageFragment fragment2 = ProgramImageFragment.getInstance(data);
                 ft.replace(R.id.framelayout_main, fragment2);
-
                 break;
             case ModelIds.VIDEO_MODEL:
                 ProgramVideoFragment videoFragment = new ProgramVideoFragment(data.getItem().getVideos());

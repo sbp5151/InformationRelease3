@@ -27,13 +27,14 @@ import com.jld.InformationRelease.view.adapter.RvNameAdapter;
 import com.jld.InformationRelease.view.adapter.VpImg1Adapter;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProgramFragment_1 extends Fragment {
+public class ProgramTextFragment extends Fragment {
 
-    public static final String TAG = "ProgramFragment_1";
+    public static final String TAG = "ProgramTextFragment";
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
@@ -50,23 +51,27 @@ public class ProgramFragment_1 extends Fragment {
             switch (msg.what) {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
+                        int i = mRandom.nextInt(16);
+                        AnimationUtil.setAnimation(i + 1,mVp_img,mContext);
                         mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
+                        LogUtil.d(TAG,"setCurrentItem:"+mVp_img.getCurrentItem());
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
                     }
                     break;
             }
         }
     };
+    private Random mRandom;
 
-    private ProgramFragment_1() {
+    private ProgramTextFragment() {
     }
 
     protected FragmentActivity mContext;
     protected ProgramResponseBean mData;
 
-    public static ProgramFragment_1 getInstance(ProgramResponseBean data) {
+    public static ProgramTextFragment getInstance(ProgramResponseBean data) {
         //数据传递
-        ProgramFragment_1 fragment1 = new ProgramFragment_1();
+        ProgramTextFragment fragment1 = new ProgramTextFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("data", data);
         fragment1.setArguments(bundle);
@@ -87,6 +92,7 @@ public class ProgramFragment_1 extends Fragment {
                 e.printStackTrace();
             }
         }
+        mRandom = new Random();
         mContext = getActivity();
     }
 

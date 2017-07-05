@@ -20,9 +20,6 @@ import com.jld.InformationRelease.util.LogUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ProgramVideoFragment extends Fragment {
 
     private ArrayList<String> mVideoPath;
@@ -32,7 +29,7 @@ public class ProgramVideoFragment extends Fragment {
     private Display mCurrDisplay;
     private SurfaceHolder mHolder;
     private SurfaceView mSurfaceView;
-    public static final String TAG = "ProgramVideoPreview-----";
+    public static final String TAG = "ProgramVideoFragment-----";
     private View mController_view;
     public static final int CONTROLLER_HIDE = 0x01;
     private Activity mActivity;

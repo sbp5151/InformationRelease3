@@ -1,14 +1,20 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+              android:gravity="center"
+             android:background="@drawable/titlepage"
              tools:context="com.jld.InformationRelease.view.fragment.DefaultFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    <!--noraml （普通字体,系统默认使用的字体）
+        sans（非衬线字体）
+        serif （衬线字体）
+        monospace（等宽字体）-->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/default_fragment"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_fragment"
+        android:textSize="40dp"
+        android:textColor="@android:color/white"
+    />
 
-</FrameLayout>
+</LinearLayout>

@@ -14,21 +14,17 @@ import java.io.LineNumberReader;
  */
 public class MacUtil {
 
-    public static String getMac()
-    {
+    public static String getMac() {
         String macSerial = null;
         String str = "";
-        try
-        {
+        try {
             Process pp = Runtime.getRuntime().exec("cat /sys/class/net/wlan0/address ");
             InputStreamReader ir = new InputStreamReader(pp.getInputStream());
             LineNumberReader input = new LineNumberReader(ir);
 
-            for (; null != str;)
-            {
+            for (; null != str; ) {
                 str = input.readLine();
-                if (str != null)
-                {
+                if (str != null) {
                     macSerial = str.trim();// 去空格
                     break;
                 }

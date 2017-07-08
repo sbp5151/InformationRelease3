@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#1874CD</color>
+    <color name="title_blue_press">#1854CD</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="light_gray">#DADEE6</color>
@@ -14,7 +15,6 @@
     <color name="text_white">#ffffff</color>
     <color name="graysh">#B5B7BB</color>
     <color name="title_blue">#1E90FF</color>
-    <color name="title_blue_press">#1874CD</color>
     <color name="cl_80c469">#F85514</color>
     <!-- zxing二维码扫描 -->
     <color name="result_view">#b0000000</color>
@@ -36,8 +36,13 @@
     <color name="backgroud_red_shape">#Fc6b47</color>
     <color name="backgroud_red_gray">#ee410b</color>
     
-    <color name="text_click_color">#515151</color>
+    <color name="text_click_color">#999999</color>
     <color name="compile_program_head_color">#e6e9f1</color>
     <color name="photopicker_background">#ffffff</color>
     <color name="background_dark">#f1f5f8</color>
+    <color name="border_grey">#ff999999</color>
+    <color name="border_blue">#15a6ff</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="half_black">#808080</color>
+    <color name="black_semi_transparent">#B2000000</color>
 </resources>

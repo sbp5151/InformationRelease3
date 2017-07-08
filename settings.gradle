@@ -1,1 +1,1 @@
-include ':app', ':jldterminal'
+include ':app', ':jldterminal', ':library'

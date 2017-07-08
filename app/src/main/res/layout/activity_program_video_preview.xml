@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jld.InformationRelease.view.my_program.program.preview.ProgramVideoPreview">
+    tools:context="com.jld.InformationRelease.view.my_program.program_create.preview.ProgramVideoPreview">
     <SurfaceView
         android:id="@+id/sv_program_video"
         android:layout_width="match_parent"

@@ -93,4 +93,8 @@ public class URLConstant {
      */
     public static final String GET_MODEL = "/user/userimg";
 
+    /**
+     * 16、节目发布后设备加载状况
+     */
+    public static final String PROGRAM_LAOD_STATE = "/program/pushgetproids";
 }

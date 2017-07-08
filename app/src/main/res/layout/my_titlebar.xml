@@ -8,18 +8,18 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/bar_back_padding_left"
-        android:background="@drawable/title_pressed_selector"
         android:orientation="horizontal">
-        <ImageView android:layout_width="@dimen/bar_back_icon_width"
-                   android:layout_height="match_parent"
+        <ImageView android:layout_width="24dp"
+                   android:layout_height="24dp"
                    android:layout_gravity="center"
                    android:scaleType="centerInside"
-                   android:src="@mipmap/back"/>
+                   android:background="@drawable/title_back_click"
+                   />
         <TextView android:layout_width="wrap_content"
                   android:layout_height="match_parent"
                   android:gravity="center"
                   android:text="@string/back"
-                  android:textColor="@color/text_white"
+                  android:textColor="@drawable/textcolor_click"
                   android:textSize="@dimen/title_back_text_size"
         />
     </LinearLayout>

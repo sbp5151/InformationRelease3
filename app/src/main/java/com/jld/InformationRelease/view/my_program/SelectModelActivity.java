@@ -18,9 +18,9 @@ import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_program.adapter.ModelAdapter;
-import com.jld.InformationRelease.view.my_program.program.ProgramTextActivity;
-import com.jld.InformationRelease.view.my_program.program.ProgramImageActivity;
-import com.jld.InformationRelease.view.my_program.program.ProgramVideoActivity;
+import com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity;
+import com.jld.InformationRelease.view.my_program.program_create.ProgramImageActivity;
+import com.jld.InformationRelease.view.my_program.program_create.ProgramVideoActivity;
 
 import java.util.ArrayList;
 
@@ -99,12 +99,15 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
             switch (modelid) {
                 case Constant.NAICHA_MODEL_1://奶茶
                     intent = new Intent(SelectModelActivity.this, ProgramTextActivity.class);
+                    intent.putExtra("model_img",imgs[1]);
                     break;
                 case Constant.IMAGE_MODEL://幻灯片
                     intent = new Intent(SelectModelActivity.this, ProgramImageActivity.class);
+                    intent.putExtra("model_img",imgs[0]);
                     break;
                 case Constant.VIDEO_MODEL://视频广告
                     intent = new Intent(SelectModelActivity.this, ProgramVideoActivity.class);
+                    intent.putExtra("model_img",imgs[2]);
                     break;
             }
             if (intent != null) {

@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity
     HashMap<Integer, Fragment> maps = new HashMap();
 
     public void switchFragment(int id) {
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         if (id == R.id.menu_my_terminal) {//我的终端
             mTerminal_fragment = (MyTerminalFragment) fm.findFragmentByTag(MY_TERMINAL_TAG);

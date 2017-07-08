@@ -25,9 +25,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -563,7 +561,6 @@ public class GeneralUtil {
         return m.find();
 
     }
-
     /**
      * 获取之间的随机数
      */
@@ -572,131 +569,6 @@ public class GeneralUtil {
         long newNum = Math.round(num);
         return (int) newNum;
     }
-
-
-    /**
-     * 时间转毫秒
-     */
-    public static final int IS_GRAB = 0;
-    public static final int NO_START = 1;
-    public static final int IS_END = 2;
-
-    public static int compareTime(String realTime, String timeFirst, String timeLast) {
-        int flag = 0;
-
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        Date real = null;
-        Date d1 = null;
-        Date d2 = null;
-        try {
-            real = df.parse(realTime);
-            d1 = df.parse(timeFirst);
-            d2 = df.parse(timeLast);
-
-            if ((real.getTime() - d1.getTime()) < 0) {
-
-                return NO_START;
-            } else if ((real.getTime() - d1.getTime()) >= 0 && (d2.getTime() - real.getTime()) >= 0) {
-                return IS_GRAB;
-            } else {
-                return IS_END;
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        return flag;
-    }
-
-
-    /**
-     * 获取时间差距
-     */
-    public static long getTimeGap(String timeFirst, String timeLast) {
-        long timegap = 0;
-
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        Date d1 = null;
-        Date d2 = null;
-        try {
-            d1 = df.parse(timeFirst);
-            d2 = df.parse(timeLast);
-
-            timegap = d2.getTime() - d1.getTime();
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return timegap;
-    }
-
-    /**
-     * 时间转天、小时、分、秒
-     */
-
-    public static String getTimeStr(long timeGap) {
-
-//        timeGap = 1325676000;
-
-        String time;
-        int minute = 1000 * 60;
-        int hours = minute * 60;
-        int day = hours * 24;
-
-        long dayStr = 0;
-        long hoursStr = 0;
-        long minuteStr = 0;
-        long secondStr = 0;
-
-
-        if (timeGap >= day) {
-
-            dayStr = timeGap / day;
-            timeGap = timeGap - (day * dayStr);
-
-        }
-
-        if (timeGap >= hours) {
-
-            hoursStr = timeGap / hours;
-            timeGap = timeGap - (hours * hoursStr);
-
-        }
-
-        if (timeGap >= minute) {
-
-            minuteStr = timeGap / minute;
-            timeGap = timeGap - (minute * minuteStr);
-
-        }
-
-        if (timeGap >= 1000) {
-
-            secondStr = timeGap / 1000;
-
-        }
-
-        time = dayStr + "天" + hoursStr + "小时" + minuteStr + "分" + secondStr + "秒";
-
-        return time;
-    }
-
-
-    /**
-     * 获取当前时间
-     */
-    public static String getTimeStr() {
-        SimpleDateFormat sDateFormat = new SimpleDateFormat(
-                "yyyy/MM/dd/hh:mm:ss");
-        String date = sDateFormat.format(new Date());
-        return date;
-    }
-
     /**
      * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
      */
@@ -712,6 +584,4 @@ public class GeneralUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
-
-
 }

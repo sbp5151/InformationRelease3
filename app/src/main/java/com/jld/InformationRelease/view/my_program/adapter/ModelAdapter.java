@@ -89,7 +89,6 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
 
     public interface ModeItemClickListener {
         void onItemClick(View view, int position);
-
         void onItemLongClick(View view, int position);
     }
 

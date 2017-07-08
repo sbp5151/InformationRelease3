@@ -47,4 +47,8 @@
     <dimen name="bar_back_icon_width">25dp</dimen>
     <dimen name="bar_title_size">19dp</dimen>
     <dimen name="bar_right_size">17dp</dimen>
+    <dimen name="create_program_button_width">70dp</dimen>
+    <dimen name="add_button_size">67dp</dimen>
+    <dimen name="add_button_margin_right">17dp</dimen>
+    <dimen name="add_button_margin_botton">21dp</dimen>
 </resources>

@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import static com.jld.InformationRelease.db.DataBaseHelper.TABLE_NAME;
 import static com.jld.InformationRelease.db.DataBaseHelper.creation_time;
 import static com.jld.InformationRelease.db.DataBaseHelper.imgs;
+import static com.jld.InformationRelease.db.DataBaseHelper.is_load_succeed;
 import static com.jld.InformationRelease.db.DataBaseHelper.macs;
 import static com.jld.InformationRelease.db.DataBaseHelper.model_id;
+import static com.jld.InformationRelease.db.DataBaseHelper.model_image;
 import static com.jld.InformationRelease.db.DataBaseHelper.program_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.tab;
 import static com.jld.InformationRelease.db.DataBaseHelper.table_id;
@@ -106,6 +108,8 @@ public class ProgramDao {
             String user_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.user_id));
             String creation_time = cursor.getString(cursor.getColumnIndex(DataBaseHelper.creation_time));
             String cover = cursor.getString(cursor.getColumnIndex(DataBaseHelper.cover));
+            String model_img = cursor.getString(cursor.getColumnIndex(DataBaseHelper.model_image));
+            String is_load_succeed = cursor.getString(cursor.getColumnIndex(DataBaseHelper.is_load_succeed));
             //text
             if (!TextUtils.isEmpty(commoditys)) {
                 ArrayList<ProgramBean.Commodity> commodities = new Gson().fromJson(commoditys, new TypeToken<ArrayList<ProgramBean.Commodity>>() {
@@ -131,7 +135,7 @@ public class ProgramDao {
             //program_id
             bean.setProgramId(program_id);
             //upload_state
-            bean.setState(is_load);
+            bean.setUpload_state(is_load);
             //table_id
             bean.setTable_id(table_id);
             //creation_time
@@ -140,6 +144,10 @@ public class ProgramDao {
             bean.setUserid(user_id);
             //tab
             bean.setTab(tab);
+            //model_image
+            bean.setModel_img(model_img);
+            //is_load_succeed
+            bean.setIsLoadSucceed(is_load_succeed);
             //mac
             if (!TextUtils.isEmpty(mac)) {
                 ArrayList<String> macs = new Gson().fromJson(mac, new TypeToken<ArrayList<String>>() {
@@ -148,6 +156,7 @@ public class ProgramDao {
             }
             data.add(bean);
         }
+        cursor.close();
         return data;
     }
 
@@ -172,7 +181,7 @@ public class ProgramDao {
     }
 
     /**
-     * 根据本地ID更新节目
+     * 根据本地ID更新节目 节目ID和上传状态
      */
     public void updateInProgram(ProgramBean bean, String userID) throws Exception {
         LogUtil.d(TAG, "updateInProgram:" + bean);
@@ -182,7 +191,7 @@ public class ProgramDao {
         wDb.beginTransaction();
         ContentValues content = getContentValues(bean, userID);
         content.put(program_id, bean.getProgramId());
-        content.put(upload_state, bean.getState());
+        content.put(upload_state, bean.getUpload_state());
         wDb.update(TABLE_NAME, content, table_id + "=?", new String[]{bean.getTable_id() + ""});
         wDb.setTransactionSuccessful();
         wDb.endTransaction();
@@ -197,7 +206,7 @@ public class ProgramDao {
      */
     public void updateState(String tableId, String state, String userID) {
         LogUtil.d(TAG, "tableId:" + tableId);
-        LogUtil.d(TAG, "state:" + state);
+        LogUtil.d(TAG, "upload_state:" + state);
 
         if (table_id == null)
             return;
@@ -222,21 +231,41 @@ public class ProgramDao {
         if (programId == null)
             return;
         SQLiteDatabase wdb = mDb.getWritableDatabase();
-        wdb.execSQL("update " + TABLE_NAME + " set " + program_id + "=? " + "where " + table_id + "=?",
-                new Object[]{programId, tableId});
-    }
-
-    public void updateProgramTab() {
-
+        ContentValues values = new ContentValues();
+        values.put(program_id, programId);
+        wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
+        wdb.setTransactionSuccessful();
     }
 
     /**
-     * 根据数据库ID更新节目
+     * 更新设备加载节目的状态
+     *
+     * @param tableId
+     * @param isSucceed
+     */
+    public void updateLoadState(String tableId, String isSucceed, String userID) {
+        LogUtil.d(TAG, "updateProgramId:" + isSucceed);
+        LogUtil.d(TAG, "tableId:" + tableId);
+        if (tableId == null)
+            return;
+        SQLiteDatabase wdb = mDb.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(is_load_succeed, isSucceed);
+        wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
+        wdb.setTransactionSuccessful();
+    }
+
+    /**
+     * 再编辑 根据数据库ID更新节目
      */
     public void updateInDataBaseId(ProgramBean bean, String userID) throws Exception {
         LogUtil.d(TAG, "updateInDataBaseId:" + bean);
-        if (bean == null || bean.getTable_id() == -1)
-            throw new Exception("空指针异常");
+        if (bean == null || bean.getTable_id() == -1) {
+            LogUtil.e(TAG, "更新数据错误");
+            return;
+        }
+        bean.setIsLoadSucceed("0");//再编辑 设备加载状态重设为0
+        bean.setUpload_state("0");//再编辑 上传状态重设为0
         SQLiteDatabase wDb = mDb.getWritableDatabase();
         wDb.beginTransaction();
         ContentValues content = getContentValues(bean, userID);
@@ -248,14 +277,16 @@ public class ProgramDao {
     public ContentValues getContentValues(ProgramBean bean, String userID) {
         ContentValues content = new ContentValues();
         content.put(user_id, userID);
+        content.put(model_image, bean.getModel_img());
         content.put(creation_time, bean.getCreation_time());
+        content.put(is_load_succeed, bean.getIsLoadSucceed());
         content.put(model_id, bean.getModelId());
         content.put(program_id, bean.getProgramId());
         content.put(imgs, mGson.toJson(bean.getImages()));
         content.put(videos, mGson.toJson(bean.getVideos()));
         content.put(texts, mGson.toJson(bean.getTexts()));
         content.put(macs, mGson.toJson(bean.getDeviceMacs()));
-        content.put(upload_state, bean.getState());
+        content.put(upload_state, bean.getUpload_state());
         content.put(tab, bean.getTab());
         content.put(DataBaseHelper.cover, bean.getCover());
         return content;

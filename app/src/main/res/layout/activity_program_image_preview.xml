@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jld.InformationRelease.view.my_program.program.preview.ProgramImagePreview">
+    tools:context="com.jld.InformationRelease.view.my_program.program_create.preview.ProgramImagePreview">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_image_preview"

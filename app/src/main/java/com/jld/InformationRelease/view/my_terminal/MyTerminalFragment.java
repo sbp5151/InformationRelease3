@@ -1,13 +1,15 @@
 package com.jld.InformationRelease.view.my_terminal;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,10 +22,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.bean.DayTaskBean;
 import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.db.ProgramDao2;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.presenter.UpdateTerminalPresenter;
@@ -60,11 +64,36 @@ public class MyTerminalFragment extends Fragment implements
     private static final int UPDATE_TERMINAL = 0x24;//获取设备数据
     private String mUserId;
     public static final String TAG = "MyTerminalFragment";
+    private static final int INIT_DATA = 0x01;
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case INIT_DATA:
+                    initData();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        LogUtil.d(TAG, "hidden:" + hidden);
+        if (!hidden)
+            mHandler.sendEmptyMessageDelayed(INIT_DATA, 200);//延迟加载 提升用户体验
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
+        ProgramDao2 dao = ProgramDao2.getInstance(mActivity);
+        DayTaskBean bean = new DayTaskBean();
+        bean.setCreation_time("2012");
+        bean.setUserid("111");
+        dao.addData(bean);
     }
 
     @Override
@@ -97,14 +126,6 @@ public class MyTerminalFragment extends Fragment implements
 
     }
 
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        LogUtil.d(TAG, "hidden:" + hidden);
-        if (!hidden)
-            initData();
-    }
 
     public void initData() {
         //加载所有绑定的终端设备
@@ -141,6 +162,7 @@ public class MyTerminalFragment extends Fragment implements
             }
         }
     };
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
@@ -167,6 +189,7 @@ public class MyTerminalFragment extends Fragment implements
 //            }
 //        });
     }
+
     /**
      * 推送、预览、保存
      */
@@ -320,15 +343,18 @@ public class MyTerminalFragment extends Fragment implements
             ArrayList<TerminalBeanSimple> items = response.getItems();
 
             SharedPreferences.Editor edit = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE).edit();
-            edit.putString(Constant.MY_TERMINAL,new Gson().toJson(items));
+            edit.putString(Constant.MY_TERMINAL, new Gson().toJson(items));
             edit.apply();
             mAdapter.setDataChange(items);
         }
     }
 
+    private boolean isFirst = true;
+
     @Override
     public void showProgress(int requestTag) {
-        if (requestTag == UPDATE_TERMINAL) {
+        if (requestTag == UPDATE_TERMINAL && isFirst) {//第一次进入显示dialog
+            isFirst = false;
             mDialog = new ProgressDialog(mActivity);
             mDialog.setMessage(getString(R.string.loading));
             mDialog.show();

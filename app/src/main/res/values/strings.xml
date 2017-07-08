@@ -127,5 +127,15 @@
     <string name="default_program_tab">新建节目</string>
     <string name="please_input_tab">请输入节目名称</string>
     <string name="data_is_null">数据为空</string>
+    <string name="load_succeed">所有设备加载完成</string>
+    <string name="device_load_state">节目加载情况</string>
+    <string name="day_task">每日任务</string>
+    <string name="day_task_compile">每日任务编辑</string>
+    <string name="program_create">节目创建</string>
+    <string name="inter_cut">节目插播</string>
+    <string name="click_add_program">添加节目</string>
+    <string name="click_add_start_time">播放时间</string>
+    <string name="click_add_stop_time">结束时间</string>
+    <string name="select_program">选择节目</string>
 
 </resources>

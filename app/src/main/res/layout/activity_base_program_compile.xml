@@ -5,6 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jld.InformationRelease.view.my_program.program.BaseProgramCompileActivity">
+    tools:context="com.jld.InformationRelease.view.my_program.program_create.BaseProgramCompileActivity">
 
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_hide_push"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
+        app:v_styleId="@array/button_raise"/>
 </android.support.constraint.ConstraintLayout>

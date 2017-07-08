@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,8 +13,6 @@ import android.view.WindowManager;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.util.LogUtil;
-
-import java.io.Serializable;
 
 /**
  * 项目名称：InformationRelease
@@ -54,9 +53,9 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(R.anim.right_in, R.anim.left_out);
     }
-    public void toActivity(Class activity,Serializable serializable,String serializableName){
+    public void toActivity(Class activity, Parcelable parcelable, String serializableName){
         Intent intent = new Intent(this, activity);
-        intent.putExtra(serializableName,serializable);
+        intent.putExtra(serializableName,parcelable);
         startActivity(intent);
 
     }

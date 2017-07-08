@@ -1,5 +1,9 @@
 package com.jld.InformationRelease.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.jld.InformationRelease.base.BaseProgram;
 import com.jld.InformationRelease.util.LogUtil;
 
 import java.io.Serializable;
@@ -13,8 +17,7 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/4/19 15:09
  */
-public class ProgramBean implements Serializable {
-
+public class ProgramBean extends BaseProgram implements Parcelable {
     /**
      * 图片集
      */
@@ -28,57 +31,40 @@ public class ProgramBean implements Serializable {
      */
     private ArrayList<String> videos = new ArrayList<>();
     /**
-     * 需要推送的终端mac地址
-     */
-    private ArrayList<String> deviceMacs = new ArrayList<>();
-
-    /**
-     * 用户ID
-     */
-    private String userid;
-    /**
-     * 节目ID 用于获取节目
-     */
-    private String programId;
-
-    /**
-     * 加密字符串 md5(key+mobile)
-     */
-    private String sign;
-
-    /**
-     * 创建时间
-     */
-    private String creation_time;
-
-    /**
-     * 数据库字段ID
-     */
-    private int table_id = -1;
-
-    /**
-     * 用户输入的标签
-     */
-    private String tab="";
-    /**
      * 模板ID
      */
     private String modelId;
-
-    /**
-     * 状态：0为未上传，1为已上传，-1为上传失败
-     */
-    private String state;
-
     /**
      * 是否未选中状态
      */
     private boolean isCheck;
-
     /**
      * 封面
      */
     private String cover = "";
+    public ProgramBean(){
+        super();
+    }
+    protected ProgramBean(Parcel in) {
+        super(in);
+        images = in.createStringArrayList();
+        videos = in.createStringArrayList();
+        modelId = in.readString();
+        isCheck = in.readByte() != 0;
+        cover = in.readString();
+    }
+
+    public static final Creator<ProgramBean> CREATOR = new Creator<ProgramBean>() {
+        @Override
+        public ProgramBean createFromParcel(Parcel in) {
+            return new ProgramBean(in);
+        }
+
+        @Override
+        public ProgramBean[] newArray(int size) {
+            return new ProgramBean[size];
+        }
+    };
 
     public String getCover() {
         return cover;
@@ -96,29 +82,6 @@ public class ProgramBean implements Serializable {
         isCheck = check;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getTab() {
-        return tab;
-    }
-
-    public void setTab(String tab) {
-        this.tab = tab;
-    }
-
-    public int getTable_id() {
-        return table_id;
-    }
-
-    public void setTable_id(int table_id) {
-        this.table_id = table_id;
-    }
 
     public ArrayList<String> getVideos() {
         return videos;
@@ -126,6 +89,20 @@ public class ProgramBean implements Serializable {
 
     public void setVideos(ArrayList<String> videos) {
         this.videos = videos;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringList(images);
+        parcel.writeStringList(videos);
+        parcel.writeString(modelId);
+        parcel.writeByte((byte) (isCheck ? 1 : 0));
+        parcel.writeString(cover);
     }
 
     public static class Commodity implements Serializable {
@@ -169,13 +146,14 @@ public class ProgramBean implements Serializable {
                     ", price='" + price + '\''
                     ;
         }
+
         @Override
         public boolean equals(Object obj) {
             Commodity com = (Commodity) obj;
-            LogUtil.d("name:",name);
-            LogUtil.d("price:",price);
-            LogUtil.d("com.getName():",com.getName());
-            LogUtil.d("com.getPrice():",com.getPrice());
+            LogUtil.d("name:", name);
+            LogUtil.d("price:", price);
+            LogUtil.d("com.getName():", com.getName());
+            LogUtil.d("com.getPrice():", com.getPrice());
             return name.equals(com.getName()) && price.equals(com.getPrice());
         }
     }
@@ -196,21 +174,6 @@ public class ProgramBean implements Serializable {
         this.texts = texts;
     }
 
-    public ArrayList<String> getDeviceMacs() {
-        return deviceMacs;
-    }
-
-    public void setDeviceMacs(ArrayList<String> deviceMacs) {
-        this.deviceMacs = deviceMacs;
-    }
-
-    public String getUserid() {
-        return userid;
-    }
-
-    public void setUserid(String mobile) {
-        this.userid = mobile;
-    }
 
     public String getModelId() {
         return modelId;
@@ -220,29 +183,6 @@ public class ProgramBean implements Serializable {
         this.modelId = modelId;
     }
 
-    public String getSign() {
-        return sign;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
-
-    public String getCreation_time() {
-        return creation_time;
-    }
-
-    public void setCreation_time(String creation_time) {
-        this.creation_time = creation_time;
-    }
-
-    public String getProgramId() {
-        return programId;
-    }
-
-    public void setProgramId(String programId) {
-        this.programId = programId;
-    }
 
     @Override
     public String toString() {
@@ -250,15 +190,8 @@ public class ProgramBean implements Serializable {
                 "images=" + images +
                 ", texts=" + texts +
                 ", videos=" + videos +
-                ", deviceMacs=" + deviceMacs +
-                ", userid='" + userid + '\'' +
-                ", programId='" + programId + '\'' +
-                ", sign='" + sign + '\'' +
                 ", creation_time='" + creation_time + '\'' +
-                ", table_id=" + table_id +
-                ", tab='" + tab + '\'' +
                 ", modelId='" + modelId + '\'' +
-                ", state='" + state + '\'' +
                 ", isCheck=" + isCheck +
                 ", cover='" + cover + '\'' +
                 '}';

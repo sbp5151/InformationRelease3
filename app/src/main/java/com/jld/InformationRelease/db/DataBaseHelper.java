@@ -15,6 +15,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "jldInformation.db";// 数据库名称
     public static final String TABLE_NAME = "program";
+    public static final String DAY_TASK_TABLE_NAME = "daytask";
     private static final int DATABASE_VERSION = 1;// 数据库当前版本，老版本为1
     //字段
     public static final String table_id = "id";
@@ -29,11 +30,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String user_id = "user_id";
     public static final String macs = "mac";
     public static final String cover = "cover";
+    public static final String model_image = "model_image";
+    public static final String is_load_succeed = "is_load_succeed";
+    public static final String program_item = "program_item";
 
     /**
-     * 创建团成员数据库表
+     * 创建单个节目数据库表
      */
-    public static final String CREATE_MYMODEL_TABLE =
+    public static final String CREATE_PROGRAM_TABLE =
             "create table if not exists " + TABLE_NAME + "( "
                     + table_id + " Integer primary key autoincrement,"//id自增长
                     + user_id + " varchar(30),"//用户ID
@@ -44,11 +48,42 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + videos + " varchar(1000),"//视频集合
                     + texts + " varchar(2000),"//“商品”集合
                     + macs + " varchar(1000),"//mac集合
-                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传
+                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
                     + tab + " varchar(30),"//用户设置的标签
-                    + cover + " varchar(50)"//封面路径
+                    + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
+                    + cover + " varchar(50),"//封面路径
+                    + model_image + " varchar(50)"//封面路径
                     + ");";
+    /**
+     * 创建每日节目数据库表
+     */
+//    public static final String CREATE_DAY_TASK_TABLE =
+//            "create table if not exists " + DAY_TASK_TABLE_NAME + "("
+//                    + table_id + " Integer primary key autoincrement,"//id自增长
+//                    + user_id + " varchar(30),"//用户ID
+//                    + creation_time + " varchar(30),"//创建时间
+//                    + program_id + " varchar(30) UNIQUE,"//节目ID 唯一
+//                    + macs + " varchar(1000),"//mac集合
+//                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
+//                    + tab + " varchar(30),"//用户设置的标签
+//                    + is_load_succeed + " varchar(30),"//发布的设备是否完全加载
+//                    + model_image + " varchar(50),"//模板缩略图
+//                    + program_item + "varchar(3000)"//任务节目列表
+//                    + ");";
 
+    public static final String CREATE_DAY_TASK_TABLE =
+            "create table if not exists " + DAY_TASK_TABLE_NAME + "( "
+                    + table_id + " Integer primary key autoincrement,"//id自增长
+                    + model_image + " varchar(50),"//模板缩略图
+                    + user_id + " varchar(30),"//用户ID
+                    + creation_time + " varchar(30),"//创建时间
+                    + program_id + " varchar(30) UNIQUE,"//节目ID 唯一
+                    + macs + " varchar(1000),"//mac集合
+                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
+                    + tab + " varchar(30),"//用户设置的标签
+                    + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
+                    + program_item + " varchar(3000)"//任务节目列表
+                    + ");";
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -56,7 +91,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //当你Android安装一个全新的应用，会从onCreate这个方法里创建。
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(CREATE_MYMODEL_TABLE);
+        sqLiteDatabase.execSQL(CREATE_PROGRAM_TABLE);//节目表
+        sqLiteDatabase.execSQL(CREATE_DAY_TASK_TABLE);//任务表
     }
 
     //当你Android在旧版本上更新的时候会从onUpgrade方法里更新。

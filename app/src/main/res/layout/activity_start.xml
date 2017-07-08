@@ -5,13 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/titlepage"
     tools:context="com.jld.InformationRelease.view.StartActivity">
-
+    <!--noraml （普通字体,系统默认使用的字体）
+        sans（非衬线字体）
+        serif （衬线字体）
+        monospace（等宽字体）-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="我是广告"
-        android:textSize="25dp"
+        android:paddingBottom="150dp"
+        android:text="JLD信息发布系统"
+        android:textSize="30dp"
+        android:typeface="serif"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

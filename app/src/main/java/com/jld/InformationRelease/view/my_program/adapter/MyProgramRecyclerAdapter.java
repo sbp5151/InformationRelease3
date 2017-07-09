@@ -118,6 +118,8 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
 
     @Override
     public int getItemCount() {
+        if(mData==null)
+            return 0;
         return mData.size();
     }
 

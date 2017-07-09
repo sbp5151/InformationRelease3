@@ -89,11 +89,6 @@ public class MyTerminalFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
-        ProgramDao2 dao = ProgramDao2.getInstance(mActivity);
-        DayTaskBean bean = new DayTaskBean();
-        bean.setCreation_time("2012");
-        bean.setUserid("111");
-        dao.addData(bean);
     }
 
     @Override

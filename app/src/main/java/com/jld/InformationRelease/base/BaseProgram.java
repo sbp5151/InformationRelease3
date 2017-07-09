@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/7/7 11:26
  */
-public class BaseProgram implements Parcelable {
+public class BaseProgram {
     /**
      * 需要推送的终端mac地址
      */
@@ -69,7 +69,20 @@ public class BaseProgram implements Parcelable {
     /**
      * 是否未选中状态
      */
-    private boolean isCheck;
+    protected boolean isCheck;
+
+    /**
+     * 节目类型
+     */
+    protected String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public boolean isCheck() {
         return isCheck;
@@ -81,33 +94,6 @@ public class BaseProgram implements Parcelable {
 
     public BaseProgram() {
     }
-
-    protected BaseProgram(Parcel in) {
-        deviceMacs = in.createStringArrayList();
-        loadDeviceMacs = in.createStringArrayList();
-        isLoadSucceed = in.readString();
-        userid = in.readString();
-        programId = in.readString();
-        sign = in.readString();
-        creation_time = in.readString();
-        table_id = in.readInt();
-        tab = in.readString();
-        upload_state = in.readString();
-        model_img = in.readString();
-    }
-
-    public static final Creator<BaseProgram> CREATOR = new Creator<BaseProgram>() {
-        @Override
-        public BaseProgram createFromParcel(Parcel in) {
-            return new BaseProgram(in);
-        }
-
-        @Override
-        public BaseProgram[] newArray(int size) {
-            return new BaseProgram[size];
-        }
-    };
-
     public ArrayList<String> getDeviceMacs() {
         return deviceMacs;
     }
@@ -210,25 +196,51 @@ public class BaseProgram implements Parcelable {
                 ", tab='" + tab + '\'' +
                 ", upload_state='" + upload_state + '\'' +
                 ", model_img='" + model_img + '\'' +
+                ", isCheck=" + isCheck +
+                ", type='" + type + '\'' +
                 '}';
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeStringList(deviceMacs);
-        parcel.writeStringList(loadDeviceMacs);
-        parcel.writeString(isLoadSucceed);
-        parcel.writeString(userid);
-        parcel.writeString(programId);
-        parcel.writeString(sign);
-        parcel.writeString(creation_time);
-        parcel.writeInt(table_id);
-        parcel.writeString(tab);
-        parcel.writeString(upload_state);
-        parcel.writeString(model_img);    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel parcel, int i) {
+//        parcel.writeStringList(deviceMacs);
+//        parcel.writeStringList(loadDeviceMacs);
+//        parcel.writeString(isLoadSucceed);
+//        parcel.writeString(userid);
+//        parcel.writeString(programId);
+//        parcel.writeString(sign);
+//        parcel.writeString(creation_time);
+//        parcel.writeInt(table_id);
+//        parcel.writeString(tab);
+//        parcel.writeString(upload_state);
+//        parcel.writeString(model_img);    }
+//    protected BaseProgram(Parcel in) {
+//        deviceMacs = in.createStringArrayList();
+//        loadDeviceMacs = in.createStringArrayList();
+//        isLoadSucceed = in.readString();
+//        userid = in.readString();
+//        programId = in.readString();
+//        sign = in.readString();
+//        creation_time = in.readString();
+//        table_id = in.readInt();
+//        tab = in.readString();
+//        upload_state = in.readString();
+//        model_img = in.readString();
+//    }
+//    public static final Creator<BaseProgram> CREATOR = new Creator<BaseProgram>() {
+//        @Override
+//        public BaseProgram createFromParcel(Parcel in) {
+//            return new BaseProgram(in);
+//        }
+//
+//        @Override
+//        public BaseProgram[] newArray(int size) {
+//            return new BaseProgram[size];
+//        }
+//    };
 }

@@ -33,6 +33,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String model_image = "model_image";
     public static final String is_load_succeed = "is_load_succeed";
     public static final String program_item = "program_item";
+    public static final String type = "program_type";
 
     /**
      * 创建单个节目数据库表
@@ -52,7 +53,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + tab + " varchar(30),"//用户设置的标签
                     + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
                     + cover + " varchar(50),"//封面路径
-                    + model_image + " varchar(50)"//封面路径
+                    + model_image + " varchar(50),"//封面路径
+                    + type + " varchar(10)"//封面路径
                     + ");";
     /**
      * 创建每日节目数据库表
@@ -82,7 +84,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
                     + tab + " varchar(30),"//用户设置的标签
                     + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
-                    + program_item + " varchar(3000)"//任务节目列表
+                    + program_item + " varchar(3000),"//任务节目列表
+                    + type + " varchar(10)"//封面路径
                     + ");";
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

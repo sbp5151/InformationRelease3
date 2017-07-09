@@ -8,6 +8,7 @@ import com.jld.InformationRelease.util.LogUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * 项目名称：InformationRelease
@@ -35,23 +36,38 @@ public class ProgramBean extends BaseProgram implements Parcelable {
      */
     private String modelId;
     /**
-     * 是否未选中状态
-     */
-    private boolean isCheck;
-    /**
      * 封面
      */
     private String cover = "";
-    public ProgramBean(){
-        super();
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
-    protected ProgramBean(Parcel in) {
-        super(in);
-        images = in.createStringArrayList();
-        videos = in.createStringArrayList();
-        modelId = in.readString();
-        isCheck = in.readByte() != 0;
-        cover = in.readString();
+
+    public ProgramBean() {
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeStringList(images);
+        parcel.writeStringList(videos);
+        parcel.writeString(modelId);
+        parcel.writeString(cover);
+        parcel.writeStringList(deviceMacs);
+        parcel.writeStringList(loadDeviceMacs);
+        parcel.writeString(isLoadSucceed);
+        parcel.writeString(userid);
+        parcel.writeString(programId);
+        parcel.writeString(sign);
+        parcel.writeString(creation_time);
+        parcel.writeInt(table_id);
+        parcel.writeString(tab);
+        parcel.writeString(upload_state);
+        parcel.writeString(model_img);
+        parcel.writeString(type);
+
+        parcel.writeTypedList(texts);
     }
 
     public static final Creator<ProgramBean> CREATOR = new Creator<ProgramBean>() {
@@ -66,46 +82,28 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         }
     };
 
-    public String getCover() {
-        return cover;
+    protected ProgramBean(Parcel in) {
+        images = in.createStringArrayList();
+        videos = in.createStringArrayList();
+        modelId = in.readString();
+        cover = in.readString();
+        deviceMacs = in.createStringArrayList();
+        loadDeviceMacs = in.createStringArrayList();
+        isLoadSucceed = in.readString();
+        userid = in.readString();
+        programId = in.readString();
+        sign = in.readString();
+        creation_time = in.readString();
+        table_id = in.readInt();
+        tab = in.readString();
+        upload_state = in.readString();
+        model_img = in.readString();
+        type = in.readString();
+
+        in.readTypedList(texts, Commodity.CREATOR);
     }
 
-    public void setCover(String cover) {
-        this.cover = cover;
-    }
-
-    public boolean isCheck() {
-        return isCheck;
-    }
-
-    public void setCheck(boolean check) {
-        isCheck = check;
-    }
-
-
-    public ArrayList<String> getVideos() {
-        return videos;
-    }
-
-    public void setVideos(ArrayList<String> videos) {
-        this.videos = videos;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeStringList(images);
-        parcel.writeStringList(videos);
-        parcel.writeString(modelId);
-        parcel.writeByte((byte) (isCheck ? 1 : 0));
-        parcel.writeString(cover);
-    }
-
-    public static class Commodity implements Serializable {
+    public static class Commodity implements Parcelable {
         /**
          * 商品名
          */
@@ -121,6 +119,35 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         public Commodity(String name, String price) {
             this.name = name;
             this.price = price;
+
+        }
+
+        protected Commodity(Parcel in) {
+            name = in.readString();
+            price = in.readString();
+        }
+
+        public static final Creator<Commodity> CREATOR = new Creator<Commodity>() {
+            @Override
+            public Commodity createFromParcel(Parcel in) {
+                return new Commodity(in);
+            }
+
+            @Override
+            public Commodity[] newArray(int size) {
+                return new Commodity[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(name);
+            parcel.writeString(price);
         }
 
         public String getName() {
@@ -156,6 +183,24 @@ public class ProgramBean extends BaseProgram implements Parcelable {
             LogUtil.d("com.getPrice():", com.getPrice());
             return name.equals(com.getName()) && price.equals(com.getPrice());
         }
+
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+
+    public ArrayList<String> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(ArrayList<String> videos) {
+        this.videos = videos;
     }
 
     public ArrayList<String> getImages() {
@@ -183,17 +228,26 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         this.modelId = modelId;
     }
 
-
     @Override
     public String toString() {
         return "ProgramBean{" +
+                "deviceMacs=" + deviceMacs +
+                ", loadDeviceMacs=" + loadDeviceMacs +
+                ", isLoadSucceed='" + isLoadSucceed + '\'' +
+                ", userid='" + userid + '\'' +
+                ", programId='" + programId + '\'' +
+                ", sign='" + sign + '\'' +
+                ", creation_time='" + creation_time + '\'' +
+                ", table_id=" + table_id +
+                ", tab='" + tab + '\'' +
+                ", upload_state='" + upload_state + '\'' +
+                ", model_img='" + model_img + '\'' +
                 "images=" + images +
                 ", texts=" + texts +
                 ", videos=" + videos +
-                ", creation_time='" + creation_time + '\'' +
                 ", modelId='" + modelId + '\'' +
-                ", isCheck=" + isCheck +
                 ", cover='" + cover + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

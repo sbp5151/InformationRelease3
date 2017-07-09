@@ -238,8 +238,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
         body.setImages(imgs);//图片广告
         body.setModelId(modleId);//模板ID
         body.setCover(mAdapter.mImgAdapter.getCover());
-        if (body.getModelId().equals(Constant.NAICHA_MODEL_1))
-            toActivity(ProgramTextPreview.class, body, "previewData");
+        toActivity(ProgramTextPreview.class, body, "previewData");
     }
 
     /**

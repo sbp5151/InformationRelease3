@@ -52,7 +52,7 @@ public class ProgramTextPreview extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview_1);
-        mPreviewData = (ProgramBean) getIntent().getSerializableExtra("previewData");
+        mPreviewData =  getIntent().getParcelableExtra("previewData");
         LogUtil.d(TAG, "mPreviewData:" + mPreviewData);
         if (mPreviewData == null) {
             ToastUtil.showToast(this, getResources().getString(R.string.data_exception), Toast.LENGTH_SHORT);

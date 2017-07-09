@@ -61,7 +61,10 @@ import com.rey.material.app.DialogFragment;
 import com.rey.material.app.SimpleDialog;
 import com.rey.material.app.ThemeManager;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -73,7 +76,7 @@ import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mPr
  * <p>
  * 节目列表
  */
-public class MyProgramFragment extends Fragment implements IViewListen<ProgramLoadStateResponse>{
+public class MyProgramFragment extends Fragment implements IViewListen<ProgramLoadStateResponse> {
 
     private static final java.lang.String TAG = "MyProgramFragment";
     private MainActivity mActivity;
@@ -140,7 +143,6 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogUtil.d(TAG, "onCreateView:");
-
         View view = inflater.inflate(R.layout.fragment_my_program, container, false);
         mSp = mActivity.getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mUserid = mSp.getString(UserConstant.USER_ID, "");
@@ -159,6 +161,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         initData();
         super.onStart();
     }
+
 
     @Override
     public void onStop() {
@@ -205,26 +208,29 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         mIv_add.setOnClickListener(mOnClickListener);
     }
 
+
     public void initData() {
         ProgramDao programDao = ProgramDao.getInstance(mActivity);
         ProgramDao2 dayTaskDao = ProgramDao2.getInstance(mActivity);
-//        try {
-            mDayTaskDatas = dayTaskDao.queryDataAll(mUserid);
-//            mProgramDatas = programDao.getAllProgram(mUserid);
-            LogUtil.d(TAG,"mDayTaskDatas:"+mDayTaskDatas);
-            mNames = new String[mProgramDatas.size()];
-            for (int i = 0; i < mProgramDatas.size(); i++) {
-                String name = mProgramDatas.get(i).getTab();
-                mNames[i] = name;
-            }
-            mDatas.addAll(mProgramDatas);
-            mDatas.addAll(mDayTaskDatas);
-//            Collections.sort(mDatas, new SortByTime());
-            LogUtil.d(TAG, "mDatas:" + mDatas);
-//        } catch (JSONException e) {
-//            ToastUtil.showToast(mActivity, getResources().getString(R.string.read_data_error), 3000);
-//            e.printStackTrace();
-//        }
+        mDayTaskDatas = dayTaskDao.queryDataAll(mUserid);
+        try {
+            mProgramDatas = programDao.getAllProgram(mUserid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        LogUtil.d(TAG, "mDayTaskDatas:" + mDayTaskDatas);
+        LogUtil.d(TAG, "mProgramDatas:" + mProgramDatas);
+        mNames = new String[mProgramDatas.size()];
+        for (int i = 0; i < mProgramDatas.size(); i++) {
+            String name = mProgramDatas.get(i).getTab();
+            mNames[i] = name;
+        }
+        mDatas.clear();
+        mDatas.addAll(mProgramDatas);
+        mDatas.addAll(mDayTaskDatas);
+        LogUtil.d(TAG, "mDatas:" + mDatas);
+        if (mDatas.size() >= 2)
+            Collections.sort(mDatas, new SortByTime());
         if (mProgramDatas != null || mProgramDatas.size() > 0) {
             mAdapter.update(mDatas);
             loadProgramState();
@@ -239,10 +245,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         public int compare(Object o1, Object o2) {
             BaseProgram s1 = (BaseProgram) o1;
             BaseProgram s2 = (BaseProgram) o2;
-            return TimeUtil.dataOne(s2.getCreation_time()).compareTo(TimeUtil.dataOne(s1.getCreation_time()));
-//          if (s1.getAge() > s2.getAge())
-//           return 1;
-//          return -1;
+            if (s1.getType().equals(s2.getType()))
+                return TimeUtil.dataOne(s2.getCreation_time()).compareTo(TimeUtil.dataOne(s1.getCreation_time()));
+            else {
+                if (s1.getType().equals("1"))
+                    return -1;
+                else return 1;
+            }
         }
     }
 
@@ -315,6 +324,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                         public void onPositiveActionClicked(DialogFragment fragment) {
                             super.onPositiveActionClicked(fragment);
                         }
+
                         @Override
                         public void onNegativeActionClicked(DialogFragment fragment) {
                             super.onNegativeActionClicked(fragment);
@@ -335,23 +345,33 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         @Override
         public void onItemClickListen(View view, int position) {
             if (!mAdapter.getCompileState()) {//在编辑状态不让点击
-
-                ProgramBean programBean = mProgramDatas.get(position);
-                LogUtil.d(TAG, "programBean:" + programBean);
-                Intent intent = null;
-                switch (programBean.getModelId()) {
-                    case Constant.VIDEO_MODEL:
-                        intent = new Intent(mActivity, ProgramVideoActivity.class);
-                        break;
-                    case Constant.IMAGE_MODEL:
-                        intent = new Intent(mActivity, ProgramImageActivity.class);
-                        break;
-                    case Constant.NAICHA_MODEL_1:
-                        intent = new Intent(mActivity, ProgramTextActivity.class);
-                        break;
-                }
-                if (intent != null) {
-                    intent.putExtra("program_data", programBean);//节目数据
+                BaseProgram baseProgram = mDatas.get(position);
+                if (baseProgram.getType().equals("1")) {
+                    ProgramBean programBean = (ProgramBean) baseProgram;
+                    LogUtil.d(TAG, "programBean:" + baseProgram);
+                    Intent intent = null;
+                    switch (programBean.getModelId()) {
+                        case Constant.VIDEO_MODEL:
+                            intent = new Intent(mActivity, ProgramVideoActivity.class);
+                            break;
+                        case Constant.IMAGE_MODEL:
+                            intent = new Intent(mActivity, ProgramImageActivity.class);
+                            break;
+                        case Constant.NAICHA_MODEL_1:
+                            intent = new Intent(mActivity, ProgramTextActivity.class);
+                            break;
+                    }
+                    if (intent != null) {
+                        intent.putExtra("program_data", programBean);//节目数据
+                        LogUtil.d(TAG, "programBean:" + programBean);
+                        startActivityForResult(intent, mProgramRequestCode);
+                    }
+                } else if (baseProgram.getType().equals("2")) {
+                    DayTaskBean dayTaskBean = (DayTaskBean) baseProgram;
+                    Intent intent = new Intent(mActivity, DayTaskProgramActivity.class);
+                    intent.putExtra("task_data", dayTaskBean);//节目数据
+                    intent.putParcelableArrayListExtra("program_data", mProgramDatas);
+                    LogUtil.d(TAG, "task_data:" + dayTaskBean);
                     startActivityForResult(intent, mProgramRequestCode);
                 }
             }
@@ -384,8 +404,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                 items.add(item);
             }
             ProgramStateProgressDialog dialog = ProgramStateProgressDialog.getInstance(items);
-            dialog.show(getFragmentManager(),"");
+            dialog.show(getFragmentManager(), "");
         }
+
         @Override
         public void onItemDeleteClickListen(View view, int position) {
             deleteProgramDialog(position);
@@ -402,6 +423,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         }
         return ret;
     }
+
     public void deleteProgramDialog(final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(getResources().getString(R.string.hint))
@@ -409,9 +431,15 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                 .setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //删除节目
-                        ProgramDao programDao = ProgramDao.getInstance(mActivity);
-                        programDao.deleteProgram(mAdapter.getData(position).getTable_id() + "", mUserid);
+                        BaseProgram baseProgram = mAdapter.getData(position);
+                        if (baseProgram.getType().equals("1")) {
+                            //删除节目
+                            ProgramDao programDao = ProgramDao.getInstance(mActivity);
+                            programDao.deleteProgram(mAdapter.getData(position).getTable_id() + "", mUserid);
+                        } else if (baseProgram.getType().equals("2")) {
+                            ProgramDao2 programDao2 = ProgramDao2.getInstance(mActivity);
+                            programDao2.deleteData(baseProgram.getTable_id() + "");
+                        }
                         initData();
                     }
                 }).setNegativeButton(getResources().getString(R.string.cancle), new DialogInterface.OnClickListener() {
@@ -430,7 +458,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == mProgramRequestCode && resultCode == mProgramResultCode) {
             //再发布
-            ProgramBean body = (ProgramBean) data.getSerializableExtra("body");
+            ProgramBean body = (ProgramBean) data.getParcelableExtra("body");
             LogUtil.d(TAG, "onActivityResult:" + body);
             if (body != null) {
                 mProgram = body;

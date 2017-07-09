@@ -24,6 +24,7 @@ import static com.jld.InformationRelease.db.DataBaseHelper.program_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.program_item;
 import static com.jld.InformationRelease.db.DataBaseHelper.tab;
 import static com.jld.InformationRelease.db.DataBaseHelper.table_id;
+import static com.jld.InformationRelease.db.DataBaseHelper.type;
 import static com.jld.InformationRelease.db.DataBaseHelper.upload_state;
 import static com.jld.InformationRelease.db.DataBaseHelper.user_id;
 
@@ -56,6 +57,7 @@ public class ProgramDao2 {
     }
 
     public void addData(DayTaskBean bean) {
+
         LogUtil.d(TAG, "addData:" + bean);
         if (TextUtils.isEmpty(bean.getUserid())) {
             ToastUtil.showToast(mContext, mContext.getString(R.string.please_login), 3000);
@@ -73,6 +75,7 @@ public class ProgramDao2 {
         values.put(is_load_succeed, bean.getIsLoadSucceed());
         values.put(model_image, bean.getModel_img());
         values.put(program_item, mGson.toJson(bean.getProgram_item()));
+        values.put(type, bean.getType());
         db.insertOrThrow(DAY_TASK_TABLE_NAME, null, values);
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -98,10 +101,14 @@ public class ProgramDao2 {
             data.setTab(query.getString(query.getColumnIndex(tab)));
             data.setIsLoadSucceed(query.getString(query.getColumnIndex(is_load_succeed)));
             data.setModel_img(query.getString(query.getColumnIndex(model_image)));
+            data.setType(query.getString(query.getColumnIndex(type)));
+            data.setTable_id(Integer.parseInt(query.getString(query.getColumnIndex(table_id))));
             String rProgramItem = query.getString(query.getColumnIndex(program_item));
+            LogUtil.d(TAG, "rProgramItem:" + rProgramItem);
             if (!TextUtils.isEmpty(rProgramItem)) {
-                ArrayList<DayTaskBean.DayTaskItem> item = new Gson().fromJson(rMacs, new TypeToken<ArrayList<DayTaskBean.DayTaskItem>>() {
+                ArrayList<DayTaskBean.DayTaskItem> item = new Gson().fromJson(rProgramItem, new TypeToken<ArrayList<DayTaskBean.DayTaskItem>>() {
                 }.getType());
+                LogUtil.d(TAG, "item:" + item);
                 data.setProgram_item(item);
             }
             datas.add(data);

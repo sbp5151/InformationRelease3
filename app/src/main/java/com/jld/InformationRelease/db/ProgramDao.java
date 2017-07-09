@@ -26,6 +26,7 @@ import static com.jld.InformationRelease.db.DataBaseHelper.program_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.tab;
 import static com.jld.InformationRelease.db.DataBaseHelper.table_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.texts;
+import static com.jld.InformationRelease.db.DataBaseHelper.type;
 import static com.jld.InformationRelease.db.DataBaseHelper.upload_state;
 import static com.jld.InformationRelease.db.DataBaseHelper.user_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.videos;
@@ -110,6 +111,7 @@ public class ProgramDao {
             String cover = cursor.getString(cursor.getColumnIndex(DataBaseHelper.cover));
             String model_img = cursor.getString(cursor.getColumnIndex(DataBaseHelper.model_image));
             String is_load_succeed = cursor.getString(cursor.getColumnIndex(DataBaseHelper.is_load_succeed));
+            String type = cursor.getString(cursor.getColumnIndex(DataBaseHelper.type));
             //text
             if (!TextUtils.isEmpty(commoditys)) {
                 ArrayList<ProgramBean.Commodity> commodities = new Gson().fromJson(commoditys, new TypeToken<ArrayList<ProgramBean.Commodity>>() {
@@ -148,6 +150,7 @@ public class ProgramDao {
             bean.setModel_img(model_img);
             //is_load_succeed
             bean.setIsLoadSucceed(is_load_succeed);
+            bean.setType(type);
             //mac
             if (!TextUtils.isEmpty(mac)) {
                 ArrayList<String> macs = new Gson().fromJson(mac, new TypeToken<ArrayList<String>>() {
@@ -288,6 +291,7 @@ public class ProgramDao {
         content.put(macs, mGson.toJson(bean.getDeviceMacs()));
         content.put(upload_state, bean.getUpload_state());
         content.put(tab, bean.getTab());
+        content.put(type, bean.getType());
         content.put(DataBaseHelper.cover, bean.getCover());
         return content;
     }

@@ -83,7 +83,10 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
             }
         });
         //头像
-        Glide.with(mContext).load(programBean.getModel_img()).into(holder.mIcon);
+        if (programBean.getType().equals("2"))
+            holder.mIcon.setImageResource(R.mipmap.day_task);
+        else
+            Glide.with(mContext).load(programBean.getModel_img()).into(holder.mIcon);
         if (programBean.getUpload_state() != null && programBean.getUpload_state().equals("1")) {//上传成功
             holder.defeat.setVisibility(View.GONE);
             holder.mIcon.setBorderColor(mContext.getResources().getColor(R.color.backgroud_red));

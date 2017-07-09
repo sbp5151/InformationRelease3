@@ -1,6 +1,7 @@
 package com.jld.InformationRelease.bean;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.jld.InformationRelease.base.BaseProgram;
 
@@ -13,18 +14,68 @@ import java.util.ArrayList;
  *
  * @creator boping
  * @create-time 2017/7/6 15:04
+ *
+ * 每日任务列表
  */
-public class DayTaskBean extends BaseProgram {
+public class DayTaskBean extends BaseProgram implements Parcelable{
 
     public DayTaskBean(){}
-    protected DayTaskBean(Parcel in) {
-        super(in);
-    }
 
     /**
      * 任务节目列表集合
      */
     private ArrayList<DayTaskItem> program_item = new ArrayList<>();
+
+    protected DayTaskBean(Parcel in) {
+        deviceMacs = in.createStringArrayList();
+        loadDeviceMacs = in.createStringArrayList();
+        isLoadSucceed = in.readString();
+        userid = in.readString();
+        programId = in.readString();
+        sign = in.readString();
+        creation_time = in.readString();
+        table_id = in.readInt();
+        tab = in.readString();
+        upload_state = in.readString();
+        model_img = in.readString();
+        type = in.readString();
+
+        in.readTypedList(program_item,DayTaskItem.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringList(deviceMacs);
+        parcel.writeStringList(loadDeviceMacs);
+        parcel.writeString(isLoadSucceed);
+        parcel.writeString(userid);
+        parcel.writeString(programId);
+        parcel.writeString(sign);
+        parcel.writeString(creation_time);
+        parcel.writeInt(table_id);
+        parcel.writeString(tab);
+        parcel.writeString(upload_state);
+        parcel.writeString(model_img);
+        parcel.writeString(type);
+
+        parcel.writeTypedList(program_item);
+    }
+    public static final Creator<DayTaskBean> CREATOR = new Creator<DayTaskBean>() {
+        @Override
+        public DayTaskBean createFromParcel(Parcel in) {
+            return new DayTaskBean(in);
+        }
+
+        @Override
+        public DayTaskBean[] newArray(int size) {
+            return new DayTaskBean[size];
+        }
+    };
 
     public ArrayList<DayTaskItem> getProgram_item() {
         return program_item;
@@ -33,21 +84,60 @@ public class DayTaskBean extends BaseProgram {
     public void setProgram_item(ArrayList<DayTaskItem> program_item) {
         this.program_item = program_item;
     }
-
     @Override
     public String toString() {
         return "DayTaskBean{" +
+                "deviceMacs=" + deviceMacs +
+                ", loadDeviceMacs=" + loadDeviceMacs +
+                ", isLoadSucceed='" + isLoadSucceed + '\'' +
+                ", userid='" + userid + '\'' +
+                ", programId='" + programId + '\'' +
+                ", sign='" + sign + '\'' +
+                ", creation_time='" + creation_time + '\'' +
+                ", table_id=" + table_id +
+                ", tab='" + tab + '\'' +
+                ", upload_state='" + upload_state + '\'' +
+                ", model_img='" + model_img + '\'' +
                 "program_item=" + program_item +
+                ", type='" + type + '\'' +
                 '}';
     }
-
-    public class DayTaskItem{
+    public static class DayTaskItem implements Parcelable{
         private String programName;
         private String stateTime;
         private String stopTime;
         private String programLocalId;
-
         public DayTaskItem() {
+        }
+        protected DayTaskItem(Parcel in) {
+            programName = in.readString();
+            stateTime = in.readString();
+            stopTime = in.readString();
+            programLocalId = in.readString();
+        }
+
+        public static final Creator<DayTaskItem> CREATOR = new Creator<DayTaskItem>() {
+            @Override
+            public DayTaskItem createFromParcel(Parcel in) {
+                return new DayTaskItem(in);
+            }
+
+            @Override
+            public DayTaskItem[] newArray(int size) {
+                return new DayTaskItem[size];
+            }
+        };
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(programName);
+            parcel.writeString(stateTime);
+            parcel.writeString(stopTime);
+            parcel.writeString(programLocalId);
         }
 
         public String getProgramLocalId() {
@@ -74,6 +164,14 @@ public class DayTaskBean extends BaseProgram {
             this.stateTime = stateTime;
         }
 
+        public String getStopTime() {
+            return stopTime;
+        }
+
+        public void setStopTime(String stopTime) {
+            this.stopTime = stopTime;
+        }
+
         @Override
         public String toString() {
             return "DayTaskBean{" +
@@ -82,14 +180,6 @@ public class DayTaskBean extends BaseProgram {
                     ", stopTime='" + stopTime + '\'' +
                     ", programLocalId='" + programLocalId + '\'' +
                     '}';
-        }
-
-        public String getStopTime() {
-            return stopTime;
-        }
-
-        public void setStopTime(String stopTime) {
-            this.stopTime = stopTime;
         }
     }
 }

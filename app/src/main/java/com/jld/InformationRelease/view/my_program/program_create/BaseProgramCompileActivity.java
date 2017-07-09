@@ -43,7 +43,10 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_program_compile);
         model_img = getIntent().getStringExtra("model_img");
-        mProgramBean = (ProgramBean) getIntent().getSerializableExtra("program_data");
+        mProgramBean = getIntent().getParcelableExtra("program_data");
+        LogUtil.d(TAG,"model_img:"+model_img);
+        LogUtil.d(TAG,"mProgramBean:"+mProgramBean);
+
         if (mProgramBean == null) {
             mProgramBean = new ProgramBean();
             mProgramBean.setModelId(Constant.VIDEO_MODEL);
@@ -53,9 +56,10 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
             mIsAgainCompile = true;
             mCheckMac = mProgramBean.getDeviceMacs();
         }
+        LogUtil.d(TAG,"program_data:"+mProgramBean);
+        mProgramBean.setType("1");//普通节目类型
         mSp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mPush = (Button) findViewById(R.id.btn_hide_push);
-
     }
 
     /**

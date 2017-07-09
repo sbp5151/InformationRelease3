@@ -42,7 +42,7 @@ import java.util.ArrayList;
 
 public class DayTaskProgramActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ArrayList<DayTaskBean.DayTaskItem> datas = new ArrayList<>();
+    private ArrayList<DayTaskBean.DayTaskItem> datas;
     private DayTaskAdapter mAdapter;
     private static final int ADD_IMAGE = 0x10;
     private static final java.lang.String TAG = "DayTaskProgramActivity";
@@ -53,7 +53,7 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
             super.handleMessage(msg);
             switch (msg.what) {
                 case ADD_IMAGE:
-                    mAdapter.addItem(mDayTaskBean.new DayTaskItem());
+                    mAdapter.addItem(new DayTaskBean.DayTaskItem());
                     break;
             }
         }
@@ -71,7 +71,20 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_task_program);
         mProgram_data = getIntent().getParcelableArrayListExtra("program_data");
-        mDayTaskBean = new DayTaskBean();
+        mDayTaskBean = getIntent().getParcelableExtra("task_data");
+        LogUtil.d(TAG, "mProgram_data:" + mProgram_data + "\n" + "mDayTaskBean:" + mDayTaskBean);
+        if (mDayTaskBean == null) {
+            mDayTaskBean = new DayTaskBean();
+            SetProgramTabDialog tabDialog = new SetProgramTabDialog(this, new SetProgramTabDialog.OnProgramTabListen() {
+                @Override
+                public void onSetTab(String tab) {
+                    mDayTaskBean.setTab(tab);
+                }
+            });
+            tabDialog.show(getFragmentManager(), "");
+        }
+        mDayTaskBean.setType("2");//每日任务类型
+        datas = mDayTaskBean.getProgram_item();
         mNames = new String[mProgram_data.size()];
         mTableIds = new String[mProgram_data.size()];
         mUserId = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE).getString(UserConstant.USER_ID, "");
@@ -83,13 +96,6 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
         }
         initView();
 
-        SetProgramTabDialog tabDialog = new SetProgramTabDialog(this, new SetProgramTabDialog.OnProgramTabListen() {
-            @Override
-            public void onSetTab(String tab) {
-                mDayTaskBean.setTab(tab);
-            }
-        });
-        tabDialog.show(getFragmentManager(),"");
     }
 
     private void initView() {
@@ -109,7 +115,8 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(DayTaskProgramActivity.this));
         mAdapter = new DayTaskAdapter(datas, DayTaskProgramActivity.this);
-        mAdapter.addItem(mDayTaskBean.new DayTaskItem());
+        if (datas.size() == 0)
+            mAdapter.addItem(new DayTaskBean.DayTaskItem());
         mAdapter.setOnItemClickListen(mOnItemClickListen);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -120,6 +127,11 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
 
         @Override
         public void onNameClickListen(View view, final int position) {
+
+            if (mNames.length == 0) {
+                ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.program_list_null), 3000);
+                return;
+            }
             builder = new SimpleDialog.Builder(isLightTheme ? R.style.SimpleDialogLight : R.style.SimpleDialog) {
                 @Override
                 public void onPositiveActionClicked(DialogFragment fragment) {
@@ -256,6 +268,7 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
             ToastUtil.showToast(this, getString(R.string.please_login), 3000);
             return;
         }
+        LogUtil.d(TAG, "datas:" + datas);
         mDayTaskBean.setModel_img("");
         mDayTaskBean.setProgram_item(datas);
 //        mDayTaskBean.setIsLoadSucceed("0");

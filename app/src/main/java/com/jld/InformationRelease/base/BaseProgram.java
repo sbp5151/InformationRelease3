@@ -1,9 +1,6 @@
 package com.jld.InformationRelease.base;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 /**
  * 项目名称：InformationRelease
@@ -72,7 +69,7 @@ public class BaseProgram {
     protected boolean isCheck;
 
     /**
-     * 节目类型
+     * 节目类型 1为普通节目，2位每日任务
      */
     protected String type;
 

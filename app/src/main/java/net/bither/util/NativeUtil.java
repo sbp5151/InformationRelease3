@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-
 /**
  * JNI图片压缩工具类
  *
@@ -31,7 +30,7 @@ import java.io.IOException;
 public class NativeUtil {
 
 	private static final String TAG = "NativeUtil";
-	private static int DEFAULT_QUALITY = 60;
+	private static int DEFAULT_QUALITY = 95;
 
 	/**
 	 * @Description: JNI基本压缩
@@ -118,7 +117,6 @@ public class NativeUtil {
 			// 这里压缩quality，把压缩后的数据存放到baos中
 			result.compress(Bitmap.CompressFormat.JPEG, quality, baos);
 		}
-		LogUtil.d(TAG,"quality:"+quality);
 		// JNI保存图片到SD卡 这个关键
 		NativeUtil.saveBitmap(result, quality, targetFilePath, true);
 		// 释放Bitmap
@@ -285,5 +283,4 @@ public class NativeUtil {
 		System.loadLibrary("jpegbither");
 		System.loadLibrary("bitherjni");
 	}
-
 }

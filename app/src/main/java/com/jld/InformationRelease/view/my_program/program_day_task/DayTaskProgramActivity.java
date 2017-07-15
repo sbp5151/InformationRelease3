@@ -95,7 +95,6 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
             mTableIds[i] = id + "";
         }
         initView();
-
     }
 
     private void initView() {
@@ -222,7 +221,6 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
                 showPopupwindow();
                 break;
         }
-
     }
 
     /**
@@ -235,6 +233,7 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
             @Override
             public void onClick(View view) {
                 mPopupWindow.dismiss();
+                Toast.makeText(DayTaskProgramActivity.this, "此功能待开发...", Toast.LENGTH_SHORT).show();
 
             }
         });

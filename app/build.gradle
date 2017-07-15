@@ -17,12 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'armeabi-v7a'
-            universalApk true
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }
@@ -36,6 +33,8 @@ dependencies {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
+
     //glide图片加载
 
     //cardview
@@ -45,8 +44,6 @@ dependencies {
     compile files('libs/jpush-android_v3.0.5.jar')
     compile files('libs/androidannotations-api-3.2.jar')
     compile files('libs/mframework.jar')
-    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') { exclude module: 'support-v13' }
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.github.rey5137:material:1.2.4'
     compile 'com.android.support:appcompat-v7:25.3.1'
@@ -67,6 +64,5 @@ dependencies {
     compile 'com.foamtrace:photopicker:1.0'
     compile 'com.makeramen:roundedimageview:2.3.0'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
     compile project(':library')
 }

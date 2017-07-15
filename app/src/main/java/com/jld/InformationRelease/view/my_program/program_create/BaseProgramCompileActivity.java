@@ -272,7 +272,6 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
 
     protected interface PopupWindowListener {
         void onPreview();
-
         void onProgramPush();
     }
 

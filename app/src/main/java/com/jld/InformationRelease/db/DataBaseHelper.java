@@ -53,8 +53,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + tab + " varchar(30),"//用户设置的标签
                     + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
                     + cover + " varchar(50),"//封面路径
-                    + model_image + " varchar(50),"//封面路径
-                    + type + " varchar(10)"//封面路径
+                    + model_image + " varchar(50),"//模板缩略图
+                    + type + " varchar(10)"//节目类型1为普通节目，2位每日任务
                     + ");";
     /**
      * 创建每日节目数据库表
@@ -85,7 +85,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + tab + " varchar(30),"//用户设置的标签
                     + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
                     + program_item + " varchar(3000),"//任务节目列表
-                    + type + " varchar(10)"//封面路径
+                    + type + " varchar(10)"//节目类型1为普通节目，2位每日任务
                     + ");";
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

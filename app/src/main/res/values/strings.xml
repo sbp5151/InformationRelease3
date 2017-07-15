@@ -138,5 +138,8 @@
     <string name="click_add_stop_time">结束时间</string>
     <string name="select_program">选择节目</string>
     <string name="program_list_null">节目列表为空</string>
+    <string name="time_span">播放时长</string>
+    <string name="time_quantun">播放时间段</string>
+    <string name="play_num">播放次数</string>
 
 </resources>

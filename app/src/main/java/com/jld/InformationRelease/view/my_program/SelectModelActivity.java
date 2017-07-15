@@ -125,7 +125,7 @@ public class SelectModelActivity extends AppCompatActivity implements IViewListe
         super.onActivityResult(requestCode, resultCode, data);
         LogUtil.d(TAG, "onActivityResult:" + requestCode);
         if (requestCode == PROGRAM_REQUEST && data != null) {
-            ProgramBean body = (ProgramBean) data.getSerializableExtra("body");
+            ProgramBean body = (ProgramBean) data.getParcelableExtra("body");
             LogUtil.d(TAG, "ProgramBean:" + body);
             Intent intent = new Intent();
             intent.putExtra("body", body);

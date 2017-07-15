@@ -16,7 +16,7 @@
             android:id="@+id/btn_day_task_program_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.6"
+            android:layout_weight="1.2"
             android:background="@null"
             android:text="@string/click_add_program"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"

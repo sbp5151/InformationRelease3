@@ -6,9 +6,7 @@ import android.os.Parcelable;
 import com.jld.InformationRelease.base.BaseProgram;
 import com.jld.InformationRelease.util.LogUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * 项目名称：InformationRelease
@@ -66,7 +64,6 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         parcel.writeString(upload_state);
         parcel.writeString(model_img);
         parcel.writeString(type);
-
         parcel.writeTypedList(texts);
     }
 
@@ -99,7 +96,6 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         upload_state = in.readString();
         model_img = in.readString();
         type = in.readString();
-
         in.readTypedList(texts, Commodity.CREATOR);
     }
 

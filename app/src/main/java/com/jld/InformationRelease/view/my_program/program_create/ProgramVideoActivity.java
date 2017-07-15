@@ -47,6 +47,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
     private View mAdd;
     private int mAddPathPosition;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

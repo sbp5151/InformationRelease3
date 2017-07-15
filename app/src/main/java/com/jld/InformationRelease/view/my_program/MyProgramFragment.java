@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.gson.Gson;
@@ -85,10 +86,12 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
     private ArrayList<BaseProgram> mDatas = new ArrayList<>();
     public MyProgramRecyclerAdapter mAdapter;
     private ImageView mIv_add;
-    private static final int NEW_PROGRAM = 0x01;//新建节目
-    private static final int DAY_PROGRAM = 0x02;//每日任务
-    private static final int INTER_CUT_PROGRAM = 0x03;//插播节目
-    private static final int PROGRAM_LOAD_STATE_TAG = 0x21;//节目加载情况
+    private static final int NEW_PROGRAM = 101;//新建节目
+    private static final int DAY_PROGRAM = 102;//每日任务
+    private static final int INTER_CUT_PROGRAM = 103;//插播节目
+    private static final int PROGRAM_LOAD_STATE_TAG = 104;//节目加载情况
+    public static final int PROGRAM_LOAD_TIME = 1000 * 60 * 5;//5分钟后不再获取节目加载情况
+
 
     Handler mHandler = new Handler() {
         @Override
@@ -123,20 +126,20 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
     private FloatingActionsMenu mBtn_menu;
     private Button mBtn_hide;
     private String[] mNames;
+    /**
+     * 插播类型
+     */
+    private String[] mIntercut_types = new String[3];
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        LogUtil.d(TAG, "hidden:" + hidden);
-//        if (!hidden)
-//            initData();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         LogUtil.d(TAG, "onCreate:");
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
+        mIntercut_types[0] = getResources().getString(R.string.time_span);
+        mIntercut_types[1] = getResources().getString(R.string.time_quantun);
+        mIntercut_types[2] = getResources().getString(R.string.play_num);
     }
 
     @Override
@@ -218,8 +221,6 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        LogUtil.d(TAG, "mDayTaskDatas:" + mDayTaskDatas);
-        LogUtil.d(TAG, "mProgramDatas:" + mProgramDatas);
         mNames = new String[mProgramDatas.size()];
         for (int i = 0; i < mProgramDatas.size(); i++) {
             String name = mProgramDatas.get(i).getTab();
@@ -231,7 +232,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
         LogUtil.d(TAG, "mDatas:" + mDatas);
         if (mDatas.size() >= 2)
             Collections.sort(mDatas, new SortByTime());
-        if (mProgramDatas != null || mProgramDatas.size() > 0) {
+        if (mDatas != null || mDatas.size() > 0) {
             mAdapter.update(mDatas);
             loadProgramState();
         } else if (mRefresh.isRefreshing())
@@ -264,12 +265,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
             //和发布时间间隔不超过五分钟
             LogUtil.d(TAG, "timeGap:" +
                     (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getCreation_time())));
-            if (i == 3 || TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getCreation_time()) > 1000 * 60 * 5)//只加载前面三个
+            if (i == 3 || TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getCreation_time()) > PROGRAM_LOAD_TIME)//只加载前面三个
                 break;
             //节目ID不为空并且设备未完全加载完成
             if (!TextUtils.isEmpty(mProgramDatas.get(i).getProgramId()) && mProgramDatas.get(i).getIsLoadSucceed().equals("0")) {
                 if (mPresenter == null)
                     mPresenter = new ProgramLoadStatePresenter(this, mActivity);
+                LogUtil.d(TAG, "节目ID加载情况:" + mProgramDatas.get(i).getProgramId());
                 mPresenter.programLoadState(mProgramDatas.get(i).getProgramId(), PROGRAM_LOAD_STATE_TAG + i);
                 loadProgramIds.add(mProgramDatas.get(i).getProgramId());
             }
@@ -323,6 +325,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                         @Override
                         public void onPositiveActionClicked(DialogFragment fragment) {
                             super.onPositiveActionClicked(fragment);
+                            Toast.makeText(mActivity, "你选择的节目为：" + getSelectedValue() + " 此功能待开发", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -332,7 +335,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                     };
                     ((SimpleDialog.Builder) builder).items(mNames, 0)
                             .title(getResources().getString(R.string.select_program))
-                            .positiveAction(getResources().getString(R.string.push))
+                            .positiveAction(getResources().getString(R.string.sure))
                             .negativeAction(getResources().getString(R.string.cancle));
                     DialogFragment fragment = DialogFragment.newInstance(builder);
                     fragment.show(mActivity.getSupportFragmentManager(), null);
@@ -366,7 +369,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
                         LogUtil.d(TAG, "programBean:" + programBean);
                         startActivityForResult(intent, mProgramRequestCode);
                     }
-                } else if (baseProgram.getType().equals("2")) {
+                } else if (baseProgram.getType().equals("2")) {//每日任务
                     DayTaskBean dayTaskBean = (DayTaskBean) baseProgram;
                     Intent intent = new Intent(mActivity, DayTaskProgramActivity.class);
                     intent.putExtra("task_data", dayTaskBean);//节目数据
@@ -379,7 +382,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
 
         @Override
         public void onItemProgressClickListen(View view, int position) {
-            ProgramBean program = mProgramDatas.get(position);
+
+            BaseProgram program = mDatas.get(position);
+            LogUtil.d(TAG, "program:" + program);
             ArrayList<String> deviceMacs = program.getDeviceMacs();
             ArrayList<String> loadDeviceMacs = program.getLoadDeviceMacs();
             if (mTerminals == null) {
@@ -456,9 +461,10 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramLo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        LogUtil.d(TAG, "onActivityResult:" + requestCode + "\n" + resultCode);
         if (requestCode == mProgramRequestCode && resultCode == mProgramResultCode) {
             //再发布
-            ProgramBean body = (ProgramBean) data.getParcelableExtra("body");
+            ProgramBean body = data.getParcelableExtra("body");
             LogUtil.d(TAG, "onActivityResult:" + body);
             if (body != null) {
                 mProgram = body;

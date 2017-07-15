@@ -37,7 +37,6 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
 
     @Override
     public ProgramVideoAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(mContext).inflate(R.layout.program_compile_video_item, parent, false);
         MyHolder myHolder = new MyHolder(view);
         return myHolder;

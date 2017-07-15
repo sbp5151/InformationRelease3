@@ -18,6 +18,8 @@ import com.jld.InformationRelease.util.TimeUtil;
 
 import java.util.ArrayList;
 
+import static com.jld.InformationRelease.view.my_program.MyProgramFragment.PROGRAM_LOAD_TIME;
+
 /**
  * 项目名称：InformationRelease
  * 晶凌达科技有限公司所有，
@@ -60,7 +62,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
             holder.mProgress.setVisibility(View.GONE);
             holder.load_state.setVisibility(View.VISIBLE);
             holder.load_state.setText(mContext.getString(R.string.load_succeed));
-        } else if (position < 3 && TimeUtil.toCurrentTimeGap(programBean.getCreation_time()) <= 1000 * 60 * 5) {//已上传 前三 不超过五分钟 显示上传进度
+        } else if (position < 3 && TimeUtil.toCurrentTimeGap(programBean.getCreation_time()) <= PROGRAM_LOAD_TIME) {//已上传 前三 不超过五分钟 显示上传进度
             holder.mProgress.setVisibility(View.VISIBLE);
             holder.load_state.setVisibility(View.GONE);
             int progress = 100 * programBean.getLoadDeviceMacs().size() / programBean.getDeviceMacs().size();
@@ -118,7 +120,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
 
     @Override
     public int getItemCount() {
-        if(mData==null)
+        if (mData == null)
             return 0;
         return mData.size();
     }

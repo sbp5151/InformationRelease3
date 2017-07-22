@@ -35,7 +35,6 @@ public class Constant {
     public static final String DEVICE_ID = "device_id";
 
 
-
     /**
      * 绑定成功返回码
      */
@@ -68,4 +67,13 @@ public class Constant {
      * 获取截屏
      */
     public static final String GET_SCREEN = "66608";
+
+    /**
+     * 普通节目类型
+     */
+    public static final String PROGRAM_TYPE_COMMON = "1";
+    /**
+     * 每日任务节目类型
+     */
+    public static final String PROGRAM_TYPE_DAY = "2";
 }

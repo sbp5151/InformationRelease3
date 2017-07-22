@@ -22,13 +22,14 @@
         android:layout_weight="1" android:orientation="vertical">
 
         <TextView android:layout_width="match_parent"
-                  android:layout_height="80dp"
+                  android:layout_height="100dp"
                   android:gravity="center"
                   android:text="价目表"
                   android:textColor="@android:color/black"
                   android:textSize="40dp"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_commodity_1"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
@@ -49,13 +50,14 @@
         android:layout_weight="1" android:orientation="vertical">
 
         <TextView android:layout_width="match_parent"
-                  android:layout_height="80dp"
+                  android:layout_height="100dp"
                   android:gravity="center"
                   android:text="价目表"
                   android:textColor="@android:color/black"
                   android:textSize="40dp"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_commodity_2"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>

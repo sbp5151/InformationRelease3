@@ -1,6 +1,7 @@
 package com.jld.InformationRelease.bean.response;
 
 import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.NamePriceBean;
 
 import java.io.Serializable;
@@ -34,7 +35,7 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
                 '}';
     }
 
-   public class Program{
+    public class Program {
         /**
          * 图片集
          */
@@ -53,23 +54,48 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
         private ArrayList<String> deviceMacs;
 
         /**
+         * 每日任务数据
+         */
+        private ArrayList<DayTaskItem> dayProgram;
+        /**
          * 模板ID
          */
         private String modelId;
-       /**
-        * 背景封面
-        */
+        /**
+         * 背景封面
+         */
         private String cover;
 
-       public String getCover() {
-           return cover;
-       }
+        /**
+         * 节目类型
+         */
+        private String type;
 
-       public void setCover(String cover) {
-           this.cover = cover;
-       }
+        public String getType() {
+            return type;
+        }
 
-       public ArrayList<String> getVideos() {
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public ArrayList<DayTaskItem> getDayProgram() {
+            return dayProgram;
+        }
+
+        public void setDayProgram(ArrayList<DayTaskItem> dayProgram) {
+            this.dayProgram = dayProgram;
+        }
+
+        public String getCover() {
+            return cover;
+        }
+
+        public void setCover(String cover) {
+            this.cover = cover;
+        }
+
+        public ArrayList<String> getVideos() {
             return videos;
         }
 
@@ -102,7 +128,6 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
         }
 
 
-
         public String getModelId() {
             return modelId;
         }
@@ -111,17 +136,19 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
             this.modelId = modelId;
         }
 
-       @Override
-       public String toString() {
-           return "Program{" +
-                   "images=" + images +
-                   ", texts=" + texts +
-                   ", videos=" + videos +
-                   ", deviceMacs=" + deviceMacs +
-                   ", modelId='" + modelId + '\'' +
-                   ", cover='" + cover + '\'' +
-                   '}';
-       }
-   }
+        @Override
+        public String toString() {
+            return "Program{" +
+                    "images=" + images +
+                    ", texts=" + texts +
+                    ", videos=" + videos +
+                    ", deviceMacs=" + deviceMacs +
+                    ", dayProgram=" + dayProgram +
+                    ", modelId='" + modelId + '\'' +
+                    ", cover='" + cover + '\'' +
+                    ", type='" + type + '\'' +
+                    '}';
+        }
+    }
 
 }

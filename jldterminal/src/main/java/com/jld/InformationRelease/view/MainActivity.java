@@ -1,6 +1,9 @@
 package com.jld.InformationRelease.view;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -19,6 +22,7 @@ import com.jld.InformationRelease.JPushReceiver;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.base.IViewToPresenter;
 import com.jld.InformationRelease.base.SimpleIViewToPresenter;
 import com.jld.InformationRelease.bean.response.FileResponseBean;
@@ -35,15 +39,17 @@ import com.jld.InformationRelease.util.DeviceUtil;
 import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ModelIds;
+import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.VolumeUtil;
 import com.jld.InformationRelease.view.fragment.DefaultFragment;
-import com.jld.InformationRelease.view.fragment.ProgramTextFragment;
 import com.jld.InformationRelease.view.fragment.ProgramImageFragment;
+import com.jld.InformationRelease.view.fragment.ProgramTextFragment;
 import com.jld.InformationRelease.view.fragment.ProgramVideoFragment;
 
 import java.io.File;
+import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity implements JPushReceiver.JPushListener, IViewToPresenter<ProgramResponseBean> {
+public class MainActivity extends BaseActivity implements JPushReceiver.JPushListener, IViewToPresenter<BaseResponse> {
 
     //加载节目请求标识
     private static final int LOAD_PROGRAM_TAG = 0x12;
@@ -64,10 +70,11 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFrameLayout = (FrameLayout) findViewById(R.id.framelayout_main);
+
         //注册极光推送监听
         JPushReceiver.sendListener(this);
         mPdialog = new ProgressDialog(this);
-        replaceFragment(null);
+        dataDispose(null);
     }
 
     /**
@@ -99,7 +106,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                 //加载节目更新
                 //节目ID
                 mProgramID = response.getProgramID();
-                LogUtil.d(TAG, "mProgramID:" + mProgramID);
+                LogUtil.d(TAG, "加载节目:" + mProgramID);
                 LoadProgramPresenter presenter = new LoadProgramPresenter(this, MainActivity.this);
                 presenter.LoadProgram(mProgramID, LOAD_PROGRAM_TAG);
                 break;
@@ -208,15 +215,17 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     //节目加载成功
     @Override
-    public void loadDataSuccess(ProgramResponseBean data, int requestTag) {
+    public void loadDataSuccess(BaseResponse data, int requestTag) {
         if (requestTag == LOAD_PROGRAM_TAG) {
+            ProgramResponseBean programResponseBean = (ProgramResponseBean) data;
+            LogUtil.d(TAG, "加载节目成功并反馈:" + mProgramID);
             Toast.makeText(this, getString(R.string.load_program_succeed), Toast.LENGTH_SHORT).show();
-            replaceFragment(data);
+            dataDispose(programResponseBean);
             //加载成功数据反馈
             SharedPreferences sp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
             String deviceId = sp.getString(Constant.DEVICE_ID, "");
             ProgramLoadSucceedPresenter presenter = new ProgramLoadSucceedPresenter(this, MainActivity.this);
-            presenter.programLoadSucceedBack(mProgramID, deviceId, LOAD_PROGRAM_BACK);
+            presenter.programLoadSucceedBack(deviceId, mProgramID, LOAD_PROGRAM_BACK);
         } else if (requestTag == LOAD_PROGRAM_BACK) {
             LogUtil.d(TAG, "反馈成功");
         }
@@ -232,17 +241,16 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         }
     }
 
-    //节目替换
-    private void replaceFragment(ProgramResponseBean data) {
+    private void dataDispose(ProgramResponseBean data) {
         LogUtil.d(TAG, "replaceFragment:" + data);
-        if (data != null) {
-            //保存数据
+        if (data != null) {//保存数据
             String play_data = new Gson().toJson(data);
             SharedPreferences.Editor sp_edit = getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
             sp_edit.putString(Constant.PLAY_DATA, play_data);
             sp_edit.apply();
-        } else {
+        } else {//展示历史数据
             String play_data = getSharedPreferences(Constant.share_key, MODE_PRIVATE).getString(Constant.PLAY_DATA, "");
+            LogUtil.d(TAG, "展示历史数据:"+play_data);
             if (!TextUtils.isEmpty(play_data)) {
                 data = new Gson().fromJson(play_data, ProgramResponseBean.class);
                 LogUtil.d(TAG, "data:" + data);
@@ -255,40 +263,74 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                     return;
                 }
             } else {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                DefaultFragment defaultFragment = new DefaultFragment();
-                ft.replace(R.id.framelayout_main, defaultFragment);
-                ft.commit();
+                replaceFragment(data);
                 return;
             }
         }
+        if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务
+            LogUtil.d(TAG, "加载每日任务:");
+            DayTask.createDayTask(MainActivity.this, data.getItem().getDayProgram());
+            dayItem = data.getItem().getDayProgram();
+        } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_COMMON)) {//普通任务
+            LogUtil.d(TAG, "加载普通任务:");
+            replaceFragment(data);
+        }
+    }
 
-        //展示数据
-        String modelId = data.getItem().getModelId();
+    ArrayList<DayTaskItem> dayItem;
+
+    //节目替换
+    private void replaceFragment(ProgramResponseBean data) {
+        LogUtil.d(TAG, "节目替换：" + data);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+
         MainActivity.this.setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-
-        switch (modelId) {
-            case ModelIds.NAICHA_MODEL_1:
-                ProgramTextFragment fragment1 = ProgramTextFragment.getInstance(data);
-                ft.replace(R.id.framelayout_main, fragment1);
-                break;
-            case ModelIds.IMAGE_MODEL:
-                ProgramImageFragment fragment2 = ProgramImageFragment.getInstance(data);
-                ft.replace(R.id.framelayout_main, fragment2);
-                break;
-            case ModelIds.VIDEO_MODEL:
-                ProgramVideoFragment videoFragment = new ProgramVideoFragment(data.getItem().getVideos());
-                ft.replace(R.id.framelayout_main, videoFragment);
-                MainActivity.this.setRequestedOrientation(//通过程序改变屏幕显示的方向
-                        ActivityInfo.SCREEN_ORIENTATION_SENSOR);//横屏
-                break;
-            default:
-                return;
+        if (data == null) {//等待接收节目
+            DefaultFragment defaultFragment = new DefaultFragment();
+            ft.replace(R.id.framelayout_main, defaultFragment);
+        } else {
+            //展示数据
+            String modelId = data.getItem().getModelId();
+            switch (modelId) {
+                case ModelIds.NAICHA_MODEL_1://text
+                    ProgramTextFragment fragment1 = ProgramTextFragment.getInstance(data);
+                    ft.replace(R.id.framelayout_main, fragment1);
+                    break;
+                case ModelIds.IMAGE_MODEL://image
+                    ProgramImageFragment fragment2 = ProgramImageFragment.getInstance(data);
+                    ft.replace(R.id.framelayout_main, fragment2);
+                    break;
+                case ModelIds.VIDEO_MODEL://video
+                    ProgramVideoFragment videoFragment = new ProgramVideoFragment(data.getItem().getVideos());
+                    ft.replace(R.id.framelayout_main, videoFragment);
+                    MainActivity.this.setRequestedOrientation(//通过程序改变屏幕显示的方向
+                            ActivityInfo.SCREEN_ORIENTATION_SENSOR);//横屏
+                    break;
+            }
         }
         ft.commit();
+    }
+
+    public class DayTaskReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            LogUtil.d(TAG, "DayTaskReceiver:" + action);
+            if (action.equals("load_program")) {
+                long cuTime = System.currentTimeMillis();
+                for (DayTaskItem item : dayItem) {
+                    if (Long.parseLong(TimeUtil.dateBack(item.getStateTime())) <= cuTime &&
+                            cuTime < Long.parseLong(TimeUtil.dateBack(item.getStopTime()))) {
+                        String programId = item.getProgramLocalId();
+                        LogUtil.d(TAG, "加载节目:" + programId);
+                        LoadProgramPresenter presenter = new LoadProgramPresenter(MainActivity.this, MainActivity.this);
+                        presenter.LoadProgram(programId, LOAD_PROGRAM_TAG);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

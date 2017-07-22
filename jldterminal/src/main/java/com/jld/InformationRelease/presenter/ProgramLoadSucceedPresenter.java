@@ -28,9 +28,9 @@ public class ProgramLoadSucceedPresenter extends BasePresenterImpl<BaseResponse>
         super(view);
         mMode = new ProgramLoadSucceedModel(context);
     }
-    public void programLoadSucceedBack(String programId, String deviceId,int requestTag){
+    public void programLoadSucceedBack(String deviceId, String programId,int requestTag){
 
-        mMode.programLoadSucceedBack(programId,deviceId,this,requestTag);
+        mMode.programLoadSucceedBack(deviceId,programId,this,requestTag);
     }
 
 }

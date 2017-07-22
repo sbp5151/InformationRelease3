@@ -20,7 +20,8 @@ import android.widget.Spinner;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.response.ProgramResponseBean;
 import com.jld.InformationRelease.util.AnimationUtil;
-import com.jld.InformationRelease.view.adapter.VpImg2Adapter;
+import com.jld.InformationRelease.util.LogUtil;
+import com.jld.InformationRelease.view.adapter.VpImg1Adapter;
 
 import java.util.Random;
 
@@ -29,6 +30,7 @@ import java.util.Random;
  */
 public class ProgramImageFragment extends Fragment {
 
+    private static String TAG = "ProgramImageFragment";
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
@@ -44,9 +46,9 @@ public class ProgramImageFragment extends Fragment {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
                         int i = mRandom.nextInt(16);
-                        AnimationUtil.setAnimation(i + 1,mVp_img,mContext);
-                        Log.d("random:",""+i);
-                        Log.d("currentItem:",""+(mVp_img.getCurrentItem() + 1));
+                        AnimationUtil.setAnimation(i + 1, mVp_img, mContext);
+                        Log.d("random:", "" + i);
+                        Log.d("currentItem:", "" + (mVp_img.getCurrentItem() + 1));
                         mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
                     }
@@ -54,7 +56,7 @@ public class ProgramImageFragment extends Fragment {
             }
         }
     };
-    private VpImg2Adapter mImgAdapter;
+    private VpImg1Adapter mImgAdapter;
     private Spinner mSp_animation;
     private Random mRandom;
 
@@ -91,6 +93,7 @@ public class ProgramImageFragment extends Fragment {
         mRandom = new Random();
         mContext = getActivity();
     }
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,17 +105,18 @@ public class ProgramImageFragment extends Fragment {
         mSp_animation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                AnimationUtil.setAnimation(i + 1,mVp_img,mContext);
+                AnimationUtil.setAnimation(i + 1, mVp_img, mContext);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
-        mImgAdapter = new VpImg2Adapter(mContext,mData.getItem().getImages());
+        LogUtil.d(TAG, "mData:" + mData);
+        mImgAdapter = new VpImg1Adapter(mData.getItem().getImages(),mContext);
         mVp_img.setAdapter(mImgAdapter);
-        mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+        if (mData.getItem().getImages().size() > 1)
+            mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
         return view;
     }
 }

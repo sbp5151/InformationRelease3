@@ -1,11 +1,11 @@
 package com.jld.InformationRelease.model;
 
 import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.bean.request.ProgramLoadSucceedBean;
 import com.jld.InformationRelease.util.URLConstant;
 
 import io.reactivex.Observable;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
@@ -18,11 +18,8 @@ import retrofit2.http.POST;
  */
 public interface ProgramLoadSucceedService {
 
-    @FormUrlEncoded
     @POST(URLConstant.PROGRAM_BACK)
     Observable<BaseResponse> load_succeed(
-            @Field("deviceId") String programId,
-            @Field("programId") String deviceId,
-            @Field("sign") String sign
+            @Body ProgramLoadSucceedBean body
     );
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.jld.InformationRelease.base.BaseObserver2;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.base.IPresenterToModel;
+import com.jld.InformationRelease.bean.request.ProgramLoadSucceedBean;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.RetrofitManager;
@@ -37,9 +38,13 @@ public class ProgramLoadSucceedModel {
      * @param callBack
      * @param requestTag
      */
-    public void programLoadSucceedBack(String programId, String deviceId, final IPresenterToModel<BaseResponse> callBack, final int requestTag) {
+    public void programLoadSucceedBack(String deviceId, String programId, final IPresenterToModel<BaseResponse> callBack, final int requestTag) {
         String md5 = MD5Util.getMD5(Constant.S_KEY + deviceId + programId);
-        mSucceedService.load_succeed(programId, deviceId, md5)
+        ProgramLoadSucceedBean body = new ProgramLoadSucceedBean();
+        body.setDeviceId(deviceId);
+        body.setProgramId(programId);
+        body.setSign(md5);
+        mSucceedService.load_succeed(body)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new BaseObserver2<BaseResponse>(callBack, requestTag));

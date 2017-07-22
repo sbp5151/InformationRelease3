@@ -162,15 +162,12 @@
         <activity
             android:name=".view.MainActivity"
             android:screenOrientation="portrait"> <!-- 设定进去的为竖屏格式 -->
-
         </activity>
-
         <service
             android:name=".service.HeartBeatService"
             android:enabled="true"
             android:exported="true">
         </service>
-
         <receiver
             android:name=".receiver.BootReceiver"
             android:enabled="true"

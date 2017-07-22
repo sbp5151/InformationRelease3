@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.jld.InformationRelease.base.BaseProgram;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
@@ -21,14 +22,21 @@ public class ProgramBean extends BaseProgram implements Parcelable {
      * 图片集
      */
     private ArrayList<String> images = new ArrayList<>();
-    /**
-     * 商品名、价格
-     */
-    private ArrayList<Commodity> texts = new ArrayList<>();
+
     /**
      * 视频集
      */
     private ArrayList<String> videos = new ArrayList<>();
+
+    /**
+     * 每日任务数据
+     */
+    private ArrayList<DayTaskItem> dayProgram = new ArrayList<>();
+
+    /**
+     * 商品名、价格
+     */
+    private ArrayList<Commodity> texts = new ArrayList<>();
     /**
      * 模板ID
      */
@@ -58,13 +66,14 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         parcel.writeString(userid);
         parcel.writeString(programId);
         parcel.writeString(sign);
-        parcel.writeString(creation_time);
+        parcel.writeString(time);
         parcel.writeInt(table_id);
         parcel.writeString(tab);
         parcel.writeString(upload_state);
         parcel.writeString(model_img);
         parcel.writeString(type);
         parcel.writeTypedList(texts);
+        parcel.writeTypedList(dayProgram);
     }
 
     public static final Creator<ProgramBean> CREATOR = new Creator<ProgramBean>() {
@@ -90,13 +99,15 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         userid = in.readString();
         programId = in.readString();
         sign = in.readString();
-        creation_time = in.readString();
+        time = in.readString();
         table_id = in.readInt();
         tab = in.readString();
         upload_state = in.readString();
         model_img = in.readString();
         type = in.readString();
         in.readTypedList(texts, Commodity.CREATOR);
+        in.readTypedList(dayProgram, DayTaskItem.CREATOR);
+
     }
 
     public static class Commodity implements Parcelable {
@@ -190,6 +201,23 @@ public class ProgramBean extends BaseProgram implements Parcelable {
         this.cover = cover;
     }
 
+    public ArrayList<DayTaskItem> getDayProgram() {
+        return dayProgram;
+    }
+
+    public void setDayProgram(ArrayList<DayTaskItem> dayProgram) {
+        this.dayProgram = dayProgram;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public ArrayList<String> getVideos() {
         return videos;
@@ -233,7 +261,7 @@ public class ProgramBean extends BaseProgram implements Parcelable {
                 ", userid='" + userid + '\'' +
                 ", programId='" + programId + '\'' +
                 ", sign='" + sign + '\'' +
-                ", creation_time='" + creation_time + '\'' +
+                ", time='" + time + '\'' +
                 ", table_id=" + table_id +
                 ", tab='" + tab + '\'' +
                 ", upload_state='" + upload_state + '\'' +
@@ -244,6 +272,7 @@ public class ProgramBean extends BaseProgram implements Parcelable {
                 ", modelId='" + modelId + '\'' +
                 ", cover='" + cover + '\'' +
                 ", type='" + type + '\'' +
+                ", dayProgram='" + dayProgram + '\'' +
                 '}';
     }
 }

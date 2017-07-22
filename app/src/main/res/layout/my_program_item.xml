@@ -87,10 +87,9 @@
                                       android:gravity="center">
                             <com.github.lzyzsd.circleprogress.CircleProgress
                                 android:id="@+id/program_item_progress"
-                                android:layout_width="46dp"
-                                android:layout_height="46dp"
-                                android:layout_marginRight="18dp"
-                                android:visibility="gone"
+                                android:layout_width="47dp"
+                                android:layout_height="47dp"
+                                android:layout_marginRight="13dp"
                             />
                         </LinearLayout>
 

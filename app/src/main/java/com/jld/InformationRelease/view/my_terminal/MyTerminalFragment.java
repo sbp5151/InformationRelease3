@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.DayTaskBean;
 import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;

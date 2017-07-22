@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.DayTaskBean;
+import com.jld.InformationRelease.base.DayTaskItem;
 
 import java.util.ArrayList;
 /**
@@ -22,10 +22,10 @@ import java.util.ArrayList;
  */
 public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.MyHolder> {
 
-    public ArrayList<DayTaskBean.DayTaskItem> datas;
+    public ArrayList<DayTaskItem> datas;
     private Context mContext;
 
-    public DayTaskAdapter(ArrayList<DayTaskBean.DayTaskItem> datas, Context context) {
+    public DayTaskAdapter(ArrayList<DayTaskItem> datas, Context context) {
         this.datas = datas;
         mContext = context;
     }
@@ -40,7 +40,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.MyHolder
 
     @Override
     public void onBindViewHolder(final DayTaskAdapter.MyHolder holder, int position) {
-        DayTaskBean.DayTaskItem data = datas.get(position);
+        DayTaskItem data = datas.get(position);
         if (!TextUtils.isEmpty(data.getProgramName()))
             holder.name.setText(data.getProgramName());
         holder.name.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +72,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.MyHolder
         });
     }
 
-    public void addItem(DayTaskBean.DayTaskItem data) {
+    public void addItem(DayTaskItem data) {
         datas.add(data);
         notifyItemInserted(getItemCount() - 1);
     }

@@ -46,7 +46,7 @@ public class UnbindRequest {
     public String toString() {
         return "UnbindRequest{" +
                 "userId='" + userId + '\'' +
-                ", deviceMacs=" + deviceMacs +
+                ", pushDeviceMacs=" + deviceMacs +
                 ", sign='" + sign + '\'' +
                 '}';
     }

@@ -3,7 +3,7 @@ package com.jld.InformationRelease.presenter;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
-import com.jld.InformationRelease.bean.response_bean.ProgramLoadStateResponse;
+import com.jld.InformationRelease.bean.response_bean.ProgramPushStateResponse;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.model.ProgramLoadStateModel;
 
@@ -15,7 +15,7 @@ import com.jld.InformationRelease.model.ProgramLoadStateModel;
  * @creator boping
  * @create-time 2017/7/4 10:09
  */
-public class ProgramLoadStatePresenter extends BasePresenterImpl<ProgramLoadStateResponse> {
+public class ProgramLoadStatePresenter extends BasePresenterImpl<ProgramPushStateResponse> {
 
     private final ProgramLoadStateModel mStateModel;
 

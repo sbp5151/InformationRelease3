@@ -195,7 +195,9 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         /**
          * 开始上传
          */
-        public void startPush() {
+        public void startPush(ProgramBean body) {
+            LogUtil.d(TAG, "开始上传:" + body);
+            mBody = body;
             Gson gson = new Gson();
             String toJson = gson.toJson(mBody);
             LogUtil.d(TAG, "tojson:" + toJson);
@@ -234,7 +236,6 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
      */
     public interface PushCompleteListener {
         void updateSucceed(String programId);// 上传成功
-
         void updateDefeated();// 上传失败
     }
 

@@ -3,7 +3,8 @@ package com.jld.InformationRelease.model;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BaseObserver;
-import com.jld.InformationRelease.bean.response_bean.ProgramLoadStateResponse;
+import com.jld.InformationRelease.bean.request_bean.PushStateRequest;
+import com.jld.InformationRelease.bean.response_bean.ProgramPushStateResponse;
 import com.jld.InformationRelease.interfaces.IPresenterListen;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.MD5Util;
@@ -32,15 +33,15 @@ public class ProgramLoadStateModel {
         mStateService = retrofit.create(ProgramLoadStateService.class);
     }
 
-    public void loadState(String programId, final IPresenterListen<ProgramLoadStateResponse> callback, final int requestTag){
-
+    public void loadState(String programId, final IPresenterListen<ProgramPushStateResponse> callback, final int requestTag) {
         String md5 = MD5Util.getMD5(Constant.S_KEY + programId);
-        mStateService.loadState(programId,md5)
+        PushStateRequest body = new PushStateRequest(md5, programId);
+        mStateService.loadState(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<ProgramLoadStateResponse>(callback,requestTag) {
+                .subscribe(new BaseObserver<ProgramPushStateResponse>(callback, requestTag) {
                     @Override
-                    public void onNext(ProgramLoadStateResponse value) {
+                    public void onNext(ProgramPushStateResponse value) {
                         if (value != null && value.getResult().equals("0")) {//成功
                             callback.requestSuccess(value, requestTag);
                         } else if (value != null) {//失败

@@ -224,7 +224,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
             return;
         }
         mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
-        mProgramBean.setCreation_time(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());
         mProgramBean.setUserid(userID);//账号
@@ -263,7 +263,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
             toActivity(LoginActivity.class);
             return;
         }
-        mProgramBean.setCreation_time(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());//需要推送终端的Mac地址
         mProgramBean.setUserid(userID);//账号

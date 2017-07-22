@@ -29,11 +29,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String tab = "tab";
     public static final String user_id = "user_id";
     public static final String macs = "mac";
+    public static final String load_macs = "load_mac";
     public static final String cover = "cover";
     public static final String model_image = "model_image";
     public static final String is_load_succeed = "is_load_succeed";
     public static final String program_item = "program_item";
     public static final String type = "program_type";
+    public static final String day_program = "day_program";
 
     /**
      * 创建单个节目数据库表
@@ -48,7 +50,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + imgs + " varchar(1000),"//图片集合
                     + videos + " varchar(1000),"//视频集合
                     + texts + " varchar(2000),"//“商品”集合
-                    + macs + " varchar(1000),"//mac集合
+                    + day_program + " varchar(2000),"//“每日任务”集合
+                    + macs + " varchar(1000),"//要推送的设备mac集合
+                    + load_macs + " varchar(1000),"//已加载成功的设备mac集合
                     + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
                     + tab + " varchar(30),"//用户设置的标签
                     + is_load_succeed + " varchar(30),"//节目所选设备是否全部加载完成
@@ -63,7 +67,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //            "create table if not exists " + DAY_TASK_TABLE_NAME + "("
 //                    + table_id + " Integer primary key autoincrement,"//id自增长
 //                    + user_id + " varchar(30),"//用户ID
-//                    + creation_time + " varchar(30),"//创建时间
+//                    + time + " varchar(30),"//创建时间
 //                    + program_id + " varchar(30) UNIQUE,"//节目ID 唯一
 //                    + macs + " varchar(1000),"//mac集合
 //                    + upload_state + " varchar(10) DEFAULT 0,"//是否已经上传服务器 默认为没有上传 0没有上传，1上传成功，-1上传失败
@@ -95,7 +99,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_PROGRAM_TABLE);//节目表
-        sqLiteDatabase.execSQL(CREATE_DAY_TASK_TABLE);//任务表
     }
 
     //当你Android在旧版本上更新的时候会从onUpgrade方法里更新。

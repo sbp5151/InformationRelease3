@@ -1,11 +1,11 @@
 package com.jld.InformationRelease.model;
 
-import com.jld.InformationRelease.bean.response_bean.ProgramLoadStateResponse;
+import com.jld.InformationRelease.bean.request_bean.PushStateRequest;
+import com.jld.InformationRelease.bean.response_bean.ProgramPushStateResponse;
 import com.jld.InformationRelease.util.URLConstant;
 
 import io.reactivex.Observable;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
@@ -19,10 +19,8 @@ import retrofit2.http.POST;
 public interface ProgramLoadStateService {
 
 
-    @FormUrlEncoded
     @POST(URLConstant.PROGRAM_LAOD_STATE)
-    Observable<ProgramLoadStateResponse> loadState(
-            @Field("programId") String programId,
-            @Field("sign") String sign
+    Observable<ProgramPushStateResponse> loadState(
+            @Body PushStateRequest body
     );
 }

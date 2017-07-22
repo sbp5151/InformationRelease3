@@ -16,19 +16,27 @@ public class Constant {
     public static final String S_KEY = "tucson88888888%#!88888888tucson";
 
     /**
-     *
      * 2 share_key
      */
     public static final String SHARE_KEY = "jld_share_key";
 
     //奶茶模板
-    public static final String NAICHA_MODEL_1="1";
+    public static final String NAICHA_MODEL_1 = "1";
     //幻灯片模板
-    public static final String IMAGE_MODEL="2";
+    public static final String IMAGE_MODEL = "2";
     //视频广告模板
-    public static final String VIDEO_MODEL="3";
+    public static final String VIDEO_MODEL = "3";
     /**
      * 保存终端设备
      */
     public static final String MY_TERMINAL = "my_terminal";
+
+    /**
+     * 普通节目类型
+     */
+    public static final String PROGRAM_TYPE_COMMON = "1";
+    /**
+     * 每日任务节目类型
+     */
+    public static final String PROGRAM_TYPE_DAY = "2";
 }

@@ -16,7 +16,7 @@ public class BaseProgram {
      */
     protected ArrayList<String> deviceMacs = new ArrayList<>();
     /**
-     * 已加载节目成功的设备ID
+     * 已加载节目成功的设备mac
      */
     protected ArrayList<String> loadDeviceMacs = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class BaseProgram {
     /**
      * 创建时间
      */
-    protected String creation_time = "";
+    protected String time = "";
 
     /**
      * 数据库字段ID
@@ -139,12 +139,12 @@ public class BaseProgram {
         this.sign = sign;
     }
 
-    public String getCreation_time() {
-        return creation_time;
+    public String getTime() {
+        return time;
     }
 
-    public void setCreation_time(String creation_time) {
-        this.creation_time = creation_time;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public int getTable_id() {
@@ -188,7 +188,7 @@ public class BaseProgram {
                 ", userid='" + userid + '\'' +
                 ", programId='" + programId + '\'' +
                 ", sign='" + sign + '\'' +
-                ", creation_time='" + creation_time + '\'' +
+                ", time='" + time + '\'' +
                 ", table_id=" + table_id +
                 ", tab='" + tab + '\'' +
                 ", upload_state='" + upload_state + '\'' +
@@ -211,7 +211,7 @@ public class BaseProgram {
 //        parcel.writeString(userid);
 //        parcel.writeString(programId);
 //        parcel.writeString(sign);
-//        parcel.writeString(creation_time);
+//        parcel.writeString(time);
 //        parcel.writeInt(table_id);
 //        parcel.writeString(tab);
 //        parcel.writeString(upload_state);
@@ -223,7 +223,7 @@ public class BaseProgram {
 //        userid = in.readString();
 //        programId = in.readString();
 //        sign = in.readString();
-//        creation_time = in.readString();
+//        time = in.readString();
 //        table_id = in.readInt();
 //        tab = in.readString();
 //        upload_state = in.readString();

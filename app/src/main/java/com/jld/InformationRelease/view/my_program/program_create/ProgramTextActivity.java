@@ -254,7 +254,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
 //        ArrayList<String> imgs = mAdapter.getImgDatas(true);
 //        ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
 //        ProgramBean body = new ProgramBean();
-        mProgramBean.setCreation_time(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
         mProgramBean.getImages().remove(0);
 //        body.setLift_texts(data);//名称和价格
@@ -289,7 +289,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
 //        ArrayList data = mAdapter.getTextDatas(true);
 //        ProgramBean body = new ProgramBean();
         mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
-        mProgramBean.setCreation_time(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
 //        body.setLift_texts(data);//名称和价格
 //        body.setImages(imgs);//图片广告
 //        LogUtil.d(TAG, "mCheckMac:" + mCheckMac);

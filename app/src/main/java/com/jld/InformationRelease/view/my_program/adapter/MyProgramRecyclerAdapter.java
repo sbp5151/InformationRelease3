@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.base.BaseProgram;
+import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 
@@ -31,11 +31,11 @@ import static com.jld.InformationRelease.view.my_program.MyProgramFragment.PROGR
 public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecyclerAdapter.MyHolder> {
 
     private Context mContext;
-    private ArrayList<BaseProgram> mData;
+    private ArrayList<ProgramBean> mData;
     public static final String TAG = "MyProgramRecyclerAdapter";
     private boolean isCompileState = false;//是否处于编辑状态
 
-    public MyProgramRecyclerAdapter(Context context, ArrayList<BaseProgram> data) {
+    public MyProgramRecyclerAdapter(Context context, ArrayList<ProgramBean> data) {
         mContext = context;
         this.mData = data;
         LogUtil.d(TAG, "mData:" + data);
@@ -49,25 +49,27 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
 
     @Override
     public void onBindViewHolder(final MyHolder holder, int position) {
-        BaseProgram programBean = mData.get(position);
+        ProgramBean programBean = mData.get(position);
         LogUtil.d(TAG, "programBean:" + programBean);
-        holder.mTime.setText(programBean.getCreation_time());
+        holder.mTime.setText(programBean.getTime());
         holder.mTab.setText(programBean.getTab());
 
         //上传情况
         if (TextUtils.isEmpty(programBean.getProgramId())) {//未上传 隐藏上传信息
             holder.mProgress.setVisibility(View.GONE);
             holder.load_state.setVisibility(View.GONE);
-        } else if (programBean.getIsLoadSucceed().equals("1")) {//已上传 所有设备加载完成 显示加载完成
-            holder.mProgress.setVisibility(View.GONE);
-            holder.load_state.setVisibility(View.VISIBLE);
-            holder.load_state.setText(mContext.getString(R.string.load_succeed));
-        } else if (position < 3 && TimeUtil.toCurrentTimeGap(programBean.getCreation_time()) <= PROGRAM_LOAD_TIME) {//已上传 前三 不超过五分钟 显示上传进度
+        }
+//        else if (programBean.getIsLoadSucceed().equals("1")) {//已上传 所有设备加载完成 显示加载完成
+//            holder.mProgress.setVisibility(View.GONE);
+//            holder.load_state.setVisibility(View.VISIBLE);
+//            holder.load_state.setText(mContext.getString(R.string.load_succeed));
+//        }
+        else if (TimeUtil.toCurrentTimeGap(programBean.getTime()) <= PROGRAM_LOAD_TIME) {//已上传 不超过五分钟 显示上传进度
             holder.mProgress.setVisibility(View.VISIBLE);
             holder.load_state.setVisibility(View.GONE);
             int progress = 100 * programBean.getLoadDeviceMacs().size() / programBean.getDeviceMacs().size();
             holder.mProgress.setProgress(progress);
-        } else {//未上传 后三 显示上传情况
+        } else {//未上传 显示上传情况
             holder.mProgress.setVisibility(View.GONE);
             holder.load_state.setVisibility(View.VISIBLE);
             holder.load_state.setText(programBean.getLoadDeviceMacs().size() + "/" + programBean.getDeviceMacs().size());
@@ -131,7 +133,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
     public void changeCompileState() {
         if (isCompileState) {
             isCompileState = false;
-            for (BaseProgram bean : mData)
+            for (ProgramBean bean : mData)
                 bean.setCheck(false);
         } else
             isCompileState = true;
@@ -142,7 +144,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
         return isCompileState;
     }
 
-    public BaseProgram getData(int position) {
+    public ProgramBean getData(int position) {
         return mData.get(position);
     }
 
@@ -184,7 +186,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
         }
     }
 
-    public void update(ArrayList<BaseProgram> data) {
+    public void update(ArrayList<ProgramBean> data) {
         this.mData = data;
         notifyDataSetChanged();
     }

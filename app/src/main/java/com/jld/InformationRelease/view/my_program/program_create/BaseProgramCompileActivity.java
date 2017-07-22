@@ -37,29 +37,37 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
     protected ImageButton mIb_tool;
     protected String model_img = "";
     protected Button mPush;
+    protected ArrayList<ProgramBean> mProgramDatas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_program_compile);
-        model_img = getIntent().getStringExtra("model_img");
         mProgramBean = getIntent().getParcelableExtra("program_data");
-        LogUtil.d(TAG,"model_img:"+model_img);
-        LogUtil.d(TAG,"mProgramBean:"+mProgramBean);
+        model_img = getIntent().getStringExtra("model_img");
+        //所有节目数据
+        mProgramDatas = getIntent().getParcelableArrayListExtra("program_datas");
+        LogUtil.d(TAG, "model_img:" + model_img);
+        LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
+        LogUtil.d(TAG, "mProgramDatas:" + mProgramDatas);
 
-        if (mProgramBean == null) {
+        if (mProgramBean == null) {//新建节目
             mProgramBean = new ProgramBean();
-            mProgramBean.setModelId(Constant.VIDEO_MODEL);
-            mProgramBean.setModel_img(model_img);
+            if (mProgramDatas == null) {//普通节目
+                mProgramBean.setModelId(Constant.VIDEO_MODEL);
+                mProgramBean.setModel_img(model_img);
+                mProgramBean.setType(Constant.PROGRAM_TYPE_COMMON);//普通节目类型
+            } else {//每日任务
+                mProgramBean.setType(Constant.PROGRAM_TYPE_DAY);//每日任务类型
+            }
             setTabDialog();
-        } else {
+        } else {//再次编辑
             mIsAgainCompile = true;
             mCheckMac = mProgramBean.getDeviceMacs();
         }
-        LogUtil.d(TAG,"program_data:"+mProgramBean);
-        mProgramBean.setType("1");//普通节目类型
         mSp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mPush = (Button) findViewById(R.id.btn_hide_push);
+        LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
     }
 
     /**
@@ -89,45 +97,7 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
                 mProgramBean.setTab(tab);
             }
         });
-        tabDialog.show(getFragmentManager(),"");
-//        final Dialog dialog = new Dialog(this, R.style.CustomDialog);
-//        //view
-//        View view = LayoutInflater.from(this).inflate(R.layout.set_name_dialog, null);
-//        TextView title = (TextView) view.findViewById(R.id.dialog1_title);
-//        ImageView close = (ImageView) view.findViewById(R.id.dialog1_close);
-//        Button confirm = (Button) view.findViewById(R.id.dialog1_confirm);
-//        final EditText content = (EditText) view.findViewById(R.id.dialog1_content);
-//        view.findViewById(R.id.dialog1_confirm);
-//        title.setText(getString(R.string.setTab_dialog_title));
-//        close.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dialog.dismiss();
-//                mProgramBean.setTab(getString(R.string.default_program_tab));
-//            }
-//        });
-//        confirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {//设置节目名称
-//                if (TextUtils.isEmpty(content.getText().toString())) {
-//                    ToastUtil.showToast(BaseProgramCompileActivity.this, getString(R.string.please_input_tab), 3000);
-//                } else {
-//                    mProgramBean.setTab(content.getText().toString());
-//                    dialog.dismiss();
-//                }
-//            }
-//        });
-//        //dialog
-//        dialog.setCancelable(false);
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        dialog.setContentView(view, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.MATCH_PARENT));
-//        Window window = dialog.getWindow();
-//        window.setWindowAnimations(R.style.main_menu_animstyle);
-//        WindowManager.LayoutParams params = window.getAttributes();
-//        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-//        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-//        dialog.show();
+        tabDialog.show(getFragmentManager(), "");
     }
 
     /**
@@ -239,14 +209,18 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
                     mPopupWindowListener.onProgramPush();
             }
         });
-        contentView.findViewById(R.id.pp_preview).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPopupWindow.dismiss();
-                if (mPopupWindowListener != null)
-                    mPopupWindowListener.onPreview();
-            }
-        });
+        if (mProgramBean.getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务不让预览
+            contentView.findViewById(R.id.pp_preview).setVisibility(View.GONE);
+        } else {
+            contentView.findViewById(R.id.pp_preview).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mPopupWindow.dismiss();
+                    if (mPopupWindowListener != null)
+                        mPopupWindowListener.onPreview();
+                }
+            });
+        }
         contentView.findViewById(R.id.pp_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -272,6 +246,7 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
 
     protected interface PopupWindowListener {
         void onPreview();
+
         void onProgramPush();
     }
 

@@ -127,7 +127,7 @@
     <string name="default_program_tab">新建节目</string>
     <string name="please_input_tab">请输入节目名称</string>
     <string name="data_is_null">数据为空</string>
-    <string name="load_succeed">所有设备加载完成</string>
+    <string name="load_succeed">完成</string>
     <string name="device_load_state">节目加载情况</string>
     <string name="day_task">每日任务</string>
     <string name="day_task_compile">每日任务编辑</string>

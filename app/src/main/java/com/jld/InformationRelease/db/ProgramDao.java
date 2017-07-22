@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.util.LogUtil;
 
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 
 import static com.jld.InformationRelease.db.DataBaseHelper.TABLE_NAME;
 import static com.jld.InformationRelease.db.DataBaseHelper.creation_time;
+import static com.jld.InformationRelease.db.DataBaseHelper.day_program;
 import static com.jld.InformationRelease.db.DataBaseHelper.imgs;
 import static com.jld.InformationRelease.db.DataBaseHelper.is_load_succeed;
+import static com.jld.InformationRelease.db.DataBaseHelper.load_macs;
 import static com.jld.InformationRelease.db.DataBaseHelper.macs;
 import static com.jld.InformationRelease.db.DataBaseHelper.model_id;
 import static com.jld.InformationRelease.db.DataBaseHelper.model_image;
@@ -105,6 +108,8 @@ public class ProgramDao {
             String imgs = cursor.getString(cursor.getColumnIndex(DataBaseHelper.imgs));
             String video = cursor.getString(cursor.getColumnIndex(DataBaseHelper.videos));
             String mac = cursor.getString(cursor.getColumnIndex(DataBaseHelper.macs));
+            String load_mac = cursor.getString(cursor.getColumnIndex(DataBaseHelper.load_macs));
+            String day_program = cursor.getString(cursor.getColumnIndex(DataBaseHelper.day_program));
             int table_id = cursor.getInt(cursor.getColumnIndex(DataBaseHelper.table_id));
             String user_id = cursor.getString(cursor.getColumnIndex(DataBaseHelper.user_id));
             String creation_time = cursor.getString(cursor.getColumnIndex(DataBaseHelper.creation_time));
@@ -130,6 +135,12 @@ public class ProgramDao {
                 }.getType());
                 bean.setImages(arImg);
             }
+            //day_program
+            if (!TextUtils.isEmpty(day_program)) {
+                ArrayList<DayTaskItem> dayTask = new Gson().fromJson(day_program, new TypeToken<ArrayList<DayTaskItem>>() {
+                }.getType());
+                bean.setDayProgram(dayTask);
+            }
             //cover
             bean.setCover(cover);
             //model_id
@@ -140,8 +151,8 @@ public class ProgramDao {
             bean.setUpload_state(is_load);
             //table_id
             bean.setTable_id(table_id);
-            //creation_time
-            bean.setCreation_time(creation_time);
+            //time
+            bean.setTime(creation_time);
             //user_id
             bean.setUserid(user_id);
             //tab
@@ -156,6 +167,12 @@ public class ProgramDao {
                 ArrayList<String> macs = new Gson().fromJson(mac, new TypeToken<ArrayList<String>>() {
                 }.getType());
                 bean.setDeviceMacs(macs);
+            }
+            //load_mac
+            if (!TextUtils.isEmpty(load_mac)) {
+                ArrayList<String> load_macs = new Gson().fromJson(load_mac, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                bean.setLoadDeviceMacs(load_macs);
             }
             data.add(bean);
         }
@@ -199,6 +216,7 @@ public class ProgramDao {
         wDb.setTransactionSuccessful();
         wDb.endTransaction();
     }
+
 
 
     /**
@@ -246,14 +264,33 @@ public class ProgramDao {
      * @param tableId
      * @param isSucceed
      */
-    public void updateLoadState(String tableId, String isSucceed, String userID) {
+    public void updateLoadState(String tableId, String isSucceed, ArrayList loadMacs) {
         LogUtil.d(TAG, "updateProgramId:" + isSucceed);
         LogUtil.d(TAG, "tableId:" + tableId);
+        LogUtil.d(TAG, "loadMacs:" + loadMacs);
         if (tableId == null)
             return;
         SQLiteDatabase wdb = mDb.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(is_load_succeed, isSucceed);
+        values.put(load_macs, mGson.toJson(loadMacs));
+        wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
+        wdb.setTransactionSuccessful();
+    }
+    /**
+     * 更新加载节目成功的设备
+     *
+     * @param tableId
+     * @param loadMacs
+     */
+    public void updateLoadMacs(String tableId, ArrayList loadMacs) {
+        LogUtil.d(TAG, "updateProgramId:" + loadMacs);
+        LogUtil.d(TAG, "tableId:" + tableId);
+        if (tableId == null)
+            return;
+        SQLiteDatabase wdb = mDb.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(load_macs, mGson.toJson(loadMacs));
         wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
         wdb.setTransactionSuccessful();
     }
@@ -281,14 +318,16 @@ public class ProgramDao {
         ContentValues content = new ContentValues();
         content.put(user_id, userID);
         content.put(model_image, bean.getModel_img());
-        content.put(creation_time, bean.getCreation_time());
+        content.put(creation_time, bean.getTime());
         content.put(is_load_succeed, bean.getIsLoadSucceed());
         content.put(model_id, bean.getModelId());
         content.put(program_id, bean.getProgramId());
         content.put(imgs, mGson.toJson(bean.getImages()));
         content.put(videos, mGson.toJson(bean.getVideos()));
+        content.put(day_program, mGson.toJson(bean.getDayProgram()));
         content.put(texts, mGson.toJson(bean.getTexts()));
         content.put(macs, mGson.toJson(bean.getDeviceMacs()));
+        content.put(load_macs, mGson.toJson(bean.getLoadDeviceMacs()));
         content.put(upload_state, bean.getUpload_state());
         content.put(tab, bean.getTab());
         content.put(type, bean.getType());

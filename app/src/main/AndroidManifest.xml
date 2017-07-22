@@ -90,7 +90,7 @@
             android:name=".view.my_program.program_create.preview.ProgramImagePreview"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBar"/>
-        <activity android:name=".view.my_program.program_day_task.DayTaskProgramActivity">
+        <activity android:name=".view.my_program.program_create.DayTaskProgramActivity">
         </activity>
     </application>
 

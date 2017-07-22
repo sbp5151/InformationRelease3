@@ -1,35 +1,29 @@
-package com.jld.InformationRelease.view.my_program.program_day_task;
+package com.jld.InformationRelease.view.my_program.program_create;
 
-import android.graphics.drawable.ColorDrawable;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.DayTaskBean;
-import com.jld.InformationRelease.bean.ProgramBean;
-import com.jld.InformationRelease.db.ProgramDao2;
-import com.jld.InformationRelease.dialog.SetProgramTabDialog;
+import com.jld.InformationRelease.base.DayTaskItem;
+import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
-import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
+import com.jld.InformationRelease.view.login_register.LoginActivity;
 import com.jld.InformationRelease.view.my_program.adapter.DayTaskAdapter;
 import com.rey.material.app.Dialog;
 import com.rey.material.app.DialogFragment;
@@ -40,61 +34,46 @@ import com.rey.material.app.TimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class DayTaskProgramActivity extends AppCompatActivity implements View.OnClickListener {
+import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
 
-    private ArrayList<DayTaskBean.DayTaskItem> datas;
+public class DayTaskProgramActivity extends BaseProgramCompileActivity implements View.OnClickListener {
+
+    private static final java.lang.String TAG = "DayTaskProgramActivity";
     private DayTaskAdapter mAdapter;
     private static final int ADD_IMAGE = 0x10;
-    private static final java.lang.String TAG = "DayTaskProgramActivity";
-
+    private ImageView mAdd_task;
+    private String[] mNames;
+    private String[] mTableIds;
+    private ArrayList<DayTaskItem> mDayTaskItems;
+    private ArrayList<DayTaskItem> mBeforeDayTaskItems = new ArrayList<>();
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case ADD_IMAGE:
-                    mAdapter.addItem(new DayTaskBean.DayTaskItem());
+                    mAdapter.addItem(new DayTaskItem());
                     break;
             }
         }
     };
-    private ImageView mAdd_task;
-    private String[] mNames;
-    private String[] mTableIds;
-    private ImageButton mIb_tool;
-    private ArrayList<ProgramBean> mProgram_data;
-    private DayTaskBean mDayTaskBean;
-    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_task_program);
-        mProgram_data = getIntent().getParcelableArrayListExtra("program_data");
-        mDayTaskBean = getIntent().getParcelableExtra("task_data");
-        LogUtil.d(TAG, "mProgram_data:" + mProgram_data + "\n" + "mDayTaskBean:" + mDayTaskBean);
-        if (mDayTaskBean == null) {
-            mDayTaskBean = new DayTaskBean();
-            SetProgramTabDialog tabDialog = new SetProgramTabDialog(this, new SetProgramTabDialog.OnProgramTabListen() {
-                @Override
-                public void onSetTab(String tab) {
-                    mDayTaskBean.setTab(tab);
-                }
-            });
-            tabDialog.show(getFragmentManager(), "");
-        }
-        mDayTaskBean.setType("2");//每日任务类型
-        datas = mDayTaskBean.getProgram_item();
-        mNames = new String[mProgram_data.size()];
-        mTableIds = new String[mProgram_data.size()];
-        mUserId = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE).getString(UserConstant.USER_ID, "");
-        for (int i = 0; i < mProgram_data.size(); i++) {
-            String name = mProgram_data.get(i).getTab();
-            int id = mProgram_data.get(i).getTable_id();
+        mDayTaskItems = mProgramBean.getDayProgram();
+        mBeforeDayTaskItems.addAll(mDayTaskItems);
+        mNames = new String[mProgramDatas.size()];
+        mTableIds = new String[mProgramDatas.size()];
+        for (int i = 0; i < mProgramDatas.size(); i++) {
+            String name = mProgramDatas.get(i).getTab();
+            int id = mProgramDatas.get(i).getTable_id();
             mNames[i] = name;
             mTableIds[i] = id + "";
         }
         initView();
+        setPopupWindowListener(mPopupWindowListener);
     }
 
     private void initView() {
@@ -113,9 +92,9 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rv_day_task);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(DayTaskProgramActivity.this));
-        mAdapter = new DayTaskAdapter(datas, DayTaskProgramActivity.this);
-        if (datas.size() == 0)
-            mAdapter.addItem(new DayTaskBean.DayTaskItem());
+        mAdapter = new DayTaskAdapter(mDayTaskItems, DayTaskProgramActivity.this);
+        if (mDayTaskItems.size() == 0)
+            mAdapter.addItem(new DayTaskItem());
         mAdapter.setOnItemClickListen(mOnItemClickListen);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -223,58 +202,83 @@ public class DayTaskProgramActivity extends AppCompatActivity implements View.On
         }
     }
 
-    /**
-     * 推送、预览、保存
-     */
-    public void showPopupwindow() {
-        final PopupWindow mPopupWindow = new PopupWindow(this);
-        View contentView = getLayoutInflater().inflate(R.layout.program_popupwindow_layout, null);
-        contentView.findViewById(R.id.pp_program_push).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPopupWindow.dismiss();
-                Toast.makeText(DayTaskProgramActivity.this, "此功能待开发...", Toast.LENGTH_SHORT).show();
+    PopupWindowListener mPopupWindowListener = new PopupWindowListener() {
+        @Override
+        public void onPreview() {
+        }
 
-            }
-        });
-        contentView.findViewById(R.id.pp_preview).setVisibility(View.GONE);
-//                .setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mPopupWindow.dismiss();
-//
-//            }
-//        });
-        contentView.findViewById(R.id.pp_save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPopupWindow.dismiss();
-                programSave();
-                finish();
-            }
-        });
-        mPopupWindow.setContentView(contentView);
-        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth(GeneralUtil.dip2px(this, 100));
-        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
-        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
-        mPopupWindow.showAsDropDown(mIb_tool, GeneralUtil.dip2px(this, 21), GeneralUtil.dip2px(this, -21));
-    }
+        @Override
+        public void onProgramPush() {
+            if (mDayTaskItems.size() > 0)
+                terminalSelect();
+            else
+                ToastUtil.showToast(DayTaskProgramActivity.this, getResources().getString(R.string.please_compile), 3000);
+        }
+    };
 
-    private void programSave() {
-        if (TextUtils.isEmpty(mUserId)) {
-            ToastUtil.showToast(this, getString(R.string.please_login), 3000);
+    @Override
+    public void saveProgram() {
+        String userID = mSp.getString(UserConstant.USER_ID, "");
+        if (TextUtils.isEmpty(userID)) {//账号不能为空
+            ToastUtil.showToast(this, getResources().getString(R.string.please_login), 3000);
             return;
         }
-        LogUtil.d(TAG, "datas:" + datas);
-        mDayTaskBean.setModel_img("");
-        mDayTaskBean.setProgram_item(datas);
-//        mDayTaskBean.setIsLoadSucceed("0");
-        mDayTaskBean.setCreation_time(TimeUtil.getTodayDateTime());
-        mDayTaskBean.setUpload_state("0");
-        mDayTaskBean.setUserid(mUserId);
-        ProgramDao2 dao = ProgramDao2.getInstance(this);
-        dao.addData(mDayTaskBean);
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setDayProgram(mDayTaskItems);//需要推送终端的Mac地址
+        mProgramBean.setUserid(userID);//账号
+        mProgramBean.setUpload_state("0");
+        LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
+        try {
+            ProgramDao mProgramDao = ProgramDao.getInstance(this);
+            if (mIsAgainCompile) {
+                mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
+                mProgramDao.updateInDataBaseId(mProgramBean, userID);
+            } else
+                mProgramDao.addProgram(mProgramBean, userID);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void programPush() {
+        String userID = mSp.getString(UserConstant.USER_ID, "");
+        if (TextUtils.isEmpty(userID)) {//账号不能为空
+            ToastUtil.showToast(this, getResources().getString(R.string.please_login), 3000);
+            toActivity(LoginActivity.class);
+            return;
+        }
+        if (mCheckMac.size() <= 0) {
+            ToastUtil.showToast(this, getResources().getString(R.string.terminal_id_no_null), Toast.LENGTH_SHORT);
+            return;
+        }
+        mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
+        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setDayProgram(mDayTaskItems);
+        mProgramBean.setUserid(userID);//账号
+        mProgramBean.setUpload_state("0");
+        Intent intent = new Intent();
+        intent.putExtra("body", mProgramBean);
+        LogUtil.d(TAG, "programPush:" + mProgramBean);
+        setResult(mProgramResultCode, intent);//编辑结果返回
+        finish();
+    }
+
+    @Override
+    public boolean isDataChange() {
+        if (mIsAgainCompile) {
+            if (mDayTaskItems.size() != mBeforeDayTaskItems.size()) {
+                return true;
+            } else {
+                for (int i = 0; i < mDayTaskItems.size(); i++) {
+                    if (mDayTaskItems.get(i) != mBeforeDayTaskItems.get(i))
+                        return true;
+                }
+            }
+        } else if (mDayTaskItems.size() > 0) {
+            return true;
+        }
+        return false;
     }
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuLayout;
 
 import java.util.ArrayList;
 
@@ -135,7 +137,7 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             imgHolder.rv_img.setAdapter(mImgAdapter);
         } else if (holder instanceof TextHolder) {//文字
-            TextHolder comHolder = (TextHolder) holder;
+            final TextHolder comHolder = (TextHolder) holder;
             comHolder.view.setTag(ITEM_TAG_TEXT);
 //            int size = mBean.getImages().size();
 //            //减去imagpath和两个head 获得真实位置
@@ -144,7 +146,13 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ProgramBean.Commodity commodity = mDatas.getTexts().get(realPosition);
             comHolder.name.setText(commodity.getName());
             comHolder.price.setText(commodity.getPrice());
-
+            comHolder.btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    comHolder.mSwipeMenuLayout.smoothCloseMenu();
+                    mMyItemClick.onTextDeleteClickListen(view,getRealPositionImg(holder.getLayoutPosition()));
+                }
+            });
             if (realPosition == (mDatas.getTexts().size() - 1) && TextUtils.isEmpty(comHolder.name.getText())) {
                 //最底下item获得焦点
                 comHolder.name.requestFocus();
@@ -204,6 +212,8 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
          * @param position
          */
         void onTextHeadClickListen(View view, int position);
+
+        void onTextDeleteClickListen(View view, int position);
     }
 
     /**
@@ -217,7 +227,14 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         commoditys.add(new ProgramBean.Commodity("", ""));
         mDatas.setTexts(commoditys);
-        notifyDataSetChanged();
+        notifyItemInserted(getItemCount() - 1);
+    }
+
+    public void deleteTextItem(int position) {
+        ArrayList<ProgramBean.Commodity> commoditys = mDatas.getTexts();
+        commoditys.remove(position);
+        mDatas.setTexts(commoditys);
+        notifyItemRemoved(position+3);
     }
 
     /**
@@ -327,18 +344,23 @@ public class ProgramCompileAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return mImgAdapter.getdata(position);
     }
 
-    class TextHolder extends RecyclerView.ViewHolder {
+    class TextHolder extends RecyclerView.ViewHolder{
 
+        SwipeMenuLayout mSwipeMenuLayout;
         EditText name;
         EditText price;
+        Button btn_delete;
         View view;
 
         public TextHolder(View itemView) {
             super(itemView);
+            mSwipeMenuLayout = (SwipeMenuLayout) itemView.findViewById(R.id.swipe_menu_layout);
             name = (EditText) itemView.findViewById(R.id.et_commodity_name);
             price = (EditText) itemView.findViewById(R.id.et_commodity_price);
+            btn_delete = (Button) itemView.findViewById(R.id.btn_text_right_view);
             view = itemView;
         }
+
     }
 
     class ImgHolder extends RecyclerView.ViewHolder {

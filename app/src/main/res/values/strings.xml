@@ -141,5 +141,11 @@
     <string name="time_span">播放时长</string>
     <string name="time_quantun">播放时间段</string>
     <string name="play_num">播放次数</string>
+    <string name="play_time_error">播放时间不能大于结束时间</string>
+    <string name="play_time_error2">该时间段已有节目</string>
+    <string name="please_compile_full">请将节目编辑完整</string>
+    <string name="have_unbunding">设备已解绑</string>
+    <string name="sure_push_program">确定要上传这个节目？</string>
+    <string name="program_upload_ing">有其他节目正在上传！</string>
 
 </resources>

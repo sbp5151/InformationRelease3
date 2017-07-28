@@ -51,4 +51,8 @@
     <dimen name="add_button_size">67dp</dimen>
     <dimen name="add_button_margin_right">17dp</dimen>
     <dimen name="add_button_margin_botton">21dp</dimen>
+    <dimen name="swipe_menu_item_width">80dp</dimen>
+    <dimen name="swipe_menu_item_width2">45dp</dimen>
+    <dimen name="swipe_menu_item_height">35dp</dimen>
+    <dimen name="swipe_menu_item_text_size">10dp</dimen>
 </resources>

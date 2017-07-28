@@ -42,6 +42,9 @@ import com.jld.InformationRelease.view.login_register.LoginActivity;
 import com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter;
 import com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileImgItemAdapter;
 import com.jld.InformationRelease.view.my_program.program_create.preview.ProgramTextPreview;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,7 +74,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
     private ProgramCompileAdapter mAdapter;
     private ProgressDialog mPhotoCompileDialog;
     public String modleId = Constant.NAICHA_MODEL_1;
-    private RecyclerView mRecyclerView;
+    private SwipeMenuRecyclerView mRecyclerView;
     private View mHead_head;
     private TextView mTv_head;
     private ProgramDao mProgramDao;
@@ -120,11 +123,19 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
         add_item.setOnClickListener(mOnClickListener);
         mTv_head = (TextView) mHead_head.findViewById(R.id.tv_compile_head_text);
         //RecyclerView
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_program_compile);
+        mRecyclerView = (SwipeMenuRecyclerView) findViewById(R.id.rv_program_compile);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());//动画
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 //        layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
+            @Override
+            public void onItemClick(SwipeMenuBridge menuBridge) {
+                menuBridge.closeMenu();
+                int position = menuBridge.getAdapterPosition();
+                LogUtil.d(TAG, "getAdapterPosition:" + position);
+            }
+        });
         //initData
         if (!mIsAgainCompile) {//新建节目初始化数据
             mCommodities.add(new ProgramBean.Commodity("", ""));
@@ -166,7 +177,12 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
         public void onTextHeadClickListen(View view, int position) {
             LogUtil.d(TAG, "onTextHeadClickListen:" + position);
             mAdapter.addTextItem();
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+//            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+        }
+
+        @Override
+        public void onTextDeleteClickListen(View view, int position) {
+            mAdapter.deleteTextItem(position);
         }
     };
 
@@ -289,7 +305,6 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
 //        ArrayList data = mAdapter.getTextDatas(true);
 //        ProgramBean body = new ProgramBean();
         mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
 //        body.setLift_texts(data);//名称和价格
 //        body.setImages(imgs);//图片广告
 //        LogUtil.d(TAG, "mCheckMac:" + mCheckMac);
@@ -531,9 +546,13 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
             super.onScrolled(recyclerView, dx, dy);
             //距离顶部五个像素的view
             View headView = recyclerView.findChildViewUnder(mHead_head.getMeasuredWidth() / 2, 1);
+            LogUtil.d(TAG, "headView:" + headView);
             //距离第一个item一个像素的view
             View transInfoView = recyclerView.findChildViewUnder(
                     mHead_head.getMeasuredWidth() / 2, mHead_head.getMeasuredHeight() + 1);
+            LogUtil.d(TAG, "transInfoView:" + transInfoView);
+            if(headView==null)
+                return;
             int headView_tag = (int) headView.getTag();
             int transInfoView_tag = (int) transInfoView.getTag();
             //head

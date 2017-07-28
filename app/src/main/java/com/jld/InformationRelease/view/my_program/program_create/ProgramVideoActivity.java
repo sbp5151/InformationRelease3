@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.base.BaseRecyclerViewAdapterClick;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.Constant;
@@ -28,6 +26,12 @@ import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
 import com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramVideoAdapter;
 import com.jld.InformationRelease.view.my_program.program_create.preview.ProgramVideoPreview;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
 
@@ -40,7 +44,6 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
 
     private static final String TAG = "ProgramVideoActivity";
     private static final int GET_VIDEO_RESULT = 0x01;
-    private RecyclerView mRecyclerView;
     private ArrayList<String> mVideoPath = new ArrayList<>();
     private ArrayList<String> mLastPath = new ArrayList<>();
     private ProgramVideoAdapter mAdapter;
@@ -79,25 +82,61 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         mAdd.setOnClickListener(mOnClickListener);
 
         //RecyclerView
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_program_video_content);
+        SwipeMenuRecyclerView recyclerView = (SwipeMenuRecyclerView) findViewById(R.id.rv_program_video_content);
         //Animator
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setSwipeMenuItemClickListener(mSwipeMenuItemClickListener);
+//        recyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mAdapter = new ProgramVideoAdapter(mVideoPath, this);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
         if (!mIsAgainCompile) {
 //            chooseVideo();//自动进入添加界面
             mAdapter.addItem();
 //            mAddPathPosition = 0;
         }
-        mAdapter.setMyOnClickListener(new BaseRecyclerViewAdapterClick.MyItemClickListener() {
+        mAdapter.setMyOnClickListener(new ProgramVideoAdapter.OnProgramVideoItemClickListen() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onSelectItemClick(View view, int position) {
                 chooseVideo();
                 mAddPathPosition = position;
             }
+
+            @Override
+            public void onDeleteItemClick(View view, int position) {
+
+                mAdapter.removeItem(position);
+            }
         });
     }
+
+    SwipeMenuItemClickListener mSwipeMenuItemClickListener = new SwipeMenuItemClickListener() {
+        @Override
+        public void onItemClick(SwipeMenuBridge menuBridge) {
+            menuBridge.closeMenu();
+            int position = menuBridge.getAdapterPosition();
+            mAdapter.removeItem(position);
+        }
+    };
+
+
+    /**
+     * 侧滑菜单 item创建
+     */
+    SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
+        @Override
+        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+            int width = getResources().getDimensionPixelSize(R.dimen.swipe_menu_item_width2);
+            int height = getResources().getDimensionPixelSize(R.dimen.swipe_menu_item_height);
+            SwipeMenuItem menuItem = new SwipeMenuItem(ProgramVideoActivity.this)
+                    .setBackground(R.drawable.swipe_menu_delete)
+                    .setHeight(height)
+                    .setWidth(width)
+                    .setText(getString(R.string.delete))
+                    .setTextColor(getResources().getColor(R.color.white));
+            swipeRightMenu.addMenuItem(menuItem);
+        }
+    };
 
     /**
      * 获得非空视频路径
@@ -224,12 +263,10 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
             return;
         }
         mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());
         mProgramBean.setUserid(userID);//账号
         mProgramBean.setUpload_state("0");
-
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
         LogUtil.d(TAG, "programPush:" + mProgramBean);
@@ -243,14 +280,19 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
      * @return
      */
     public boolean isDataChange() {
-        if (mLastPath.size() == mVideoPath.size()) {
-            for (int i = 0; i < mLastPath.size(); i++) {
-                if (!mLastPath.get(i).equals(mVideoPath.get(i)))
-                    return true;
-            }
-            return false;
-        } else
-            return false;
+        if (mIsAgainCompile) {
+            if (mLastPath.size() == mVideoPath.size()) {
+                for (int i = 0; i < mLastPath.size(); i++) {
+                    if (!mLastPath.get(i).equals(mVideoPath.get(i)))
+                        return true;
+                }
+                return false;
+            } else
+                return true;
+        } else if (mVideoPath.size() > 0 && !TextUtils.isEmpty(mVideoPath.get(0))) {
+            return true;
+        }
+        return false;
     }
 
     /**

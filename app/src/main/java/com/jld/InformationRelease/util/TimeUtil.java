@@ -16,49 +16,51 @@ import java.util.Locale;
  */
 public class TimeUtil {
 
+
     /**
-     * 时间转毫秒
+     * 时间转日期
+     *
+     * @param time
+     * @return
      */
-    public static final int IS_GRAB = 0;
-    public static final int NO_START = 1;
-    public static final int IS_END = 2;
-
-    public static int compareTime(String realTime, String timeFirst, String timeLast) {
-        int flag = 0;
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date real = null;
-        Date d1 = null;
-        Date d2 = null;
-        try {
-            real = df.parse(realTime);
-            d1 = df.parse(timeFirst);
-            d2 = df.parse(timeLast);
-
-            if ((real.getTime() - d1.getTime()) < 0) {
-
-                return NO_START;
-            } else if ((real.getTime() - d1.getTime()) >= 0 && (d2.getTime() - real.getTime()) >= 0) {
-                return IS_GRAB;
-            } else {
-                return IS_END;
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        return flag;
+    public static String timeAddDate(String time) {
+        String todayDateTime = TimeUtil.getTodayDateTime();
+        String[] splitTime = todayDateTime.split(" ");
+        time = splitTime[0] + " " + time;
+        return time;
     }
 
     /**
-     * 获取时间差距
+     * time1 比 time2 大返回true 否则返回false
+     * 时间格式  00:00:00
+     * @param time1
+     * @param time2
+     * @return
+     */
+    public static boolean timeCompare(String time1, String time2) {
+
+        String[] time1s = time1.split(":");
+        String[] time2s = time2.split(":");
+        for (int i = 0; i < time1s.length; i++) {
+            if (Integer.parseInt(time1s[i]) > Integer.parseInt(time2s[i])) {
+                return true;
+            } else if (Integer.parseInt(time1s[i]) < Integer.parseInt(time2s[i])) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 计算时间差值
+     *
+     * @param timeFirst 时间1 日期格式
+     * @param timeLast  时间2 日期格式
+     * @return
      */
     public static long getTimeGap(String timeFirst, String timeLast) {
         long timegap = 0;
-
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         Date d1 = null;
         Date d2 = null;
         try {
@@ -70,14 +72,13 @@ public class TimeUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         return timegap;
     }
 
     /**
      * 与当前时间的差距
      *
-     * @param time
+     * @param time 日期格式
      * @return
      */
     public static long toCurrentTimeGap(String time) {
@@ -85,23 +86,24 @@ public class TimeUtil {
         return getTimeGap(time, currentTime);
     }
 
-
     /**
      * 获取当前时间
-     * @return
+     *
+     * @return 日期格式
      */
     public static String getTodayDateTime() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.getDefault());
         return format.format(new Date());
     }
+
     /**
-     * 调此方法输入所要转换的时间输入例如（"2014-06-14-16-09-00"）返回时间戳
+     * 日期格式转时间戳格式 例如（"2014-06-14 16-09-00"）返回时间戳
      *
-     * @param time
-     * @return
+     * @param time 日期格式
+     * @return 时间戳格式
      */
-    public static String dataOne(String time) {
+    public static String dateBack(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.CHINA);
         Date date;
@@ -109,26 +111,24 @@ public class TimeUtil {
         try {
             date = sdr.parse(time);
             long l = date.getTime();
-            String stf = String.valueOf(l);
-            times = stf.substring(0, 10);
+            times = String.valueOf(l);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return times;
     }
+
     /**
-     * 调用此方法输入所要转换的时间戳输入例如（1402733340）输出（"2014-06-14  16:09:00"）
+     * 时间戳格式转日期格式 例如（1402733340）输出（"2014-06-14  16:09:00"）
      *
-     * @param time
-     * @return
+     * @param time 时间戳格式
+     * @return 日期格式
      */
-    public static String timedate(String time) {
+    public static String dateFormat(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         @SuppressWarnings("unused")
         long lcc = Long.valueOf(time);
-        int i = Integer.parseInt(time);
-        String times = sdr.format(new Date(i * 1000L));
+        String times = sdr.format(new Date(lcc * 1000L));
         return times;
-
     }
 }

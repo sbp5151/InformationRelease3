@@ -2,7 +2,6 @@ package com.jld.InformationRelease.view.my_program.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +54,7 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
         holder.mTab.setText(programBean.getTab());
 
         //上传情况
-        if (TextUtils.isEmpty(programBean.getProgramId())) {//未上传 隐藏上传信息
+        if (!programBean.getUpload_state().equals("1")) {//未上传或上传失败 隐藏上传信息
             holder.mProgress.setVisibility(View.GONE);
             holder.load_state.setVisibility(View.GONE);
         }
@@ -67,8 +66,12 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
         else if (TimeUtil.toCurrentTimeGap(programBean.getTime()) <= PROGRAM_LOAD_TIME) {//已上传 不超过五分钟 显示上传进度
             holder.mProgress.setVisibility(View.VISIBLE);
             holder.load_state.setVisibility(View.GONE);
-            int progress = 100 * programBean.getLoadDeviceMacs().size() / programBean.getDeviceMacs().size();
-            holder.mProgress.setProgress(progress);
+            if (programBean.getDeviceMacs().size() > 0) {
+                int progress = 100 * programBean.getLoadDeviceMacs().size() / programBean.getDeviceMacs().size();
+                holder.mProgress.setProgress(progress);
+            } else
+                holder.mProgress.setVisibility(View.GONE);
+
         } else {//未上传 显示上传情况
             holder.mProgress.setVisibility(View.GONE);
             holder.load_state.setVisibility(View.VISIBLE);

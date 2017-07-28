@@ -1,31 +1,26 @@
 package com.jld.InformationRelease.view;
 
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.bean.request_bean.BindingRequest;
+import com.jld.InformationRelease.dialog.SetTerminalNameDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -151,16 +146,18 @@ public class MainActivity extends BaseActivity
             } else {
                 ft.show(mMyProgramFragment);
             }
-        } else if (id == R.id.menu_system_model) {//系统模板
-            mSystemModelFragment = (SystemModelFragment) fm.findFragmentByTag(SYSTEM_MODEL_TAG);
-            if (mSystemModelFragment == null) {
-                mSystemModelFragment = new SystemModelFragment();
-                maps.put(id, mSystemModelFragment);
-                ft.add(R.id.main_fragment, mSystemModelFragment, SYSTEM_MODEL_TAG);
-            } else {
-                ft.show(mSystemModelFragment);
-            }
-        } else if (id == R.id.menu_scan_code) {//扫描添加
+        }
+//        else if (id == R.id.menu_system_model) {//系统模板
+//            mSystemModelFragment = (SystemModelFragment) fm.findFragmentByTag(SYSTEM_MODEL_TAG);
+//            if (mSystemModelFragment == null) {
+//                mSystemModelFragment = new SystemModelFragment();
+//                maps.put(id, mSystemModelFragment);
+//                ft.add(R.id.main_fragment, mSystemModelFragment, SYSTEM_MODEL_TAG);
+//            } else {
+//                ft.show(mSystemModelFragment);
+//            }
+//        }
+        else if (id == R.id.menu_scan_code) {//扫描添加
             startScan();
         } else if (id == R.id.menu_setting) {//设置
             mSettingFragment = (SettingFragment) fm.findFragmentByTag(SETTING_TAG);
@@ -181,11 +178,10 @@ public class MainActivity extends BaseActivity
             ft.hide(entry.getValue());
         }
         ft.commit();
-
     }
 
-    public void startScan(){
-        LogUtil.d(TAG,"startScan");
+    public void startScan() {
+        LogUtil.d(TAG, "startScan");
         Intent intent = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent, mScanRequestCode);
     }
@@ -221,49 +217,31 @@ public class MainActivity extends BaseActivity
     }
 
 
+    /**
+     * 设备添加 设置名称
+     * @param mac
+     */
     public void showSetNameDialog(final String mac) {
-        View view = LayoutInflater.from(this).inflate(R.layout.set_name_dialog, null);
-        final EditText setName = (EditText) view.findViewById(R.id.dialog1_content);
-        Button confirm = (Button) view.findViewById(R.id.dialog1_confirm);
-        ImageView close = (ImageView) view.findViewById(R.id.dialog1_close);
-        close.setOnClickListener(new View.OnClickListener() {
+        SetTerminalNameDialog dialog = new SetTerminalNameDialog(this, new SetTerminalNameDialog.SetTerminalNameListen() {
             @Override
-            public void onClick(View view) {
-                mSetNameDialog.dismiss();
+            public void onConfirm(String name) {
+                if (mTerminalFunctionPresenter == null)
+                    mTerminalFunctionPresenter = new TerminalFunctionPresenter(MainActivity.this, MainActivity.this);
+                SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
+                String mobile = sp.getString(UserConstant.USER_ID, "");
+                mBean = new BindingRequest();
+                mBean.setUserId(mobile);
+                mBean.setDevicename(name);
+                mBean.setDevicemac(mac);
+                LogUtil.d(TAG, "userid:" + mBean.getUserId());
+                LogUtil.d(TAG, "mac:" + mac);
+                String sign = MD5Util.getMD5(Constant.S_KEY + mBean.getUserId() + mac);
+                mBean.setSign(sign);
+                mTerminalFunctionPresenter.binding(mBean, BIND_REQUEST_TAG);
             }
         });
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String name = setName.getText().toString();
-                if (!TextUtils.isEmpty(name)) {
-                    if (mTerminalFunctionPresenter == null)
-                        mTerminalFunctionPresenter = new TerminalFunctionPresenter(MainActivity.this, MainActivity.this);
-                    if (mBean == null) {
-                        SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-                        String mobile = sp.getString(UserConstant.USER_ID, "");
-                        mBean = new BindingRequest();
-                        mBean.setUserId(mobile);
-                        mBean.setDevicename(name);
-                    }
-                    mBean.setDevicemac(mac);
-                    LogUtil.d(TAG, "userid:" + mBean.getUserId());
-                    LogUtil.d(TAG, "mac:" + mac);
-                    String sign = MD5Util.getMD5(Constant.S_KEY + mBean.getUserId() + mac);
-                    mBean.setSign(sign);
-                    mTerminalFunctionPresenter.binding(mBean, BIND_REQUEST_TAG);
-                } else
-                    ToastUtil.showToast(MainActivity.this, getResources().getString(R.string.input_name), 3000);
-            }
-        });
-        mSetNameDialog = new Dialog(this, R.style.CustomDialog);
-//        mSetNameDialog.setCanceledOnTouchOutside();
-        mSetNameDialog.setCancelable(false);
-        mSetNameDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);//无标题栏
-        mSetNameDialog.setContentView(view);
-        mSetNameDialog.show();
+        dialog.show(getFragmentManager(),"set_name");
     }
-
 
     @Override
     public void onBackPressed() {
@@ -309,5 +287,16 @@ public class MainActivity extends BaseActivity
         if (requestTag == BIND_REQUEST_TAG) {
             ToastUtil.showToast(this, e.getMessage(), 3000);
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent();
+            intent.setAction("android.intent.action.MAIN");
+            intent.addCategory("android.intent.category.HOME");
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.base.BaseRecyclerViewAdapterClick;
 import com.jld.InformationRelease.util.LogUtil;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
  * <p>
  * 视频广告 节目编辑适配器
  */
-public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapter.MyHolder> implements BaseRecyclerViewAdapterClick {
+public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapter.MyHolder> {
 
     private static final String TAG = "ProgramVideoAdapter";
     private ArrayList<String> mDada;
@@ -37,21 +36,16 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
 
     @Override
     public ProgramVideoAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.program_compile_video_item, parent, false);
-        MyHolder myHolder = new MyHolder(view);
-        return myHolder;
+//        View view = LayoutInflater.from(mContext).inflate(R.layout.program_compile_video_item, parent, false);
+//        MyHolder myHolder = new MyHolder(view);
+//        return myHolder;
+        return new ProgramVideoAdapter.MyHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.program_compile_video_item, parent, false));
+
     }
 
     @Override
     public void onBindViewHolder(final ProgramVideoAdapter.MyHolder holder, int position) {
-
         holder.mPath.setText(mDada.get(position));
-        holder.mSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyItemClick.onItemClick(view, holder.getLayoutPosition());
-            }
-        });
     }
 
     @Override
@@ -70,20 +64,21 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
         }
     }
 
-    public String getItem(int position){
+    public String getItem(int position) {
         if (mDada != null) {
-          return mDada.get(position);
+            return mDada.get(position);
         }
         return "";
 
     }
-    public void removeItem(int position){
+
+    public void removeItem(int position) {
         if (mDada != null) {
             mDada.remove(position);
-//            notifyItemChanged(mDada.size() - 1);
-            notifyDataSetChanged();
+            notifyItemRemoved(position);
         }
     }
+
     public void setPath(int position, String path) {
         if (mDada != null && position < mDada.size()) {
             mDada.set(position, path);
@@ -91,29 +86,46 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
         }
     }
 
-    MyItemClickListener mMyItemClick;
-    MyItemLongClickListener mMyItemLongClickListener;
+    OnProgramVideoItemClickListen mMyItemClick;
 
-    @Override
-    public void setMyOnClickListener(MyItemClickListener myItemClick) {
+    public void setMyOnClickListener(OnProgramVideoItemClickListen myItemClick) {
         mMyItemClick = myItemClick;
     }
 
-    @Override
-    public void setMyOnLongClickListener(MyItemLongClickListener onItemSelectClick) {
-        mMyItemLongClickListener = onItemSelectClick;
+    public interface OnProgramVideoItemClickListen {
+
+        void onSelectItemClick(View view, int position);
+
+        void onDeleteItemClick(View view, int position);
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mPath;
         private Button mSelect;
+        private Button mdelete;
 
         public MyHolder(View itemView) {
             super(itemView);
             mPath = (TextView) itemView.findViewById(R.id.tv_video_item_path);
             mSelect = (Button) itemView.findViewById(R.id.btn_video_item_path_select);
+            mdelete = (Button) itemView.findViewById(R.id.btn_video_item_path_delete);
+            mSelect.setOnClickListener(this);
+            mdelete.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+
+            switch (view.getId()) {
+                case R.id.btn_video_item_path_delete:
+                    mMyItemClick.onDeleteItemClick(view, getAdapterPosition());
+                    break;
+                case R.id.btn_video_item_path_select:
+                    mMyItemClick.onSelectItemClick(view, getAdapterPosition());
+                    break;
+            }
+
+        }
     }
 }

@@ -10,8 +10,6 @@ import android.view.View;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.LogUtil;
-import com.jld.InformationRelease.util.MacUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
 
@@ -51,13 +49,7 @@ public class StartActivity extends BaseActivity {
         setContentView(R.layout.activity_start);
         mHandler.sendEmptyMessageDelayed(TO_LOGIN_ACTIVITY, 2000);
         mSp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-        SharedPreferences.Editor edit = mSp.edit();
-        String mac = MacUtil.getMac();
-        LogUtil.d(TAG, "mac:" + mac);
-        if (mac == null) {
-            edit.putString(UserConstant.USER_ID, "111");
-            edit.putBoolean(UserConstant.IS_LOGIN, true).apply();
-        }
+
         Intent intent = new Intent("");
         sendBroadcast(intent);
     }

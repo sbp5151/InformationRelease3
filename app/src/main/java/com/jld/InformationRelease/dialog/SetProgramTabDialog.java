@@ -81,8 +81,6 @@ public class SetProgramTabDialog extends DialogFragment {
         WindowManager.LayoutParams params = window.getAttributes();
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        dialog.show();
-
         return dialog;
     }
 }

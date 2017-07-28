@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +12,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.dialog.SetProgramTabDialog;
+import com.jld.InformationRelease.dialog.TerminalSelectDialog;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 
 import java.util.ArrayList;
+
+import static com.jld.InformationRelease.view.my_program.MyProgramFragment.sIsProgramUpload;
 
 public abstract class BaseProgramCompileActivity extends BaseActivity {
     protected ProgramBean mProgramBean;
@@ -63,7 +63,6 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
             setTabDialog();
         } else {//再次编辑
             mIsAgainCompile = true;
-            mCheckMac = mProgramBean.getDeviceMacs();
         }
         mSp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mPush = (Button) findViewById(R.id.btn_hide_push);
@@ -104,74 +103,14 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
      * 终端选择
      */
     public void terminalSelect() {
-        String terminalJson = mSp.getString(Constant.MY_TERMINAL, "");
-        LogUtil.d(TAG, "terminalJson:" + terminalJson);
-        if (!TextUtils.isEmpty(terminalJson)) {
-            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<TerminalBeanSimple>>() {
-            }.getType());
-        }
-        LogUtil.d(TAG, "mTerminals:" + mTerminals);
-
-        if (mTerminals == null || mTerminals.size() <= 0) {
-            ToastUtil.showToast(this, getString(R.string.terminal_null), 3000);
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.select_device_dialog_title));
-        /**
-         * 设置内容区域为多选列表项
-         */
-        //默认选择都为false
-        boolean[] terminalBoolean = new boolean[mTerminals.size()];
-        for (int i = 0; i < terminalBoolean.length; i++) {
-            terminalBoolean[i] = false;
-        }
-        ArrayList<String> select_item = new ArrayList<>();
-        for (int i = 0; i < mTerminals.size(); i++) {
-            if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
-                select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
-                if (mIsAgainCompile) {//再编辑  默认选中以前选中过的设备
-                    for (String str : mCheckMac) {
-                        if (mTerminals.get(i).getMac().equals(str)) {
-                            terminalBoolean[i] = true;
-                        }
-                    }
-                }
-            }
-        }
-        LogUtil.d(TAG, "select_item:" + select_item);
-        final String[] select_item_arry = select_item.toArray(new String[0]);
-        LogUtil.d(TAG, "select_item_arry:" + select_item_arry);
-
-        builder.setMultiChoiceItems(select_item_arry, terminalBoolean, new DialogInterface.OnMultiChoiceClickListener() {
+        mCheckMac = mProgramBean.getDeviceMacs();
+        TerminalSelectDialog selectDialog = new TerminalSelectDialog(this, mCheckMac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                LogUtil.d(TAG, "mPushId1:" + mCheckMac);
-                if (b)
-                    mCheckMac.add(mTerminals.get(i).getMac());
-                else {
-                    boolean remove = mCheckMac.remove(mTerminals.get(i).getMac());
-                    LogUtil.d(TAG, "remove:" + remove);
-                }
-                LogUtil.d(TAG, "mPushId2:" + mCheckMac);
-            }
-        });
-        //监听下方button点击事件
-        builder.setPositiveButton(getString(R.string.sure), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onSure() {
                 programPush();
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mCheckMac.clear();
-            }
-        });
-        builder.setCancelable(true);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        selectDialog.show(getFragmentManager(), "select");
     }
 
     /**
@@ -205,8 +144,12 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 mPopupWindow.dismiss();
-                if (mPopupWindowListener != null)
-                    mPopupWindowListener.onProgramPush();
+                if (mPopupWindowListener != null) {
+                    if (!sIsProgramUpload)
+                        mPopupWindowListener.onProgramPush();
+                    else
+                        ToastUtil.showToast(BaseProgramCompileActivity.this, getString(R.string.program_upload_ing), 3000);
+                }
             }
         });
         if (mProgramBean.getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务不让预览

@@ -14,9 +14,8 @@
 
         <com.rey.material.widget.Button
             android:id="@+id/btn_day_task_program_name"
-            android:layout_width="0dp"
+            android:layout_width="140dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.2"
             android:background="@null"
             android:text="@string/click_add_program"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
@@ -26,9 +25,8 @@
 
         <com.rey.material.widget.Button
             android:id="@+id/btn_day_task_start_time"
-            android:layout_width="0dp"
+            android:layout_width="140dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:background="@null"
             android:text="@string/click_add_start_time"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
@@ -36,9 +34,8 @@
             app:v_styleId="@array/button_raise"/>
         <com.rey.material.widget.Button
             android:id="@+id/btn_day_task_stop_time"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:background="@null"
             android:text="@string/click_add_stop_time"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"

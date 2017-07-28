@@ -10,10 +10,10 @@
             android:id="@+id/menu_my_model"
             android:icon="@mipmap/my_model"
             android:title="@string/myProgram"/>
-        <item
-            android:id="@+id/menu_system_model"
-            android:icon="@mipmap/system_model"
-            android:title="@string/systemModel"/>
+        <!--<item-->
+            <!--android:id="@+id/menu_system_model"-->
+            <!--android:icon="@mipmap/system_model"-->
+            <!--android:title="@string/systemModel"/>-->
         <item
             android:id="@+id/menu_scan_code"
             android:icon="@mipmap/scan_code"

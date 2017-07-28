@@ -26,7 +26,6 @@ import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
-import com.jld.InformationRelease.db.ProgramDao2;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.presenter.UpdateTerminalPresenter;
@@ -230,7 +229,6 @@ public class MyTerminalFragment extends Fragment implements
             switch (view.getId()) {
                 case R.id.pp_program_unbind://节目推送
                     mPopupWindow.dismiss();
-                    // TODO: 2017/6/17 解绑
                     UnbindRequest body = new UnbindRequest();
                     body.setDeviceMacs(pushId);
                     body.setUserId(mUserId);

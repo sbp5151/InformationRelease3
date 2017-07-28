@@ -240,7 +240,6 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
             return;
         }
         mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setModelId(Constant.IMAGE_MODEL);//模板ID
         mProgramBean.setImages(mAdapter.getImgDatas());
         mProgramBean.setUserid(userID);//账号

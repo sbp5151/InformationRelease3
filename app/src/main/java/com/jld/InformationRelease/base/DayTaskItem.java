@@ -3,6 +3,8 @@ package com.jld.InformationRelease.base;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.jld.InformationRelease.util.LogUtil;
+
 /**
  * 项目名称：InformationRelease
  * 晶凌达科技有限公司所有，
@@ -16,7 +18,10 @@ public class DayTaskItem implements Parcelable {
     private String programName;
     private String stateTime;
     private String stopTime;
+    //服务器节目ID（写错）
     private String programLocalId;
+    //本地数据库ID
+    private String programTabId = "";
 
     public DayTaskItem() {
     }
@@ -26,6 +31,7 @@ public class DayTaskItem implements Parcelable {
         stateTime = in.readString();
         stopTime = in.readString();
         programLocalId = in.readString();
+        programTabId = in.readString();
     }
 
     public static final Creator<DayTaskItem> CREATOR = new Creator<DayTaskItem>() {
@@ -51,6 +57,7 @@ public class DayTaskItem implements Parcelable {
         parcel.writeString(stateTime);
         parcel.writeString(stopTime);
         parcel.writeString(programLocalId);
+        parcel.writeString(programTabId);
     }
 
     public String getProgramLocalId() {
@@ -85,18 +92,38 @@ public class DayTaskItem implements Parcelable {
         this.stopTime = stopTime;
     }
 
+    public String getProgramTabId() {
+        return programTabId;
+    }
+
+    public void setProgramTabId(String programTabId) {
+        this.programTabId = programTabId;
+    }
+
     @Override
     public String toString() {
-        return "DayTaskBean{" +
+        return "DayTaskItem{" +
                 "programName='" + programName + '\'' +
                 ", stateTime='" + stateTime + '\'' +
                 ", stopTime='" + stopTime + '\'' +
                 ", programLocalId='" + programLocalId + '\'' +
+                ", programTabId='" + programTabId + '\'' +
                 '}';
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (!(obj instanceof DayTaskItem))
+            return false;
+        DayTaskItem item = (DayTaskItem) obj;
+
+        LogUtil.d("equals", "item:" + item);
+        LogUtil.d("equals", "this:" + this);
+        if (item.getProgramLocalId().equals(programLocalId)
+                && item.getStateTime().equals(stateTime)
+                && item.getStopTime().equals(stopTime)) {
+            return true;
+        }
+        return false;
     }
 }

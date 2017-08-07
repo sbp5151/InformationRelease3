@@ -25,7 +25,7 @@ public class BaseProgramFragment extends Fragment {
         //数据传递
         BaseProgramFragment fragment1 = new BaseProgramFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("data", data);
+        bundle.putParcelable("data", data);
         fragment1.setArguments(bundle);
         return fragment1;
     }

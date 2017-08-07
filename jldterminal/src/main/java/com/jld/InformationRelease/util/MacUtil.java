@@ -1,8 +1,13 @@
 package com.jld.InformationRelease.util;
 
+import android.content.Context;
+import android.telephony.TelephonyManager;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * 项目名称：InformationRelease2
@@ -34,5 +39,11 @@ public class MacUtil {
             ex.printStackTrace();
         }
         return macSerial;
+    }
+
+    public  static String getIMEI(Context context){
+        TelephonyManager TelephonyMgr = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
+        String szImei = TelephonyMgr.getDeviceId();
+        return szImei+"JLDIMEI";
     }
 }

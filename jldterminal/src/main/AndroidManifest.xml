@@ -44,7 +44,6 @@
         <activity android:name=".view.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -163,11 +162,13 @@
             android:name=".view.MainActivity"
             android:screenOrientation="portrait"> <!-- 设定进去的为竖屏格式 -->
         </activity>
+
         <service
             android:name=".service.HeartBeatService"
             android:enabled="true"
             android:exported="true">
         </service>
+
         <receiver
             android:name=".receiver.BootReceiver"
             android:enabled="true"
@@ -176,6 +177,17 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".receiver.DayTaskReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
+
+        <service
+            android:name=".service.DayTaskService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

@@ -1,6 +1,5 @@
 package com.jld.InformationRelease.view;
 
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -24,7 +23,6 @@ import com.jld.InformationRelease.dialog.SetTerminalNameDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
@@ -52,7 +50,6 @@ public class MainActivity extends BaseActivity
     public NavigationView mNavigationView;
     private PopupWindow mPopupWindow;
     private TerminalFunctionPresenter mTerminalFunctionPresenter;
-    private Dialog mSetNameDialog;
     private BindingRequest mBean;
     public static final int REQUEST_TAG_BIND = 0x11;//绑定tag
     public static final int REQUEST_TAG_PUSH = 0x12;//推送tag
@@ -202,11 +199,11 @@ public class MainActivity extends BaseActivity
         //扫描添加数据返回
         if (mScanResultCode == resultCode && requestCode == mScanRequestCode && data != null) {
             String mac = data.getStringExtra("result");
-            boolean isMac = GeneralUtil.isMac(mac);
-            if (isMac) {
+//            boolean isMac = GeneralUtil.isMac(mac);
+            if (mac.contains("JLDIMEI")) {
                 showSetNameDialog(mac);
             } else {
-                LogUtil.d(TAG, "非法Mac地址");
+                LogUtil.d(TAG, "非法标识");
             }
         }
         if (mScanRequestCode == requestCode) {
@@ -274,8 +271,6 @@ public class MainActivity extends BaseActivity
         LogUtil.d(TAG, "loadDataSuccess:" + requestTag);
         if (requestTag == BIND_REQUEST_TAG) {
             ToastUtil.showToast(this, data.getMsg(), 3000);
-            if (mSetNameDialog.isShowing())
-                mSetNameDialog.dismiss();
             //刷新界面
             if (mTerminal_fragment != null && mTerminal_fragment.mAdapter != null)
                 mTerminal_fragment.initData();

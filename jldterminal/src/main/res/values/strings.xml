@@ -14,4 +14,5 @@
     <string name="set_alias_succeed">Jpush设置别名成功</string>
     <string name="set_alias_net_timeout">Jpush设置别名超时</string>
     <string name="set_alias_defeat">Jpush设置别名失败</string>
+    <string name="player_error">视频播放出错!</string>
 </resources>

@@ -106,7 +106,9 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
         mCheckMac = mProgramBean.getDeviceMacs();
         TerminalSelectDialog selectDialog = new TerminalSelectDialog(this, mCheckMac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
-            public void onSure() {
+            public void onSure(ArrayList<String> selectMac) {
+                mProgramBean.getLoadDeviceMacs().clear();
+                mProgramBean.setIsLoadSucceed("0");
                 programPush();
             }
         });

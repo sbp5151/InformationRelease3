@@ -1,6 +1,7 @@
 package com.jld.InformationRelease.view.my_program;
 
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -71,6 +72,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 import static android.content.Context.MODE_PRIVATE;
 import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramRequestCode;
 import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
@@ -80,6 +84,7 @@ import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mPr
  * <p>
  * 节目列表
  */
+@RuntimePermissions
 public class MyProgramFragment extends Fragment implements IViewListen<ProgramPushStateResponse> {
 
     private static final java.lang.String TAG = "MyProgramFragment";
@@ -319,8 +324,11 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         ArrayList<String> checkMac = mProgramDatas.get(position).getDeviceMacs();
         TerminalSelectDialog selectDialog = new TerminalSelectDialog(mActivity, checkMac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
-            public void onSure() {
-                uploadProgramData(mProgramDatas.get(position));
+            public void onSure(ArrayList<String> selectMac) {
+                LogUtil.d(TAG,"terminalSelect:"+selectMac);
+                mProgramDatas.get(position).getLoadDeviceMacs().clear();
+                mProgramDatas.get(position).setIsLoadSucceed("0");
+                MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, mProgramDatas.get(position));
             }
         });
         selectDialog.show(getFragmentManager(), "select");
@@ -352,7 +360,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             //和发布时间间隔不超过五分钟
             LogUtil.d(TAG, "timeGap:i--" + i + "--" +
                     (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getTime())) / 1000 / 60);
-            if (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getTime()) > PROGRAM_LOAD_TIME)//只加载前面三个
+            if (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getTime()) > PROGRAM_LOAD_TIME)//前五分钟
                 continue;
             //节目ID不为空并且设备未完全加载完成
             if (!TextUtils.isEmpty(mProgramDatas.get(i).getProgramId()) && mProgramDatas.get(i).getIsLoadSucceed().equals("0")) {
@@ -366,6 +374,12 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         }
     }
 
+    @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void createProgram() {
+        mHandler.sendEmptyMessageDelayed(NEW_PROGRAM, 200);
+        mBtn_menu.collapse();
+    }
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -377,8 +391,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                         mActivity.mDrawer.openDrawer(mActivity.mNavigationView);
                     break;
                 case R.id.btn_create_program://创建节目
-                    mHandler.sendEmptyMessageDelayed(NEW_PROGRAM, 200);
-                    mBtn_menu.collapse();
+                    MyProgramFragmentPermissionsDispatcher.createProgramWithCheck(MyProgramFragment.this);
                     break;
                 case R.id.btn_day_task://每日任务
                     mHandler.sendEmptyMessageDelayed(DAY_PROGRAM, 200);
@@ -528,7 +541,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             ProgramBean body = data.getParcelableExtra("body");
             LogUtil.d(TAG, "onActivityResult:" + body);
             if (body != null) {
-                uploadProgramData(body);
+                MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, body);
             }
         }
     }
@@ -538,6 +551,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     /**
      * 上传节目数据
      */
+    @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
     public void uploadProgramData(final ProgramBean program) {
         LogUtil.d(TAG, "上传节目数据:" + program);
         sIsProgramUpload = true;

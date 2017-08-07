@@ -1,1 +1,1 @@
-include ':app', ':jldterminal', ':library'
+include ':app', ':jldterminal', ':library', ':test', ':ijkplayer-armv7a', ':ijkplayer-java', ':ijkplayer-exo'

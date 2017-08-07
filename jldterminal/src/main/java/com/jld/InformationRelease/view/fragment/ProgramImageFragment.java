@@ -10,7 +10,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +33,9 @@ public class ProgramImageFragment extends Fragment {
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
-    private static final int IMG_CHANGE_TIME = 6000;
+    private static final int IMG_CHANGE_TIME = 3000;
     private ViewPager mVp_img;
+    public int pagerCurrentItem = 0;
     Handler mHandler = new Handler() {
 
         @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -45,34 +45,33 @@ public class ProgramImageFragment extends Fragment {
             switch (msg.what) {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
-                        int i = mRandom.nextInt(16);
-                        AnimationUtil.setAnimation(i + 1, mVp_img, mContext);
-                        Log.d("random:", "" + i);
-                        Log.d("currentItem:", "" + (mVp_img.getCurrentItem() + 1));
-                        mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
+                        if (!isPagerStop) {
+                            pagerCurrentItem++;
+                            mVp_img.setCurrentItem(pagerCurrentItem);
+                        }
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+                        LogUtil.d(TAG, "pagerCurrentItem:" + pagerCurrentItem);
                     }
                     break;
             }
         }
     };
+
+    private ProgramImageFragment() {
+    }
+
     private VpImg1Adapter mImgAdapter;
     private Spinner mSp_animation;
     private Random mRandom;
-
-    private ProgramImageFragment() {
-        super();
-    }
-
-
     protected FragmentActivity mContext;
     protected ProgramResponseBean mData;
+    private boolean isPagerStop = false;
 
     public static ProgramImageFragment getInstance(ProgramResponseBean data) {
         //数据传递
         ProgramImageFragment fragment1 = new ProgramImageFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("data", data);
+        bundle.putParcelable("data", data);
         fragment1.setArguments(bundle);
         return fragment1;
     }
@@ -80,9 +79,11 @@ public class ProgramImageFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.d(TAG, "onCreate");
+
         Bundle bundle = getArguments();//从activity传过来的Bundle
         if (bundle != null) {
-            mData = (ProgramResponseBean) bundle.getSerializable("data");
+            mData = bundle.getParcelable("data");
         } else {
             try {
                 throw new Exception("ProgramFragment需要传入参数");
@@ -90,7 +91,7 @@ public class ProgramImageFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-        mRandom = new Random();
+        mRandom = new Random(16);
         mContext = getActivity();
     }
 
@@ -98,6 +99,8 @@ public class ProgramImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LogUtil.d(TAG, "onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_brogram_fragment_2, container, false);
         mVp_img = (ViewPager) view.findViewById(R.id.program2_vp);
 
@@ -113,10 +116,51 @@ public class ProgramImageFragment extends Fragment {
             }
         });
         LogUtil.d(TAG, "mData:" + mData);
-        mImgAdapter = new VpImg1Adapter(mData.getItem().getImages(),mContext);
+        mImgAdapter = new VpImg1Adapter(mData.getItem().getImages(), mContext);
         mVp_img.setAdapter(mImgAdapter);
-        if (mData.getItem().getImages().size() > 1)
+        if (mData.getItem().getImages().size() > 1) {
             mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+            int random_index = mRandom.nextInt(16);
+            LogUtil.d(TAG, "mRandom:" + (random_index + 1));
+            AnimationUtil.setAnimation(random_index + 1, mVp_img, mContext);
+            mVp_img.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                    LogUtil.d(TAG, "onPageScrolled:" + position);
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isPagerStop = true;
+        LogUtil.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogUtil.d(TAG, "onStart");
+        isPagerStop = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtil.d(TAG, "onDestroy");
+        if (mData.getItem().getImages().size() > 1)
+            mHandler.removeMessages(CHANGE_IMG);
     }
 }

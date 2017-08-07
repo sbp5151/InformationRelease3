@@ -38,11 +38,13 @@ public class ProgramTextFragment extends Fragment {
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
-    private static final int IMG_CHANGE_TIME = 5000;
+    private static final int IMG_CHANGE_TIME = 3000;
     private ViewPager mVp_img;
     private ArrayList<NamePriceBean> mNamePriceBeen1 = new ArrayList<>();
     private ArrayList<NamePriceBean> mNamePriceBeen2 = new ArrayList<>();
     private ArrayList<String> imgUlrs = new ArrayList<>();
+    private int mCurrentItem = 0;
+    private boolean isPagerStop = false;
     Handler mHandler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
         @Override
@@ -51,10 +53,10 @@ public class ProgramTextFragment extends Fragment {
             switch (msg.what) {
                 case CHANGE_IMG://图片自动切换
                     if (mVp_img != null) {
-                        int i = mRandom.nextInt(16);
-                        AnimationUtil.setAnimation(i + 1,mVp_img,mContext);
-                        mVp_img.setCurrentItem(mVp_img.getCurrentItem() + 1);
-                        LogUtil.d(TAG,"setCurrentItem:"+mVp_img.getCurrentItem());
+                        if (!isPagerStop) {
+                            mCurrentItem++;
+                            mVp_img.setCurrentItem(mCurrentItem);
+                        }
                         mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
                     }
                     break;
@@ -73,7 +75,7 @@ public class ProgramTextFragment extends Fragment {
         //数据传递
         ProgramTextFragment fragment1 = new ProgramTextFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("data", data);
+        bundle.putParcelable("data", data);
         fragment1.setArguments(bundle);
         return fragment1;
     }
@@ -84,7 +86,7 @@ public class ProgramTextFragment extends Fragment {
 
         Bundle bundle = getArguments();//从activity传过来的Bundle
         if (bundle != null) {
-            mData = (ProgramResponseBean) bundle.getSerializable("data");
+            mData = bundle.getParcelable("data");
         } else {
             try {
                 throw new Exception("ProgramFragment需要传入参数");
@@ -106,16 +108,12 @@ public class ProgramTextFragment extends Fragment {
             return view;
         initData();
         initView(view);
-        if (imgUlrs.size() > 1)
+        if (imgUlrs.size() > 1) {
             mHandler.sendEmptyMessageDelayed(CHANGE_IMG, IMG_CHANGE_TIME);
+            int i = mRandom.nextInt(16);
+            AnimationUtil.setAnimation(i + 1, mVp_img, mContext);
+        }
         return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (imgUlrs.size() > 1)
-            mHandler.removeMessages(CHANGE_IMG);
     }
 
     private void initData() {
@@ -162,4 +160,25 @@ public class ProgramTextFragment extends Fragment {
         ImageView back = (ImageView) view.findViewById(R.id.iv_preview_back);
         Glide.with(mContext).load(mData.getItem().getCover()).into(back);
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isPagerStop = false;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isPagerStop = true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (imgUlrs.size() > 1)
+            mHandler.removeMessages(CHANGE_IMG);
+    }
+
 }

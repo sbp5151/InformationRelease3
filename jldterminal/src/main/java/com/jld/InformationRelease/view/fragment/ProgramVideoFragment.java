@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -46,10 +47,10 @@ public class ProgramVideoFragment extends Fragment {
     };
     private View mPlay;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    public ProgramVideoFragment(ArrayList<String> videoPath) {
-        mVideoPath = videoPath;
-        mActivity = getActivity();
     }
 
     @Override
@@ -155,6 +156,7 @@ public class ProgramVideoFragment extends Fragment {
         mMediaPlayer.prepareAsync();
     }
 
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -221,5 +223,35 @@ public class ProgramVideoFragment extends Fragment {
         }
         mController_view.setVisibility(View.VISIBLE);
         mHandler.sendEmptyMessageDelayed(CONTROLLER_HIDE, 3000);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogUtil.d(TAG,"onPause");
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        LogUtil.d(TAG,"onViewStateRestored");
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        LogUtil.d(TAG,"onSaveInstanceState");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtil.d(TAG,"onStop");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtil.d(TAG,"onDestroy");
     }
 }

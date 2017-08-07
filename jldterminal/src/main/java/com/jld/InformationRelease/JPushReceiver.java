@@ -3,25 +3,16 @@ package com.jld.InformationRelease;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.MacUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.api.TagAliasCallback;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class JPushReceiver extends BroadcastReceiver {
 
@@ -62,28 +53,28 @@ public class JPushReceiver extends BroadcastReceiver {
         } else if (JPushInterface.ACTION_CONNECTION_CHANGE.equals(intent.getAction())) {//网络变化
             boolean connected = intent.getBooleanExtra(JPushInterface.EXTRA_CONNECTION_CHANGE, false);
             Log.w(TAG, "[MyReceiver]" + intent.getAction() + " connected state change to " + connected);
-            if (!MyApplication.JPush_Alias_Succeed) {//设置别名
-                String mac = MacUtil.getMac();
-                if(mac==null)
-                    return;
-                JPushInterface.setAlias(context, mac, new TagAliasCallback() {
-                    @Override
-                    public void gotResult(int i, String s, Set<String> set) {
-                        final SharedPreferences.Editor edit = context.getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
-
-                        Log.d("JPush", "i:" + i);
-                        Log.d("JPush", "s:" + s);
-                        if (0 == i) {
-                            Log.d("JPush", "设置别名成功！");
-                            Toast.makeText(context, context.getString(R.string.set_alias_succeed), Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-                            edit.putInt(Constant.JPush_alias_set, i).apply();
-                            MyApplication.JPush_Alias_Succeed = true;
-                        } else
-                            edit.putInt(Constant.JPush_alias_set, i).apply();
-                    }
-                });
-            }
+//            if (!MyApplication.JPush_Alias_Succeed) {//设置别名
+//                String mac = MacUtil.getIMEI(context);
+//                if(mac==null)
+//                    return;
+//                JPushInterface.setAlias(context, mac, new TagAliasCallback() {
+//                    @Override
+//                    public void gotResult(int i, String s, Set<String> set) {
+//                        final SharedPreferences.Editor edit = context.getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
+//
+//                        Log.d("JPush", "i:" + i);
+//                        Log.d("JPush", "s:" + s);
+//                        if (0 == i) {
+//                            Log.d("JPush", "设置别名成功！");
+//                            Toast.makeText(context, context.getString(R.string.set_alias_succeed), Toast.LENGTH_SHORT).show();
+////                            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+//                            edit.putInt(Constant.JPush_alias_set, i).apply();
+//                            MyApplication.JPush_Alias_Succeed = true;
+//                        } else
+//                            edit.putInt(Constant.JPush_alias_set, i).apply();
+//                    }
+//                });
+//            }
         } else {
             Log.d(TAG, "[MyReceiver] Unhandled intent - " + intent.getAction());
         }

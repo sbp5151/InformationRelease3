@@ -24,6 +24,10 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.jar.Manifest;
+
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 
 /**
  * 后台节目推送
@@ -361,23 +365,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
                 switch (msg.what) {
                     case UPLOAD_VIDEO://视频文件上传
                         if (!TextUtils.isEmpty(uploadVideoPath)) {
-                            FileModel.uploadFile2(uploadVideoPath, new FileModel.PushFileListener() {
-                                @Override
-                                public void pushSucceed(String fileUrl) {
-                                    LogUtil.d(TAG, "pushSucceed:" + fileUrl);
-                                    mVideoUrl.add(fileUrl);
-                                    mHandler.sendEmptyMessage(NEXT_VIDEO_PATH);
-                                }
-
-                                @Override
-                                public void pushDefeat(String defeat) {
-                                    LogUtil.d(TAG, "pushDefeat:" + defeat);
-                                    Message message = new Message();
-                                    message.obj = defeat;
-                                    message.what = UPDATE_VIDEO_DEFEAT;
-                                    mHandler.sendMessage(message);
-                                }
-                            });
+                            uploadFile(uploadVideoPath);
                         }
                         break;
                 }
@@ -385,6 +373,29 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         };
     }
 
+    /**
+     * 上传视频文件
+     * @param uploadVideoPath
+     */
+    private void uploadFile(String uploadVideoPath){
+        FileModel.uploadFile2(uploadVideoPath, new FileModel.PushFileListener() {
+            @Override
+            public void pushSucceed(String fileUrl) {
+                LogUtil.d(TAG, "pushSucceed:" + fileUrl);
+                mVideoUrl.add(fileUrl);
+                mHandler.sendEmptyMessage(NEXT_VIDEO_PATH);
+            }
+
+            @Override
+            public void pushDefeat(String defeat) {
+                LogUtil.d(TAG, "pushDefeat:" + defeat);
+                Message message = new Message();
+                message.obj = defeat;
+                message.what = UPDATE_VIDEO_DEFEAT;
+                mHandler.sendMessage(message);
+            }
+        });
+    }
     /**
      * 获取下一张需要上传的视频文件路径
      */

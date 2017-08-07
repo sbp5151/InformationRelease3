@@ -109,7 +109,7 @@ public class TerminalSelectDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (mCheckMac.size() > 0)
-                    mSelectListen.onSure();
+                    mSelectListen.onSure(mCheckMac);
                 else
                     ToastUtil.showToast(mContext, getString(R.string.terminal_id_no_null), 3000);
             }
@@ -123,9 +123,7 @@ public class TerminalSelectDialog extends DialogFragment {
         AlertDialog dialog = builder.create();
         return dialog;
     }
-
     public interface TerminalSelectListen {
-
-        void onSure();
+        void onSure(ArrayList<String> selectMac);
     }
 }

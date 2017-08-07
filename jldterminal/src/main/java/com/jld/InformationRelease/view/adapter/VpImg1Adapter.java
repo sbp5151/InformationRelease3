@@ -23,7 +23,6 @@ import java.util.ArrayList;
  */
 public class VpImg1Adapter extends PagerAdapter {
 
-
     public static final String TAG = "VpImg1Adapter";
     ArrayList<ImageView> mViews = new ArrayList<>();
     ArrayList<String> mImgUlrs;
@@ -46,17 +45,23 @@ public class VpImg1Adapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        ViewGroup parent = (ViewGroup) mViews.get(position % mViews.size()).getParent();
-        if (parent != null) {
-            parent.removeAllViews();
+        LogUtil.d(TAG,"instantiateItem:"+position);
+        position %= mViews.size();
+        LogUtil.d(TAG,"instantiateItem:"+position);
+        if (position < 0) {
+            position += mViews.size();
         }
-        container.addView(mViews.get(position % mViews.size()));
+        ViewGroup parent = (ViewGroup) mViews.get(position).getParent();
+        ImageView view = mViews.get(position);
+        if (parent != null) {
+            parent.removeView(view);
+        }
+        container.addView(view);
         return mViews.get(position % mViews.size());
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
     }
 
     @Override
@@ -68,4 +73,5 @@ public class VpImg1Adapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
+
 }

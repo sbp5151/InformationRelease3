@@ -45,7 +45,7 @@ public class ProgramVideoAdapter extends RecyclerView.Adapter<ProgramVideoAdapte
 
     @Override
     public void onBindViewHolder(final ProgramVideoAdapter.MyHolder holder, int position) {
-        holder.mPath.setText(mDada.get(position));
+        holder.mPath.setText(mDada.get(position).replace("http://admsgimg.torsun.cn/",""));
     }
 
     @Override

@@ -89,7 +89,6 @@ public class RvNameAdapter extends RecyclerView.Adapter<RvNameAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount:" + beans.size());
         return beans.size();
     }
 

@@ -51,6 +51,7 @@ public class SetTerminalNameDialog extends DialogFragment {
                 String name = setName.getText().toString();
                 if (!TextUtils.isEmpty(name)) {
                     mListen.onConfirm(name);
+                    dialog.dismiss();
                 } else
                     ToastUtil.showToast(mContext, getResources().getString(R.string.input_name), 3000);
             }

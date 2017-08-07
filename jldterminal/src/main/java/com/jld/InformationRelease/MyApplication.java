@@ -1,9 +1,12 @@
 package com.jld.InformationRelease;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Message;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
+
+import com.danikula.videocache.HttpProxyCacheServer;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -16,30 +19,31 @@ import cn.jpush.android.api.JPushInterface;
  * @create-time 2017/4/21 11:07
  */
 public class MyApplication extends Application {
-
-    public static Boolean JPush_Alias_Succeed = false;
+    public static boolean JPush_Alias_Succeed = false;
     private static final String TAG = "MyApplication";
-    private String mMac;
     private static final int JPUSH_AGAIN = 0x01;
-    private int jpush_again_num = 0;
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case JPUSH_AGAIN:
-                    //jpushInit();
-                    break;
-            }
-        }
-    };
+    public static boolean network_is_connect = false;
 
+    private HttpProxyCacheServer proxy;
+
+    public static HttpProxyCacheServer getProxy(Context context) {
+        MyApplication app = (MyApplication) context.getApplicationContext();
+        return app.proxy == null ? (app.proxy = app.newProxy()) : app.proxy;
+    }
+
+    private HttpProxyCacheServer newProxy() {
+        return new HttpProxyCacheServer(this);
+    }
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
         JPushInterface.init(this);
-
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable()) {
+            network_is_connect = true;
+        }else
+            network_is_connect = false;
     }
-
 }

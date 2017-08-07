@@ -15,44 +15,12 @@ import java.util.Locale;
  * @create-time 2017/7/4 14:45
  */
 public class TimeUtil {
-
     /**
-     * 时间转毫秒
-     */
-    public static final int IS_GRAB = 0;
-    public static final int NO_START = 1;
-    public static final int IS_END = 2;
-
-    public static int compareTime(String realTime, String timeFirst, String timeLast) {
-        int flag = 0;
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date real = null;
-        Date d1 = null;
-        Date d2 = null;
-        try {
-            real = df.parse(realTime);
-            d1 = df.parse(timeFirst);
-            d2 = df.parse(timeLast);
-
-            if ((real.getTime() - d1.getTime()) < 0) {
-
-                return NO_START;
-            } else if ((real.getTime() - d1.getTime()) >= 0 && (d2.getTime() - real.getTime()) >= 0) {
-                return IS_GRAB;
-            } else {
-                return IS_END;
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        return flag;
-    }
-
-    /**
-     * 获取时间差距
+     * 计算时间差值
+     *
+     * @param timeFirst 时间1 日期格式
+     * @param timeLast  时间2 日期格式
+     * @return
      */
     public static long getTimeGap(String timeFirst, String timeLast) {
         long timegap = 0;
@@ -74,7 +42,7 @@ public class TimeUtil {
     /**
      * 与当前时间的差距
      *
-     * @param time
+     * @param time 日期格式
      * @return
      */
     public static long toCurrentTimeGap(String time) {
@@ -82,21 +50,35 @@ public class TimeUtil {
         return getTimeGap(time, currentTime);
     }
 
-
     /**
      * 获取当前时间
-     * @return
+     *
+     * @return 日期格式
      */
     public static String getTodayDateTime() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.getDefault());
         return format.format(new Date());
     }
+
     /**
-     * 调此方法输入所要转换的时间输入例如（"2014-06-14 16-09-00"）返回时间戳
+     * 时间转日期
      *
      * @param time
      * @return
+     */
+    public static String timeAddDate(String time) {
+        String todayDateTime = TimeUtil.getTodayDateTime();
+        String[] splitTime = todayDateTime.split(" ");
+        time = splitTime[0] + " " + time;
+        return time;
+    }
+
+    /**
+     * 日期格式转时间戳格式 例如（"2014-06-14 16-09-00"）返回时间戳
+     *
+     * @param time 日期格式
+     * @return 时间戳格式
      */
     public static String dateBack(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
@@ -112,11 +94,12 @@ public class TimeUtil {
         }
         return times;
     }
+
     /**
-     * 调用此方法输入所要转换的时间戳输入例如（1402733340）输出（"2014-06-14  16:09:00"）
+     * 时间戳格式转日期格式 例如（1402733340）输出（"2014-06-14  16:09:00"）
      *
-     * @param time
-     * @return
+     * @param time 时间戳格式
+     * @return 日期格式
      */
     public static String dateFormat(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

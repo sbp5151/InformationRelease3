@@ -1,10 +1,13 @@
 package com.jld.InformationRelease.bean.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.jld.InformationRelease.base.BaseResponse;
 import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.NamePriceBean;
+import com.jld.InformationRelease.util.LogUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -15,9 +18,7 @@ import java.util.ArrayList;
  * @creator boping
  * @create-time 2017/4/19 15:09
  */
-public class ProgramResponseBean extends BaseResponse implements Serializable {
-
-
+public class ProgramResponseBean extends BaseResponse implements Parcelable {
     private Program item;
 
     public Program getItem() {
@@ -35,7 +36,33 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
                 '}';
     }
 
-    public class Program {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(item,i);
+        LogUtil.d("ProgramResponseBean","writeToParcel:"+item);
+    }
+
+    protected ProgramResponseBean(Parcel in) {
+        item = in.readParcelable(Program.class.getClassLoader());
+        LogUtil.d("ProgramResponseBean","ProgramResponseBean:"+item);
+    }
+    public static final Creator<ProgramResponseBean> CREATOR = new Creator<ProgramResponseBean>() {
+        @Override
+        public ProgramResponseBean createFromParcel(Parcel in) {
+            return new ProgramResponseBean(in);
+        }
+
+        @Override
+        public ProgramResponseBean[] newArray(int size) {
+            return new ProgramResponseBean[size];
+        }
+    };
+    public static class Program implements Parcelable {
         /**
          * 图片集
          */
@@ -149,6 +176,42 @@ public class ProgramResponseBean extends BaseResponse implements Serializable {
                     ", type='" + type + '\'' +
                     '}';
         }
-    }
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeStringList(images);
+            parcel.writeTypedList(texts);
+            parcel.writeStringList(videos);
+            parcel.writeStringList(deviceMacs);
+            parcel.writeTypedList(dayProgram);
+            parcel.writeString(modelId);
+            parcel.writeString(cover);
+            parcel.writeString(type);
+        }
+        protected Program(Parcel in){
+            images = in.createStringArrayList();
+            in.readTypedList(texts,NamePriceBean.CREATOR);
+            videos = in.createStringArrayList();
+            deviceMacs = in.createStringArrayList();
+            in.readTypedList(dayProgram,DayTaskItem.CREATOR);
+            modelId = in.readString();
+            cover = in.readString();
+            type = in.readString();
+        }
 
+        public static final Creator<Program> CREATOR = new Creator<Program>() {
+            @Override
+            public Program createFromParcel(Parcel in) {
+                return new Program(in);
+            }
+
+            @Override
+            public Program[] newArray(int size) {
+                return new Program[size];
+            }
+        };
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+    }
 }

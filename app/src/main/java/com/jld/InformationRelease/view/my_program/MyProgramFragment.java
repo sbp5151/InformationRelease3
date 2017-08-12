@@ -26,13 +26,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseProgram;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.ProgramStateDialogItem;
 import com.jld.InformationRelease.bean.response_bean.ProgramPushStateResponse;
@@ -40,6 +40,7 @@ import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.dialog.ProgramStateProgressDialog;
 import com.jld.InformationRelease.dialog.TerminalSelectDialog;
+import com.jld.InformationRelease.dialog.UrgencyProgramDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.ProgramLoadStatePresenter;
 import com.jld.InformationRelease.util.Constant;
@@ -55,10 +56,6 @@ import com.jld.InformationRelease.view.my_program.program_create.ProgramImageAct
 import com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity;
 import com.jld.InformationRelease.view.my_program.program_create.ProgramVideoActivity;
 import com.jld.InformationRelease.view.service.ProgramPushService;
-import com.rey.material.app.Dialog;
-import com.rey.material.app.DialogFragment;
-import com.rey.material.app.SimpleDialog;
-import com.rey.material.app.ThemeManager;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -295,14 +292,15 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        //排序
+        if (mProgramDatas.size() >= 2)
+            Collections.sort(mProgramDatas, new SortByTime());
         mNames = new String[mProgramDatas.size()];
         for (int i = 0; i < mProgramDatas.size(); i++) {
             String name = mProgramDatas.get(i).getTab();
             mNames[i] = name;
         }
-        //排序
-        if (mProgramDatas.size() >= 2)
-            Collections.sort(mProgramDatas, new SortByTime());
         //节目被加载情况
         if (mProgramDatas != null || mProgramDatas.size() > 0) {
             mAdapter.update(mProgramDatas);
@@ -325,10 +323,29 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         TerminalSelectDialog selectDialog = new TerminalSelectDialog(mActivity, checkMac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
             public void onSure(ArrayList<String> selectMac) {
-                LogUtil.d(TAG,"terminalSelect:"+selectMac);
+                LogUtil.d(TAG, "terminalSelect:" + selectMac);
                 mProgramDatas.get(position).getLoadDeviceMacs().clear();
                 mProgramDatas.get(position).setIsLoadSucceed("0");
-                MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, mProgramDatas.get(position));
+                MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(
+                        MyProgramFragment.this, mProgramDatas.get(position));
+            }
+        });
+        selectDialog.show(getFragmentManager(), "select");
+    }
+
+    /**
+     * 紧急推送
+     *
+     * @param position
+     */
+    public void terminalSelect2(final int position, final ProgramBean pushProgramBean) {
+        ArrayList<String> checkMac = mProgramDatas.get(position).getDeviceMacs();
+        TerminalSelectDialog selectDialog = new TerminalSelectDialog(mActivity, checkMac, new TerminalSelectDialog.TerminalSelectListen() {
+            @Override
+            public void onSure(ArrayList<String> selectMac) {
+                LogUtil.d(TAG, "terminalSelect:" + selectMac);
+                pushProgramBean.setDeviceMacs(selectMac);
+                MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, pushProgramBean);
             }
         });
         selectDialog.show(getFragmentManager(), "select");
@@ -403,25 +420,29 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                     mBtn_menu.collapse();
                     break;
                 case R.id.btn_hide_inter_cut://插播任务
-                    boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
-                    Dialog.Builder builder = new SimpleDialog.Builder(isLightTheme ? R.style.SimpleDialogLight : R.style.SimpleDialog) {
+                    UrgencyProgramDialog urgencyDialog = new UrgencyProgramDialog(getActivity(), mNames, new UrgencyProgramDialog.OnUrgencyProgramListen() {
                         @Override
-                        public void onPositiveActionClicked(DialogFragment fragment) {
-                            super.onPositiveActionClicked(fragment);
-                            Toast.makeText(mActivity, "你选择的节目为：" + getSelectedValue() + " 此功能待开发", Toast.LENGTH_SHORT).show();
+                        public void onPush(int selectProgramPosition, String play_type, String num1, String num2) {
+                            LogUtil.d(TAG, "selectProgramPosition:" + selectProgramPosition + "\n\r"
+                                    + "play_type:" + play_type + "\n\r" + "num1:" + num1 + "\n\r" + "num2:" + num2);
+                            ProgramBean program = new ProgramBean();
+                            program.setType(Constant.PROGRAM_TYPE_URGENCY);
+                            program.setUserid(mUserid);
+                            ProgramBean selectProgram = mProgramDatas.get(selectProgramPosition);
+                            DayTaskItem item = new DayTaskItem();
+                            item.setType(play_type);
+                            item.setStateTime(num1);
+                            item.setStopTime(num2);
+                            item.setProgramLocalId(selectProgram.getProgramId());
+                            item.setProgramTabId(selectProgram.getTable_id() + "");
+                            ArrayList<DayTaskItem> dayTaskItems = new ArrayList<>();
+                            dayTaskItems.add(item);
+                            program.setDayProgram(dayTaskItems);
+                            program.setSign(MD5Util.getMD5(Constant.S_KEY + mUserid));
+                            terminalSelect2(selectProgramPosition, program);
                         }
-
-                        @Override
-                        public void onNegativeActionClicked(DialogFragment fragment) {
-                            super.onNegativeActionClicked(fragment);
-                        }
-                    };
-                    ((SimpleDialog.Builder) builder).items(mNames, 0)
-                            .title(getResources().getString(R.string.select_program))
-                            .positiveAction(getResources().getString(R.string.sure))
-                            .negativeAction(getResources().getString(R.string.cancle));
-                    DialogFragment fragment = DialogFragment.newInstance(builder);
-                    fragment.show(mActivity.getSupportFragmentManager(), null);
+                    });
+                    urgencyDialog.show(getFragmentManager(), "dialog");
                     break;
             }
         }
@@ -567,8 +588,10 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             @Override
             public void pushSucceed(String programId) {//节目上传成功
                 sIsProgramUpload = false;
-                LogUtil.d(TAG, "节目上传成功:" + program);
+                LogUtil.d(TAG, "pushSucceed 节目上传成功:" + program);
                 mProgressBar.setVisibility(View.GONE);
+                if (program.getType().equals(Constant.PROGRAM_TYPE_URGENCY))
+                    return;
                 //更新数据库为已上传状态
                 try {
                     //保存到数据库
@@ -587,7 +610,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                 sIsProgramUpload = false;
                 mProgressBar.setVisibility(View.GONE);
                 //更新数据库为已上传状态
-                LogUtil.d(TAG, "发布失败:");
+                LogUtil.d(TAG, "pushDefeated  发布失败:");
+                if (program.getType().equals(Constant.PROGRAM_TYPE_URGENCY))
+                    return;
                 try {
                     //保存到数据库
                     program.setUpload_state("-1");//上传失败状态
@@ -600,6 +625,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
 
             @Override
             public void uploadSucceed(ProgramBean programBean) {
+                LogUtil.d(TAG, "uploadSucceed:" + programBean);
                 if (programBean != null) {
                     try {
                         //保存到数据库
@@ -613,9 +639,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             }
         });
         //开始上传
-        if (program.getType().equals("2")) {
+        if (program.getType().equals(Constant.PROGRAM_TYPE_DAY) || program.getType().equals(Constant.PROGRAM_TYPE_URGENCY)) {
             mPushProgramBinder.uploadDayTask(program, mProgramDatas);
-        } else if (program.getType().equals("1"))
+        } else if (program.getType().equals(Constant.PROGRAM_TYPE_COMMON))
             mPushProgramBinder.startPush(program);
         else
             LogUtil.e("上传数据未匹配");

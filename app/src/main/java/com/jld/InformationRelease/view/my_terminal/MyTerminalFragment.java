@@ -1,7 +1,6 @@
 package com.jld.InformationRelease.view.my_terminal;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -10,8 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,7 @@ import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
 import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.dialog.AlertTextDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
 import com.jld.InformationRelease.presenter.UpdateTerminalPresenter;
@@ -37,6 +37,12 @@ import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
 import com.jld.InformationRelease.view.my_terminal.adapter.TerminalAdapter;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +53,10 @@ import java.util.List;
 public class MyTerminalFragment extends Fragment implements
         TerminalAdapter.OnRecyclerViewItemClickListener, IViewListen<Object> {
 
-    private RecyclerView mRecyclerView;
+    private SwipeMenuRecyclerView mRecyclerView;
     private MainActivity mActivity;
     private ArrayList<TerminalBeanSimple> terminals = new ArrayList<>();
     public TerminalAdapter mAdapter;
-    private ProgressDialog mDialog;
     private ImageButton mPush;
     private TextView mTvComplete;
     private TextView mTitle_tx;
@@ -74,6 +79,7 @@ public class MyTerminalFragment extends Fragment implements
             }
         }
     };
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -97,12 +103,12 @@ public class MyTerminalFragment extends Fragment implements
         initData();
         return view;
     }
-
     private void initView(View view) {
         //title
         View title_view = view.findViewById(R.id.my_terminal_title);
         ImageButton menu = (ImageButton) title_view.findViewById(R.id.toolbar_left);
         mTvComplete = (TextView) title_view.findViewById(R.id.toolbar_complete);
+        mTvComplete.setVisibility(View.GONE);
         mPush = (ImageButton) title_view.findViewById(R.id.toolbar_push);
         menu.setOnClickListener(mOnClickListener);
         mTitle_tx = (TextView) title_view.findViewById(R.id.toolbar_title);
@@ -110,15 +116,25 @@ public class MyTerminalFragment extends Fragment implements
         mPush.setOnClickListener(mOnClickListener);
         mTvComplete.setOnClickListener(mOnClickListener);
         //recycler
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.terminal_recycler_view);
+        mRecyclerView = (SwipeMenuRecyclerView) view.findViewById(R.id.terminal_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
+        mRecyclerView.setSwipeMenuItemClickListener(mSwipeMenuItemClickListener);
         mAdapter = new TerminalAdapter(terminals, mActivity);
         mAdapter.setOnRecyclerViewItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-
+        //
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.terminal_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                LogUtil.d(TAG,"onRefresh");
+                initData();
+            }
+        });
+        mSwipeRefreshLayout.setRefreshing(true);
     }
-
 
     public void initData() {
         //加载所有绑定的终端设备
@@ -155,7 +171,58 @@ public class MyTerminalFragment extends Fragment implements
             }
         }
     };
+    /**
+     * 侧滑菜单 item创建
+     */
+    SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
+        @Override
+        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            int width = getResources().getDimensionPixelSize(R.dimen.swipe_menu_item_width);
+            //解绑 menu
+            SwipeMenuItem menuItemPush = new SwipeMenuItem(mActivity)
+                    .setBackground(R.drawable.swipe_menu_delete)
+                    .setHeight(height)
+                    .setWidth(width)
+                    .setText(getString(R.string.unbind))
+                    .setTextColor(getResources().getColor(R.color.white));
+            swipeRightMenu.addMenuItem(menuItemPush);
+        }
+    };
+    /**
+     * 侧滑菜单 item点击监听
+     */
+    SwipeMenuItemClickListener mSwipeMenuItemClickListener = new SwipeMenuItemClickListener() {
+        @Override
+        public void onItemClick(SwipeMenuBridge menuBridge) {
+            menuBridge.closeMenu();
+            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
+            final int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
+            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {//右侧菜单
+                AlertTextDialog unbindDialog = new AlertTextDialog(mActivity, getString(R.string.unbind_dev_affirm), new AlertTextDialog.OnAlertTextListen() {
+                    @Override
+                    public void onConfirm() {
+                        unbindTerminal(adapterPosition);
+                    }
+                });
+                unbindDialog.show(getFragmentManager(),"dialog");
+            } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {//左侧菜单
+            }
+        }
+    };
 
+    private void unbindTerminal(int position){
+        TerminalBeanSimple terminal = terminals.get(position);
+        ArrayList<String> macs = new ArrayList<>();//解绑
+        macs.add(terminal.getMac());
+        UnbindRequest body = new UnbindRequest();
+        body.setDeviceMacs(macs);
+        body.setUserId(mUserId);
+        body.setSign(MD5Util.getMD5(Constant.S_KEY + mUserId));
+        TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyTerminalFragment.this);
+        presenter.unbind(body, UNBIND_REQUEST_TAG);
+    }
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
@@ -183,40 +250,6 @@ public class MyTerminalFragment extends Fragment implements
 //        });
     }
 
-    /**
-     * 推送、预览、保存
-     */
-//    public void showPopupwindow() {
-//        final PopupWindow mPopupWindow = new PopupWindow(mActivity);
-//        View contentView = mActivity.getLayoutInflater().inflate(R.layout.popupwindow_layout, null);
-////        contentView.findViewById(R.id.pp_program_push).setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                mPopupWindow.dismiss();
-////
-////            }
-////        });
-////        contentView.findViewById(R.id.pp_preview).setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                mPopupWindow.dismiss();
-////
-////            }
-////        });
-////        contentView.findViewById(R.id.pp_save).setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                mPopupWindow.dismiss();
-////            }
-////        });
-//        mPopupWindow.setContentView(contentView);
-//        mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-//        mPopupWindow.setWidth(GeneralUtil.dip2px(mActivity, 100));
-//        mPopupWindow.setOutsideTouchable(true);//触摸外部消失
-//        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x000000000));//透明背景
-//        mPopupWindow.setAnimationStyle(R.style.push_popupwindow_style);//动画
-//        mPopupWindow.showAsDropDown(mPush, GeneralUtil.dip2px(mActivity, 21), GeneralUtil.dip2px(mActivity, -21));
-//    }
     View.OnClickListener ppOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -337,7 +370,9 @@ public class MyTerminalFragment extends Fragment implements
             SharedPreferences.Editor edit = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE).edit();
             edit.putString(Constant.MY_TERMINAL, new Gson().toJson(items));
             edit.apply();
-            mAdapter.setDataChange(items);
+            terminals.clear();
+            terminals.addAll(items);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -347,16 +382,13 @@ public class MyTerminalFragment extends Fragment implements
     public void showProgress(int requestTag) {
         if (requestTag == UPDATE_TERMINAL && isFirst) {//第一次进入显示dialog
             isFirst = false;
-            mDialog = new ProgressDialog(mActivity);
-            mDialog.setMessage(getString(R.string.loading));
-            mDialog.show();
         }
     }
 
     @Override
     public void hideProgress(int requestTag) {
-        if (requestTag == UPDATE_TERMINAL && mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
+        if (requestTag == UPDATE_TERMINAL) {
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 

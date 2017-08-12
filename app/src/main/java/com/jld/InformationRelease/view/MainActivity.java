@@ -13,8 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
@@ -62,11 +66,16 @@ public class MainActivity extends BaseActivity
     private static final int BIND_REQUEST_TAG = 0x31;
     private static final int REQUEST_CAMERA_PERMISSION = 0x32;//获取相机权限
     private ProgressDialog mBindDialog;
+    private SharedPreferences mSp;
+    private ImageView mMenuIcon;
+    private ImageView mMenuBackground;
+    private TextView mMenuText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mSp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         LogUtil.d(TAG, "onCreate");
         initView();
     }
@@ -74,10 +83,40 @@ public class MainActivity extends BaseActivity
     public void initView() {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = mNavigationView.inflateHeaderView(R.layout.nav_header_main);
+        mMenuBackground = (ImageView) headerView.findViewById(R.id.menu_background);
+        mMenuIcon = (ImageView) headerView.findViewById(R.id.menu_imageView);
+        mMenuText = (TextView) headerView.findViewById(R.id.menu_textview);
         mNavigationView.setNavigationItemSelectedListener(this);
         //默认值
         mNavigationView.getMenu().getItem(0).setChecked(true);
+        mNavigationView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                LogUtil.d(TAG, "onFocusChange");
+            }
+        });
         switchFragment(R.id.menu_my_terminal);
+    }
+
+    private void initData() {
+        String iconPath = mSp.getString(UserConstant.USER_ICON, "");
+        String background = mSp.getString(UserConstant.SET_BACKGROUND, "");
+        LogUtil.d(TAG, "iconPath:" + iconPath);
+        LogUtil.d(TAG, "background:" + background);
+        mMenuText.setText(mSp.getString(UserConstant.USER_NICK, ""));
+        Glide.with(this).load(iconPath).crossFade()
+                .error(this.getResources().getDrawable(R.mipmap.meizi))
+                .into(mMenuIcon);
+        Glide.with(this).load(background).crossFade()
+                .error(this.getResources().getDrawable(R.mipmap.head_back))
+                .into(mMenuBackground);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initData();
     }
 
     @Override
@@ -216,6 +255,7 @@ public class MainActivity extends BaseActivity
 
     /**
      * 设备添加 设置名称
+     *
      * @param mac
      */
     public void showSetNameDialog(final String mac) {
@@ -225,9 +265,9 @@ public class MainActivity extends BaseActivity
                 if (mTerminalFunctionPresenter == null)
                     mTerminalFunctionPresenter = new TerminalFunctionPresenter(MainActivity.this, MainActivity.this);
                 SharedPreferences sp = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
-                String mobile = sp.getString(UserConstant.USER_ID, "");
+                String userId = sp.getString(UserConstant.USER_ID, "");
                 mBean = new BindingRequest();
-                mBean.setUserId(mobile);
+                mBean.setUserId(userId);
                 mBean.setDevicename(name);
                 mBean.setDevicemac(mac);
                 LogUtil.d(TAG, "userid:" + mBean.getUserId());
@@ -237,7 +277,7 @@ public class MainActivity extends BaseActivity
                 mTerminalFunctionPresenter.binding(mBean, BIND_REQUEST_TAG);
             }
         });
-        dialog.show(getFragmentManager(),"set_name");
+        dialog.show(getFragmentManager(), "set_name");
     }
 
     @Override
@@ -283,6 +323,7 @@ public class MainActivity extends BaseActivity
             ToastUtil.showToast(this, e.getMessage(), 3000);
         }
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

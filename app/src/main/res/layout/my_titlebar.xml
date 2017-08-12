@@ -1,75 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:background="@color/colorPrimary">
+
+    <View
+        android:id="@+id/title_bar_flag"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerVertical="true"/>
+
     <LinearLayout
         android:id="@+id/title_back"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/bar_back_padding_left"
-        android:orientation="horizontal">
-        <ImageView android:layout_width="24dp"
-                   android:layout_height="24dp"
-                   android:layout_gravity="center"
-                   android:scaleType="centerInside"
-                   android:background="@drawable/title_back_click"
-                   />
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:gravity="center"
-                  android:text="@string/back"
-                  android:textColor="@drawable/textcolor_click"
-                  android:textSize="@dimen/title_back_text_size"
-        />
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/title_bar_flag"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/bar_back_padding_left">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="@drawable/title_back_click"
+            android:scaleType="centerInside"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/back"
+            android:textColor="@drawable/textcolor_click"
+            android:textSize="@dimen/title_back_text_size"
+            />
     </LinearLayout>
 
     <TextView
         android:id="@+id/title_center"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/top_title_height"
-        android:layout_centerInParent="true"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/title_bar_flag"
+        android:layout_centerHorizontal="true"
         android:text="title"
         android:textColor="@color/text_white"
         android:textSize="@dimen/bar_title_size"
-    />
+        />
+
     <TextView
         android:id="@+id/title_right"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/title_bar_flag"
+        android:layout_marginEnd="12dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/title_pressed_selector"
-        android:gravity="center"
         android:text="@string/cancel"
         android:textColor="@color/text_white"
-        android:textSize="@dimen/bar_right_size"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/linearLayout" android:layout_marginEnd="12dp"/>
+        android:textSize="@dimen/bar_right_size"/>
 
-    <TextView
-        android:id="@+id/title_preview"
+    <ImageButton
+        android:id="@+id/title_tool"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/title_bar_flag"
         android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@+id/title_right"
-        android:background="@drawable/title_pressed_selector"
-        android:gravity="center"
-        android:text="预览"
-        android:textColor="@color/text_white"
-        android:textSize="@dimen/bar_right_size"
-        android:visibility="gone"/>
-    <LinearLayout android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:layout_alignParentRight="true"
-                  android:layout_marginRight="10dp"
-                  android:gravity="center" android:id="@+id/linearLayout">
-        <ImageButton
-            android:id="@+id/titlebar_tool"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/toolbar_right_push_click"
-            android:visibility="gone"/>
-    </LinearLayout>
-
+        android:visibility="gone"
+        android:background="@drawable/toolbar_right_push_click"
+        />
 </RelativeLayout>

@@ -15,11 +15,35 @@ public class UserConstant {
      */
     public static final String USER_PASSWORD = "user_password";
     /**
-     * 2 用户账号
+     * 2 用户id
      */
     public static final String USER_ID = "user_id";
     /**
      * 3是否登陆过
      */
     public static final String IS_LOGIN = "is_login";
+
+    /**
+     * 用户昵称
+     */
+    public static final String USER_NICK = "user_nike";
+
+    /**
+     * 用户头像
+     */
+    public static final String USER_ICON = "user_icon";
+    /**
+     * 设置 背景封面
+     */
+    public static final String SET_BACKGROUND = "set_background";
+
+    /**
+     * 公司名称
+     */
+    public static final String COMPANY_NAME = "company_name";
+
+    /**
+     * 用户账号
+     */
+    public static final String USER_PHONE = "user_phone";
 }

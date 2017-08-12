@@ -14,7 +14,7 @@ import com.jld.InformationRelease.util.LogUtil;
  * @create-time 2017/7/18 9:37
  */
 public class DayTaskItem implements Parcelable {
-
+    private String type;//播放类型 0为播放时长、1为播放次数、2为播放时间段
     private String programName;
     private String stateTime;
     private String stopTime;
@@ -22,6 +22,14 @@ public class DayTaskItem implements Parcelable {
     private String programLocalId;
     //本地数据库ID
     private String programTabId = "";
+
+    public DayTaskItem(String programName, String stateTime, String stopTime, String programLocalId, String programTabId) {
+        this.programName = programName;
+        this.stateTime = stateTime;
+        this.stopTime = stopTime;
+        this.programLocalId = programLocalId;
+        this.programTabId = programTabId;
+    }
 
     public DayTaskItem() {
     }
@@ -32,6 +40,7 @@ public class DayTaskItem implements Parcelable {
         stopTime = in.readString();
         programLocalId = in.readString();
         programTabId = in.readString();
+        type = in.readString();
     }
 
     public static final Creator<DayTaskItem> CREATOR = new Creator<DayTaskItem>() {
@@ -58,6 +67,15 @@ public class DayTaskItem implements Parcelable {
         parcel.writeString(stopTime);
         parcel.writeString(programLocalId);
         parcel.writeString(programTabId);
+        parcel.writeString(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getProgramLocalId() {
@@ -103,7 +121,8 @@ public class DayTaskItem implements Parcelable {
     @Override
     public String toString() {
         return "DayTaskItem{" +
-                "programName='" + programName + '\'' +
+                "type='" + type + '\'' +
+                ", programName='" + programName + '\'' +
                 ", stateTime='" + stateTime + '\'' +
                 ", stopTime='" + stopTime + '\'' +
                 ", programLocalId='" + programLocalId + '\'' +

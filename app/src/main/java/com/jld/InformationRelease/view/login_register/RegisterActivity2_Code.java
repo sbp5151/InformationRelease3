@@ -3,11 +3,12 @@ package com.jld.InformationRelease.view.login_register;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,69 +19,91 @@ import com.jld.InformationRelease.bean.response_bean.VerifyCodeResponseBean;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.VerifyCodePresenter;
 import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
 
 /**
- * 注册1
+ * 注册2
  */
-public class RegisterActivity_Phone extends BaseActivity implements IViewListen<VerifyCodeResponseBean> {
+public class RegisterActivity2_Code extends BaseActivity implements IViewListen<VerifyCodeResponseBean> {
 
-    private static final int GET_CODE_TAG = 666;
     private ProgressDialog mProgressDialog;
-    private ImageView mImg_back;
-    private EditText mEt_input_nike;
-    private EditText mEt_input_name;
-    private Button mBtn_next;
+    public static final int COUNT_DOWN = 0x01;
+    private int countDown = 60;
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case COUNT_DOWN:
+                    if (mBtn_again != null) {
+                        if (countDown == 0) {//60s倒计时结束
+                            mBtn_again.setText(getResources().getString(R.string.register_code_again));
+                            mBtn_again.setClickable(true);
+                            mBtn_again.setEnabled(true);
+                        } else {//倒计时
+                            mBtn_again.setText(getResources().getString(R.string.register_code_again) + "(" + countDown + ")");
+                            countDown--;
+                            mHandler.sendEmptyMessageDelayed(COUNT_DOWN, 1000);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
+    private Button mBtn_again;
+    private String mVerityCode;
+    private EditText mEt_code;
     private VerifyCodePresenter mPresenter;
-    private EditText mEt_number;
-    private int mRequestId = 0x11;
-    private String mPhoneNum;
-    private String countryCode = "86";
-    private Button mBtn_num_code;
+    private String mPhone;
+    private int mRequestId = 0x21;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_phone);
+        setContentView(R.layout.activity_register_code);
+        //取值
+        Intent intent = getIntent();
+        mVerityCode = intent.getStringExtra("code");
+        mPhone = intent.getStringExtra("phone");
 
+        //dialog
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("loading...");
-        initView();
 
+        initView();
+        //网络请求
         mPresenter = new VerifyCodePresenter(this, this);
+        mHandler.sendEmptyMessage(COUNT_DOWN);
     }
 
     public void initView() {
         //title
-        View title = findViewById(R.id.register_number_title_phone);
+        View title = findViewById(R.id.register_number_title_code);
         LinearLayout title_back = (LinearLayout) title.findViewById(R.id.title_back);
         TextView title_center = (TextView) title.findViewById(R.id.title_center);
         title_center.setText(getString(R.string.verify_number));
         TextView title_right = (TextView) title.findViewById(R.id.title_right);
         title_right.setVisibility(View.GONE);
-        // 用户协议
-        TextView tv_protocol = (TextView) findViewById(R.id.tv_register_protocol);
-        //区号
-        mBtn_num_code = (Button) findViewById(R.id.btn_number_code);
-        //电话号码
-        mEt_number = (EditText) findViewById(R.id.et_input_number);
+        //重新发送
+        mBtn_again = (Button) findViewById(R.id.btn_code_again);
+        //验证码
+        mEt_code = (EditText) findViewById(R.id.et_input_code);
         //下一步
-        final Button btn_next = (Button) findViewById(R.id.bt_register_number_next);
+        final Button btn_next = (Button) findViewById(R.id.bt_register_code_next);
 
         title_back.setOnClickListener(mOnClickListener);
-        tv_protocol.setOnClickListener(mOnClickListener);
-        mBtn_num_code.setOnClickListener(mOnClickListener);
+        mBtn_again.setOnClickListener(mOnClickListener);
+        mBtn_again.setClickable(false);
+        mBtn_again.setEnabled(false);
         btn_next.setOnClickListener(mOnClickListener);
         btn_next.setEnabled(false);// 非激活状态
-
-        mEt_number.addTextChangedListener(new MyTextWatcher() {
+        mEt_code.addTextChangedListener(new MyTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if (!TextUtils.isEmpty(charSequence.toString()) && GeneralUtil.isPhoneNum(charSequence.toString()))
+                if (!TextUtils.isEmpty(charSequence.toString()))
                     btn_next.setEnabled(true);
                 else
                     btn_next.setEnabled(false);
@@ -98,39 +121,28 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewListen<
                     overridePendingTransition(R.anim.right_in, R.anim.left_out);
                     finish();
                     break;
-                case R.id.tv_register_protocol://用户协议
-                    //// TODO: 2017/4/13 用户协议
-                    ToastUtil.showToast(RegisterActivity_Phone.this, "霸王条约不让看!", 3000);
-                    break;
-                case R.id.btn_number_code://区号
-                    Intent intent = new Intent(RegisterActivity_Phone.this, CountryPageActivity.class);
-                    startActivityForResult(intent, GET_CODE_TAG);
-                    overridePendingTransition(R.anim.right_in, R.anim.left_out);
-                    break;
-                case R.id.bt_register_number_next://下一步
+                case R.id.btn_code_again://重新发送
                     VerifyCodeRequestBean bean = new VerifyCodeRequestBean();
-                    mPhoneNum = mEt_number.getText().toString();
-                    bean.setMobile(mPhoneNum);
-                    bean.setDa(countryCode);
-                    bean.setSign(MD5Util.getMD5(Constant.S_KEY + mPhoneNum));
+                    bean.setMobile(mPhone);
+                    bean.setDa("86");
+                    bean.setSign(MD5Util.getMD5(Constant.S_KEY + mPhone));
                     mPresenter.getVerifyCode1(bean, mRequestId);
+
+                    mBtn_again.setEnabled(false);
+                    mBtn_again.setClickable(false);
+                    countDown = 60;
+                    mHandler.sendEmptyMessage(COUNT_DOWN);
+                    break;
+                case R.id.bt_register_code_next://下一步
+                    if (mVerityCode.equals(mEt_code.getText().toString())) {
+                        toActivity(RegisterActivity3.class,"phone",mPhone);
+                    } else {
+                        ToastUtil.showToast(RegisterActivity2_Code.this, "验证码错误", 3000);
+                    }
                     break;
             }
         }
     };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (null != data && requestCode == GET_CODE_TAG) {
-            countryCode = data.getExtras().getString("CountryCode");
-            String countryName = data.getExtras().getString("CountryName");
-            if (!TextUtils.isEmpty(countryCode)
-                    && !TextUtils.isEmpty(countryName)) {
-                mBtn_num_code.setText(countryName + "(+" + countryCode + ")");
-            }
-        }
-    }
 
     @Override
     public void showProgress(int requestTag) {
@@ -148,11 +160,7 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewListen<
     public void loadDataSuccess(VerifyCodeResponseBean data, int requestTag) {
         String code = data.getCode();
         if (!TextUtils.isEmpty(code)) {
-            Intent intent = new Intent(this, RegisterActivity_Code.class);
-            intent.putExtra("code", code);
-            intent.putExtra("phone", mPhoneNum);
-            startActivity(intent);
-            overridePendingTransition(R.anim.right_in, R.anim.left_out);
+            mVerityCode = code;
         }
     }
 
@@ -160,7 +168,7 @@ public class RegisterActivity_Phone extends BaseActivity implements IViewListen<
     public void loadDataError(Throwable e, int requestTag) {
         String s = e.getMessage().toString();
         if ("1004".equals(s))
-            ToastUtil.showToast(this, "用户已存在", 3000);
+            ToastUtil.showToast(this, getString(R.string.phone_password_error), 3000);
         else
             ToastUtil.showToast(this, s, 3000);
         hideProgress(requestTag);

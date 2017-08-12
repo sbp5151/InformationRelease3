@@ -8,6 +8,10 @@ package com.jld.InformationRelease.bean.request_bean;
  * @creator boping
  * @create-time 2017/5/31 11:11
  */
+
+/**
+ * 密码修改
+ */
 public class ChangePWRequestBean {
 
     private String userid;
@@ -17,6 +21,18 @@ public class ChangePWRequestBean {
     private String newpasswd2;
     //md5($ts_skey + mobile + passwd + newpasswd)
     private String sign;
+
+    public ChangePWRequestBean() {
+    }
+
+    public ChangePWRequestBean(String userid, String mobile, String passwd, String newpasswd, String newpasswd2, String sign) {
+        this.userid = userid;
+        this.mobile = mobile;
+        this.passwd = passwd;
+        this.newpasswd = newpasswd;
+        this.newpasswd2 = newpasswd2;
+        this.sign = sign;
+    }
 
     public String getUserid() {
         return userid;

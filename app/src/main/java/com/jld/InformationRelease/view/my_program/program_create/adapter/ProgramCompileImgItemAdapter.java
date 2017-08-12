@@ -50,7 +50,7 @@ public class ProgramCompileImgItemAdapter extends RecyclerView.Adapter<ProgramCo
             holder.mCover.setVisibility(View.VISIBLE);
             Glide.with(mContext)
                     .load(mDatas.get(position))
-                    .crossFade()
+                    .crossFade()//谈出效果
                     .into(holder.mImg);
             holder.mImg.setOnClickListener(new View.OnClickListener() {
                 @Override

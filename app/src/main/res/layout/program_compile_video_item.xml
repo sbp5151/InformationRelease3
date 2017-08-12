@@ -31,7 +31,7 @@
             android:gravity="center_vertical"
             android:singleLine="true"
         />
-        <LinearLayout android:layout_width="60dp"
+        <LinearLayout android:layout_width="64dp"
                       android:layout_height="match_parent">
             <Button
                 android:id="@+id/btn_video_item_path_select"
@@ -41,6 +41,7 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="20dp"
+                android:textAllCaps="false"
                 android:background="@drawable/video_select"
                 android:text="@string/select"/>
         </LinearLayout>
@@ -58,6 +59,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:textAllCaps="false"
             android:background="@drawable/swipe_menu_delete_round"
             android:text="@string/delete"/>
     </LinearLayout>

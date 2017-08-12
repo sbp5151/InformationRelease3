@@ -96,5 +96,14 @@ public class URLConstant {
     /**
      * 16、节目发布后设备加载状况
      */
-    public static final String PROGRAM_LAOD_STATE = "/program/pushgetproids";
+    public static final String PROGRAM_LOAD_STATE = "/program/pushgetproids";
+
+    /**
+     * 用户名修改
+     */
+    public static final String CHAGNE_NICK = "/user/upnick";
+    /**
+     * 用户反馈接口
+     */
+    public static final String FEED_BACK = "/tsmsg/feedb";
 }

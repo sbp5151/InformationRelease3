@@ -24,10 +24,6 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 
 import java.util.ArrayList;
-import java.util.jar.Manifest;
-
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
 
 /**
  * 后台节目推送
@@ -156,6 +152,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             UpdateProgramResponse response = (UpdateProgramResponse) data;
             LogUtil.d(TAG, "上传节目成功：" + response.getData());
             if (isLoadDayProgram) {
+                mDayUploadProgramItem.get(upload_day_program_num - 1).setType(lastType);
                 mDayUploadProgramItem.get(upload_day_program_num - 1).setProgramId(response.getData());
                 mHandler.sendEmptyMessage(UPLOAD_DAY_TASK_PROGRAM);
                 mCompleteListener.uploadSucceed(mDayUploadProgramItem.get(upload_day_program_num - 1));
@@ -179,6 +176,8 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     @Override
     public void loadDataError(Throwable e, int requestTag) {
         LogUtil.d(TAG, "loadDataError:" + e.getMessage());
+        if(isLoadDayProgram)
+            mDayUploadProgramItem.get(upload_day_program_num - 1).setType(lastType);
         mCompleteListener.pushDefeated();
     }
 
@@ -226,6 +225,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
                 updateDayTask();
             }
         }
+
         /**
          * 开始上传
          */
@@ -268,20 +268,21 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             } else {//如果图片为空，或者图片上传过（上传失败重新上传），则直接上传节目
                 updateProgram();
             }
-        } else//否则上传轮播图
+        } else//否则上传封面
             mFilePresenter.updateFile(mUploadData.getCover(), UPLOAD_COVER_REQUEST);
     }
 
+    private String lastType;
     /**
      * 上传节目
      */
     public void updateProgram() {
         UploadProgramPresenter presenter = new UploadProgramPresenter(this, this);
         mUploadData.setProgramId(null);
-        if (isLoadDayProgram)
+        if (isLoadDayProgram) {
+            lastType = mUploadData.getType();
             mUploadData.setType("-1");
-        else
-            mUploadData.setType("1");
+        }
         LogUtil.d(TAG, "updateProgram：" + mUploadData);
         presenter.uploadProgram(mUploadData, PROGRAM_UPDATE);
     }
@@ -300,7 +301,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         UploadProgramPresenter presenter = new UploadProgramPresenter(this, this);
         LogUtil.d(TAG, "上传每日任务2：" + mUploadDayData);
         mUploadDayData.setProgramId(null);
-        mUploadDayData.setType("2");
+//        mUploadDayData.setType("2");
         presenter.uploadProgram(mUploadDayData, DAY_PROGRAM_UPDATE);
     }
 
@@ -310,6 +311,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     public interface PushCompleteListener {
         /**
          * 上传推送成功
+         *
          * @param programId
          */
         void pushSucceed(String programId);// 上传成功
@@ -318,6 +320,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
 
         /**
          * 上传成功
+         *
          * @param programBean
          */
         void uploadSucceed(ProgramBean programBean);
@@ -375,9 +378,10 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
 
     /**
      * 上传视频文件
+     *
      * @param uploadVideoPath
      */
-    private void uploadFile(String uploadVideoPath){
+    private void uploadFile(String uploadVideoPath) {
         FileModel.uploadFile2(uploadVideoPath, new FileModel.PushFileListener() {
             @Override
             public void pushSucceed(String fileUrl) {
@@ -396,6 +400,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             }
         });
     }
+
     /**
      * 获取下一张需要上传的视频文件路径
      */

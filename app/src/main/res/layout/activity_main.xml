@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
+    <!--android:fitsSystemWindows="true"-->
     <!--// fitsystemwindows : 设置应用布局时是否考虑系统窗口布局;如果为true,将调整系统窗口布局以适应你自定义的布局-->
     <!--tools:openDrawer="center_horizontal">-->
     <FrameLayout
@@ -20,8 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
         app:itemIconTint="@color/navigation_menu_item_color"
         app:itemTextColor="@color/navigation_menu_item_color"
         app:menu="@menu/activity_main_drawer"/>

@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_dark"
-    android:fitsSystemWindows="true"
     tools:context="com.jld.InformationRelease.view.my_program.program_create.ProgramVideoActivity">
    <RelativeLayout android:layout_width="match_parent"
                    android:layout_height="match_parent">
@@ -15,7 +14,7 @@
            android:id="@+id/program_video_title"
            layout="@layout/my_titlebar"
            android:layout_width="match_parent"
-           android:layout_height="@dimen/title_height"/>
+           android:layout_height="@dimen/top_title_height"/>
        <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
            android:id="@+id/rv_program_video_content"
            android:layout_width="match_parent"

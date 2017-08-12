@@ -53,6 +53,12 @@ public class LoginActivity extends BaseActivity implements IViewListen<UserRespo
         mUserPresenter = new UserPresenter(this, this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initView();
+    }
+
     private void initView() {
         mTv_code = (TextView) findViewById(R.id.tv_login_country_code);
         mTv_code.setOnClickListener(mOnClickListener);
@@ -62,10 +68,10 @@ public class LoginActivity extends BaseActivity implements IViewListen<UserRespo
 
         //输入账号
         mEt_login_phone = (EditText) findViewById(R.id.et_login_number);
-        String user_id = mSp.getString(UserConstant.USER_ID, "");
-        if (!TextUtils.isEmpty(user_id)) {
-            Log.d(TAG, "user_id:" + user_id);
-            mEt_login_phone.setText(user_id);
+        String user_phone = mSp.getString(UserConstant.USER_PHONE, "");
+        if (!TextUtils.isEmpty(user_phone)) {
+            Log.d(TAG, "user_id:" + user_phone);
+            mEt_login_phone.setText(user_phone);
             mIsInputPhoneNull = false;
         }
         //输入密码
@@ -139,7 +145,7 @@ public class LoginActivity extends BaseActivity implements IViewListen<UserRespo
                     toActivity(FindBackPassWordActivity.class);
                     break;
                 case R.id.tv_new_user_register://注册
-                    toActivity(RegisterActivity_Phone.class);
+                    toActivity(RegisterActivity1_Phone.class);
                     break;
                 case R.id.tv_login_country_code://选择国家编码
                     Intent intent = new Intent(LoginActivity.this, CountryPageActivity.class);
@@ -180,11 +186,14 @@ public class LoginActivity extends BaseActivity implements IViewListen<UserRespo
     @Override
     public void loadDataSuccess(UserResponse data, int requestTag) {
         LogUtil.d("loadDataSuccess:" + data);
-        ToastUtil.showToast(this, "登陆成功", 3000);
+        ToastUtil.showToast(this, getString(R.string.login_succeed), 3000);
         //保存账号密码
+        UserResponse.ItemResponse item = data.getItem();
         SharedPreferences.Editor edit = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE).edit();
-        edit.putString(UserConstant.USER_ID, data.getItem().getUserid());
+        edit.putString(UserConstant.USER_ID, item.getUserid());
+        edit.putString(UserConstant.USER_PHONE, item.getMobile());
         edit.putString(UserConstant.USER_PASSWORD, mMdt_password);
+        edit.putString(UserConstant.USER_NICK, item.getNick());
         edit.putBoolean(UserConstant.IS_LOGIN, true);
         edit.apply();
         toActivity(MainActivity.class);

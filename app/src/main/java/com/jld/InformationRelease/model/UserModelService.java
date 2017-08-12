@@ -1,6 +1,8 @@
 package com.jld.InformationRelease.model;
 
+import com.jld.InformationRelease.bean.request_bean.ChangeNickRequest;
 import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
+import com.jld.InformationRelease.bean.request_bean.FeedBackRequest;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
 import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
@@ -59,5 +61,21 @@ public interface UserModelService {
      */
     @POST(URLConstant.SMS_GET)
     Observable<VerifyCodeResponseBean> getVerifyCode2(@Body VerifyCodeRequestBean body);
+
+    /**
+     * 修改昵称
+     * @param body
+     * @return
+     */
+    @POST(URLConstant.CHAGNE_NICK)
+    Observable<UserResponse> changeNick(@Body ChangeNickRequest body);
+
+    /**
+     * 意见反馈
+     * @param body
+     * @return
+     */
+    @POST(URLConstant.FEED_BACK)
+    Observable<UserResponse> feedBack(@Body FeedBackRequest body);
 
 }

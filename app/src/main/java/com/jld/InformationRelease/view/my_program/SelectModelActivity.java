@@ -3,13 +3,13 @@ package com.jld.InformationRelease.view.my_program;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.response_bean.GetModelResponse;
 import com.jld.InformationRelease.interfaces.IViewListen;
@@ -18,8 +18,8 @@ import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.view.my_program.adapter.ModelAdapter;
-import com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity;
 import com.jld.InformationRelease.view.my_program.program_create.ProgramImageActivity;
+import com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity;
 import com.jld.InformationRelease.view.my_program.program_create.ProgramVideoActivity;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mPr
 /**
  * 二：模板选择
  */
-public class SelectModelActivity extends AppCompatActivity implements IViewListen<GetModelResponse> {
+public class SelectModelActivity extends BaseActivity implements IViewListen<GetModelResponse> {
 
     public static final String TAG = "SelectModelActivity";
     private RecyclerView mRecyclerView;

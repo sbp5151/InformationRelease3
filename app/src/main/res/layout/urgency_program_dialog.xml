@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+    >
+
+    <LinearLayout
+        android:layout_width="@dimen/dialog_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/dialog_shape"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog1_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_title_height"
+            android:gravity="center"
+            android:text="@string/program_create"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/dialog_title_size"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.2"
+                    android:gravity="center"
+                    android:text="@string/program_select"
+                    android:textColor="#000"
+                    android:textSize="18dp"/>
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorLine"/>
+
+                <Spinner
+                    android:id="@+id/sp_program_select"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"/>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorLine"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2"
+                        android:gravity="center"
+                        android:text="@string/play_type"
+                        android:textColor="#000"
+                        android:textSize="18dp"/>
+
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorLine"/>
+
+                    <Spinner
+                        android:id="@+id/sp_play_type"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:entries="@array/program_play_type"
+                        android:gravity="center"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorLine"
+                />
+
+            <LinearLayout
+                android:id="@+id/ll_play_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <TextView
+                        android:id="@+id/tv_play_num"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2"
+                        android:gravity="center"
+                        android:text="@string/play_num"
+                        android:textColor="#000"
+                        android:textSize="18dp"/>
+
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorLine"/>
+
+                    <EditText
+                        android:id="@+id/et_play_num"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:inputType="number"
+                        android:paddingLeft="8dp"
+                        android:textColor="#000"
+                        android:textSize="18dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_play_start_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2"
+                        android:gravity="center"
+                        android:text="@string/click_add_start_time"
+                        android:textColor="#000"
+                        android:textSize="18dp"/>
+
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorLine"/>
+
+                    <com.rey.material.widget.Button
+                        android:id="@+id/btn_program_start_time"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@null"
+                        android:text="@string/click_add_start_time"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
+                        android:textSize="18dp"
+                        app:v_styleId="@array/button_raise"/>
+                </LinearLayout>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorLine"
+                />
+
+            <LinearLayout
+                android:id="@+id/ll_play_stop_time"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.2"
+                    android:gravity="center"
+                    android:text="@string/click_add_stop_time"
+                    android:textColor="#000"
+                    android:textSize="18dp"/>
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorLine"/>
+
+                <com.rey.material.widget.Button
+                    android:id="@+id/btn_program_stop_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="@null"
+                    android:text="@string/click_add_stop_time"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
+                    android:textSize="18dp"
+                    app:v_styleId="@array/button_raise"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_bottom_height"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_urgency_program_cancel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_bottom_height"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_left_pre_bg"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:textColor="#000"
+                android:textSize="18dp"/>
+
+            <Button
+                android:id="@+id/btn_urgency_program_push"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_bottom_height"
+                android:layout_weight="1"
+                android:background="@drawable/dialog_right_pre_bg"
+                android:gravity="center"
+                android:text="@string/sure"
+                android:textColor="#000"
+                android:textSize="18dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/dialog1_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@mipmap/close_dialog"
+        android:visibility="gone"/>
+</RelativeLayout>

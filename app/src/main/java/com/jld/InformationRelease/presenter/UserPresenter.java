@@ -3,7 +3,9 @@ package com.jld.InformationRelease.presenter;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BasePresenterImpl;
+import com.jld.InformationRelease.bean.request_bean.ChangeNickRequest;
 import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
+import com.jld.InformationRelease.bean.request_bean.FeedBackRequest;
 import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
@@ -65,7 +67,7 @@ public class UserPresenter extends BasePresenterImpl<UserResponse> {
      * @param requestTag
      */
     public void retrievePW(RetrievePWRequestBean body, int requestTag) {
-        mUserModel.RetrievePW(body, this, requestTag);
+        mUserModel.retrievePW(body, this, requestTag);
     }
 
     /**
@@ -75,6 +77,20 @@ public class UserPresenter extends BasePresenterImpl<UserResponse> {
      * @param requestTag
      */
     public void changePW(ChangePWRequestBean body, int requestTag) {
-        mUserModel.ChangePw(body, this, requestTag);
+        mUserModel.changePw(body, this, requestTag);
+    }
+
+    /**
+     * 修改昵称
+     */
+    public void ChangeNike(ChangeNickRequest body, int requestTag) {
+        mUserModel.changeNick(body, this, requestTag);
+    }
+
+    /**
+     * 意见反馈
+     */
+    public void FeedBack(FeedBackRequest body, int requestTag) {
+        mUserModel.feedBack(body, this, requestTag);
     }
 }

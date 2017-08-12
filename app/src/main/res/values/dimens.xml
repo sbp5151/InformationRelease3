@@ -4,6 +4,7 @@
     <dimen name="back_high">30dp</dimen>
     <dimen name="sp_16">16dp</dimen>
     <dimen name="sp_24">24dp</dimen>
+    <dimen name="sp_14">14dp</dimen>
     <dimen name="padding_right_left">25dp</dimen>
     <dimen name="sp_18">18dp</dimen>
     <dimen name="line_top_padding">0dp</dimen>
@@ -17,11 +18,11 @@
     <dimen name="title_height">50dp</dimen>
     <dimen name="register_input_icon">50dp</dimen>
     <dimen name="activity_vertical_margin">14dp</dimen>
-    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="nav_header_height">190dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
 
-    <dimen name="terminal_state_icon_size">12dp</dimen>
+    <dimen name="terminal_state_icon_size">13dp</dimen>
     <dimen name="item_height">40dp</dimen>
     <dimen name="recycler_item_height">50dp</dimen>
     <dimen name="dialog_width">290dp</dimen>
@@ -35,8 +36,7 @@
     <dimen name="top_title_back_height">-1dp</dimen>
     <dimen name="margin_widget_v_big">30dp</dimen>
     <dimen name="margin_left_layout">30dp</dimen>
-    <dimen name="height_item">56dp</dimen>
-    <dimen name="sp_14">14sp</dimen>
+    <dimen name="height_item">55dp</dimen>
     <dimen name="title_bar_size">19dp</dimen>
     <dimen name="push_popup_width">93dp</dimen>
     <dimen name="model_item_width">150dp</dimen>
@@ -55,4 +55,13 @@
     <dimen name="swipe_menu_item_width2">45dp</dimen>
     <dimen name="swipe_menu_item_height">35dp</dimen>
     <dimen name="swipe_menu_item_text_size">10dp</dimen>
+    <dimen name="set_item_icon_mg_right">21dp</dimen>
+    <dimen name="set_item_back_right">12dp</dimen>
+    <dimen name="sp_17">17dp</dimen>
+    <dimen name="sp_12">12dp</dimen>
+    <dimen name="set_item_size">16dp</dimen>
+    <dimen name="width_phone_dialog">260dp</dimen>
+    <dimen name="heigth_phone_dialog">200dp</dimen>
+    <dimen name="height_text_phone_dialog">65dp</dimen>
+
 </resources>

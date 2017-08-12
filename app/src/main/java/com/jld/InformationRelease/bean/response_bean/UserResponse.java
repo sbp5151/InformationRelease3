@@ -14,7 +14,6 @@ public class UserResponse extends BaseResponse {
 
     private ItemResponse item;
 
-
     @Override
     public String toString() {
         super.toString();
@@ -31,10 +30,20 @@ public class UserResponse extends BaseResponse {
         this.item = item;
     }
 
-    public class ItemResponse{
+    public class ItemResponse {
         private String userid;
         private String mobile;
         private String nick;
+        private String img;
+
+        public String getImg() {
+            return img;
+        }
+
+        public void setImg(String img) {
+            this.img = img;
+        }
+
         public String getUserid() {
             return userid;
         }

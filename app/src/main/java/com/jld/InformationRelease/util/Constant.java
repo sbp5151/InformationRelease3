@@ -1,5 +1,9 @@
 package com.jld.InformationRelease.util;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * 项目名称：InformationRelease
  * 晶凌达科技有限公司所有，
@@ -20,6 +24,7 @@ public class Constant {
      */
     public static final String SHARE_KEY = "jld_share_key";
 
+
     //奶茶模板
     public static final String NAICHA_MODEL_1 = "1";
     //幻灯片模板
@@ -39,4 +44,25 @@ public class Constant {
      * 每日任务节目类型
      */
     public static final String PROGRAM_TYPE_DAY = "2";
+    /**
+     * 紧急插播
+     */
+    public static final String PROGRAM_TYPE_URGENCY = "3";
+    /**
+     * 关于晶凌达信息发布系统 网页链接
+     */
+    public static final String ABOUT_INFORMATION = "http://www.baidu.com/";
+    /**
+     * 用户协议 网页链接 中文
+     */
+    public static final String USER_AGREEMENT_CN = "file:///android_asset/userProtocol_cn.html";
+    /**
+     * 用户协议 网页链接 英文
+     */
+    public static final String USER_AGREEMENT_EN = "file:///android_asset/userProtocol_en.html";
+
+    /**
+     * 图片缓存区
+     */
+    public static final String IMAGE_CHACE = Environment.getExternalStorageDirectory() + File.separator + "miniPhoto";
 }

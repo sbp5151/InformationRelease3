@@ -107,12 +107,10 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
                 break;
         }
     }
-
     @Override
     public int getItemCount() {
         return beans.size();
     }
-
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_id;
         TextView tv_name;
@@ -141,11 +139,9 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
     public void setOnRecyclerViewItemClickListener(OnRecyclerViewItemClickListener listener) {
         mClickListener = listener;
     }
-
     public ArrayList<TerminalBeanSimple> getData() {
         return beans;
     }
-
     public void setCompile(boolean isCompile) {
         if (!isCompile) {
             for (TerminalBeanSimple beanSimple : beans)

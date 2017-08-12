@@ -24,7 +24,7 @@ import com.jld.InformationRelease.util.UserConstant;
 /**
  * 注册3
  */
-public class RegisterActivity extends BaseActivity implements IViewListen<UserResponse> {
+public class RegisterActivity3 extends BaseActivity implements IViewListen<UserResponse> {
 
     private EditText mInput_name;
     private EditText mInput_companyName;
@@ -113,11 +113,13 @@ public class RegisterActivity extends BaseActivity implements IViewListen<UserRe
     @Override
     public void loadDataSuccess(UserResponse data, int requestTag) {
         LogUtil.d(data.toString());
-        ToastUtil.showToast(this, "注册成功", 3000);
+        ToastUtil.showToast(this, getString(R.string.register_succeed), 3000);
         //保存账号密码
         SharedPreferences.Editor edit = getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE).edit();
-        edit.putString(UserConstant.USER_ID,mPhone);
+        edit.putString(UserConstant.USER_PHONE,mPhone);
         edit.putString(UserConstant.USER_PASSWORD,mPassword);
+        edit.putString(UserConstant.USER_NICK,mInput_name.getText().toString());
+        edit.putString(UserConstant.COMPANY_NAME,mInput_companyName.getText().toString());
         edit.apply();
         toActivity(LoginActivity.class);
     }

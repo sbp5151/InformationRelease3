@@ -7,13 +7,18 @@
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
     <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 
@@ -21,6 +26,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
     <!--注册布局文件style-->
     <style name="registerLinearLayoutStyle">
@@ -33,6 +39,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">vertical</item>
     </style>
+
     <style name="registerMyEditTextStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -46,6 +53,7 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColorHint">@color/graysh</item>
     </style>
+
     <style name="registerNextStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>
@@ -57,6 +65,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/sp_20</item>
     </style>
+
     <style name="CustomDialog" parent="android:style/Theme.Dialog">
 
         <!-- 背景颜色及透明程度 -->
@@ -66,7 +75,6 @@
     <!-- dialog的出入场动画 -->
     <style name="main_menu_animstyle">
         <item name="android:windowEnterAnimation">@anim/photo_dialog_in_anim</item>
-
         <item name="android:windowExitAnimation">@anim/photo_dialog_out_anim</item>
     </style>
     <!--这个样式，就是隐藏标题栏和状态栏-->
@@ -79,7 +87,12 @@
         <item name="android:windowEnterAnimation">@anim/push_popup_anim_show</item>
         <item name="android:windowExitAnimation">@anim/push_popup_anim_hide</item>
     </style>
-
+    <!-- 加载dialog -->
+    <style name="loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 
     <!-- 设置ActionBar菜单字体 -->
     <style name="ActionMenuTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Menu">
@@ -101,8 +114,11 @@
         <!--<item name="actionBarTheme">@style/actionBarTheme</item>-->
         <!--<item name="actionBarPopupTheme">@style/actionBarPopupTheme</item>-->
     </style>
+
     <style name="MyTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <style name="MyTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>

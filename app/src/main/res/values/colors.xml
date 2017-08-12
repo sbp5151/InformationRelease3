@@ -6,7 +6,11 @@
     <color name="colorAccent">#FF4081</color>
     <color name="light_gray">#DADEE6</color>
     <color name="white">#ffffff</color>
+
     <color name="black">#34353A</color>
+    <color name="btn_backgroud_color">#BFC1C5</color>
+
+
     <color name="line_gray">#D3D7DA</color>
     <color name="background_red_check">#e44101</color>
     <color name="background_red">#F85514</color>
@@ -45,10 +49,15 @@
     <color name="white_pressed">#f1f1f1</color>
     <color name="half_black">#808080</color>
     <color name="black_semi_transparent">#B2000000</color>
+    <color name="action_bar">#30353131</color>
 
     <!--swipe_menu-->
     <color name="menu_red">#fbec4c3d</color>
     <color name="menu_red_click">#eec4837d</color>
     <color name="menu_green">#ee3dde36</color>
     <color name="menu_green_click">#ee94b993</color>
+    <color name="btn_check">#F1F5F8</color>
+    <color name="button_stroke_colour">#D3D7DA</color>
+    <color name="frame_gray">#D3D7DA</color>
+    <color name="hint_title">#A1A3A7</color>
 </resources>

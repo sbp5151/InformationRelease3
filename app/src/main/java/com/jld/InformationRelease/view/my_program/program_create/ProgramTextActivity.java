@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -107,7 +106,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
     private void initView() {
         /***********************title***********************/
         View title = findViewById(R.id.program_compile_titlebar);
-        mIb_tool = (ImageButton) title.findViewById(R.id.titlebar_tool);
+        mIb_tool = (ImageButton) title.findViewById(R.id.title_tool);
         mIb_tool.setVisibility(View.VISIBLE);
         mIb_tool.setOnClickListener(mOnClickListener);
         TextView title_right = (TextView) title.findViewById(R.id.title_right);
@@ -207,7 +206,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
                     else
                         finish();
                     break;
-                case R.id.titlebar_tool://tool
+                case R.id.title_tool://tool
                     showPopupwindow();
                     break;
             }
@@ -439,7 +438,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
                 String[] split = path.split(File.separator);
                 String imgName = split[split.length - 1];
                 //创建miniphone文件夹
-                String miniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
+                String miniPath = Constant.IMAGE_CHACE;
                 File file = new File(miniPath);
                 if (!file.exists())
                     file.mkdirs();

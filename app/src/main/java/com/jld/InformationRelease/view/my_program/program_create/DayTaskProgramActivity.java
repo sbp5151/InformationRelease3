@@ -69,9 +69,9 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_day_task_program);
         mDayTaskItems = mProgramBean.getDayProgram();
-
         mLastString = mDayTaskItems.toString();
         LogUtil.d(TAG, "mLastString:" + mLastString);
         mNames = new String[mProgramDatas.size()];
@@ -95,7 +95,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         //title
         View title = findViewById(R.id.day_task_title);
         title.findViewById(R.id.title_back).setOnClickListener(this);
-        mIb_tool = (ImageButton) findViewById(R.id.titlebar_tool);
+        mIb_tool = (ImageButton) findViewById(R.id.title_tool);
         mIb_tool.setVisibility(View.VISIBLE);
         mIb_tool.setOnClickListener(this);
         TextView title_center = (TextView) findViewById(R.id.title_center);
@@ -143,7 +143,6 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
     DayTaskAdapter.OnItemClickListen mOnItemClickListen = new DayTaskAdapter.OnItemClickListen() {
         boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
         Dialog.Builder builder = null;
-
         //节目名称设置
         @Override
         public void onNameClickListen(View view, final int position) {
@@ -229,7 +228,8 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         //结束时间设置
         @Override
         public void onStopClickListen(View view, final int position) {
-            builder = new TimePickerDialog.Builder(isLightTheme ? R.style.Material_App_Dialog_TimePicker_Light : R.style.Material_App_Dialog_TimePicker, 24, 00) {
+            builder = new TimePickerDialog.Builder(isLightTheme ? R.style.Material_App_Dialog_TimePicker_Light
+                    : R.style.Material_App_Dialog_TimePicker, 24, 00) {
                 @Override
                 public void onPositiveActionClicked(DialogFragment fragment) {//设置节目停止时间
                     TimePickerDialog dialog = (TimePickerDialog) fragment.getDialog();
@@ -243,7 +243,8 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                     for (int i = 0; i < mAdapter.datas.size(); i++) {
                         DayTaskItem item = mAdapter.datas.get(i);
                         if (i != position && !TextUtils.isEmpty(item.getStateTime()) && !TextUtils.isEmpty(item.getStopTime())) {
-                            if (TimeUtil.timeCompare(stopTime, item.getStateTime()) && TimeUtil.timeCompare(item.getStopTime(), stopTime)) {
+                            LogUtil.d(TAG, "stopTime:" + stopTime);
+                            if (!stopTime.equals("00:00:00") && TimeUtil.timeCompare(stopTime, item.getStateTime()) && TimeUtil.timeCompare(item.getStopTime(), stopTime)) {
                                 ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.play_time_error2), 3000);
                                 return;
                             }
@@ -251,14 +252,15 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                     }
 
                     //结束时间大于播放时间检测
-                    if (TextUtils.isEmpty(startTime) || TimeUtil.timeCompare(stopTime, startTime)) {
+                    if (stopTime.equals("00:00:00")||TextUtils.isEmpty(startTime) || TimeUtil.timeCompare(stopTime, startTime)) {
+                        if("00:00:00".equals(stopTime))
+                            stopTime = "24:00:00";
                         mAdapter.datas.get(position).setStopTime(stopTime);
                         mAdapter.notifyDataSetChanged();
                     } else {
                         ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.play_time_error), 3000);
                     }
                 }
-
                 @Override
                 public void onNegativeActionClicked(DialogFragment fragment) {
                     super.onNegativeActionClicked(fragment);
@@ -285,7 +287,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                 } else
                     finish();
                 break;
-            case R.id.titlebar_tool:
+            case R.id.title_tool:
                 showPopupwindow();
                 break;
         }

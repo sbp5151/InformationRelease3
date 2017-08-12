@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
@@ -29,7 +28,7 @@ public class ResetPasswordActivity extends BaseActivity implements
     // private static final String TAG = "ResetPasswordActivity";
 
     private TextView titleTextView;
-    private ImageView titleBackImageView;
+    private View mBackView;
 
     private EditText et_reset_password, et_reset_password_sure;
     private Button bt_resetpassword_sure;
@@ -57,11 +56,12 @@ public class ResetPasswordActivity extends BaseActivity implements
                     FindBackPassWordActivity.NUMBER);
         }
         titleView = findViewById(R.id.layout_reste_password_title);
-        titleTextView = (TextView) titleView.findViewById(R.id.tv_view_title_message);
+        titleTextView = (TextView) titleView.findViewById(R.id.title_center);
         titleTextView.setText(R.string.t_reset_pwd_info);
 
-        titleBackImageView = (ImageView) titleView.findViewById(R.id.iv_view_title_back);
-        titleBackImageView.setOnClickListener(this);
+        mBackView = titleView.findViewById(R.id.title_back);
+        mBackView.setOnClickListener(this);
+        titleView.findViewById(R.id.title_right).setVisibility(View.GONE);
 
         et_reset_password = (EditText) findViewById(R.id.et_reset_password);
         et_reset_password_sure = (EditText) findViewById(R.id.et_reset_password_sure);

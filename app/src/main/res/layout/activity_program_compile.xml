@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="com.jld.InformationRelease.view.my_program.program_create.ProgramTextActivity">
     <!-- fitsystemwindows : 设置应用布局时是否考虑系统窗口布局;如果为true,将调整系统窗口布局以适应你自定义的布局-->
 
@@ -15,7 +14,7 @@
             android:id="@+id/program_compile_titlebar"
             layout="@layout/my_titlebar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/title_height"
+            android:layout_height="@dimen/top_title_height"
         />
         <FrameLayout android:layout_width="match_parent"
                      android:layout_height="match_parent">

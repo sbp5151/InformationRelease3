@@ -42,15 +42,15 @@
         <activity android:name=".view.login_register.ResetPasswordActivity"/>
         <activity android:name=".view.login_register.CountryPageActivity"/>
         <activity
-            android:name=".view.login_register.RegisterActivity_Phone"
+            android:name=".view.login_register.RegisterActivity1_Phone"
             android:label="@string/title_activity_register">
         </activity>
         <activity
-            android:name=".view.login_register.RegisterActivity_Code"
+            android:name=".view.login_register.RegisterActivity2_Code"
             android:label="@string/title_activity_code">
         </activity>
         <activity
-            android:name=".view.login_register.RegisterActivity"
+            android:name=".view.login_register.RegisterActivity3"
             android:label="@string/title_activity_register">
         </activity>
         <activity android:name=".view.my_program.program_create.ProgramTextActivity"/>
@@ -92,6 +92,10 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBar"/>
         <activity android:name=".view.my_program.program_create.DayTaskProgramActivity">
+        </activity>
+        <activity android:name=".view.web_view.WebViewActivity">
+        </activity>
+        <activity android:name=".view.settings.FeedBackActivity">
         </activity>
     </application>
 

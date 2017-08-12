@@ -67,7 +67,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
     public void initView() {
         //title
         View title = findViewById(R.id.program_video_title);
-        mIb_tool = (ImageButton) title.findViewById(R.id.titlebar_tool);
+        mIb_tool = (ImageButton) title.findViewById(R.id.title_tool);
         mIb_tool.setVisibility(View.VISIBLE);
         mIb_tool.setOnClickListener(mOnClickListener);
         TextView title_right = (TextView) title.findViewById(R.id.title_right);
@@ -224,7 +224,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
                     } else
                         ToastUtil.showToast(ProgramVideoActivity.this, getString(R.string.add_video_max), 3000);
                     break;
-                case R.id.titlebar_tool:
+                case R.id.title_tool:
                     showPopupwindow();
                     break;
 //                case R.id.pp_program_push://发布

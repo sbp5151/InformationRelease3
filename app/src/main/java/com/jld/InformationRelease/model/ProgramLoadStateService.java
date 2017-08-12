@@ -19,7 +19,7 @@ import retrofit2.http.POST;
 public interface ProgramLoadStateService {
 
 
-    @POST(URLConstant.PROGRAM_LAOD_STATE)
+    @POST(URLConstant.PROGRAM_LOAD_STATE)
     Observable<ProgramPushStateResponse> loadState(
             @Body PushStateRequest body
     );

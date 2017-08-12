@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JLD发布系统</string>
+    <string name="app_name">晶凌达信息发布系统</string>
     <string name="title_activity_login">登录界面</string>
     <string name="title_activity_register">注册之输入手机号码</string>
     <string name="title_activity_code">注册之输入手机验证码</string>
@@ -13,13 +13,13 @@
 
     <string name="login_password_hint">输入密码</string>
     <string name="login_mobile_hint">输入手机号码</string>
-    <string name="regies_username">填写用户名</string>
-    <string name="regies_hint">使用真实姓名能让别人更快地找到你</string>
+    <string name="register_username">填写用户名</string>
+    <string name="register_hint">使用真实姓名能让别人更快地找到你</string>
     <string name="next_step">下一步</string>
     <string name="register_completer">完成</string>
     <string name="sure_protocol">点击下一步，既表示您已同意</string>
     <string name="tucson_protocol">《用户协议》</string>
-    <string name="regies_have_account">已有账户，点击登录</string>
+    <string name="register_have_account">已有账户，点击登录</string>
     <string name="register_hint_phone">填写手机号码</string>
     <string name="register_hint_code">填写验证码</string>
     <string name="register_hint_name">请输入用户名（选填）</string>
@@ -37,7 +37,6 @@
     <string name="action_settings">设置</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="terminal_state_offline">离线</string>
     <string name="terminal_state_online">在线</string>
     <string name="terminal_state_showdown">关机</string>
@@ -45,6 +44,7 @@
     <string name="compile">编辑</string>
     <string name="complete">完成</string>
     <string name="cancle">取消</string>
+    <string name="delete">删除</string>
     <string name="program_compile">节目编辑</string>
     <string name="push">推送</string>
     <string name="str_scan_hint">扫描二维码绑定设备</string>
@@ -78,7 +78,7 @@
     <string name="regies_code_account">中国(+86)</string>
     <string name="get_security_code">获取验证码</string>
     <string name="sure">确定</string>
-    <string name="input_regiest_number">请输入注册时填写的手机号</string>
+    <string name="input_register_number">请输入注册时填写的手机号</string>
     <string name="mobile_hint">填写手机号码</string>
     <string name="t_find_back_pwd_phone">请填写手机号码</string>
     <string name="t_find_back_pwd_text_info">信息不完整</string>
@@ -116,11 +116,11 @@
     <string name="select_model">模板选择</string>
     <string name="add">增加</string>
     <string name="select">选择</string>
-    <string name="add_video_max">最对添加10个视频广告</string>
+    <string name="add_video_max">最多添加10个视频广告</string>
     <string name="play_path_null">没有播放数据</string>
     <string name="play_first">第一个</string>
     <string name="please_compile">请编辑节目</string>
-    <string name="video_size_too_big">选择的文件大于100M</string>
+    <string name="video_size_too_big">文件不能大于100M</string>
     <string name="video_type_nonsupport">文件格式不支持</string>
     <string name="add_image_max">最多添加20张轮播图</string>
     <string name="setTab_dialog_title">请输入节目名称</string>
@@ -133,6 +133,7 @@
     <string name="day_task_compile">每日任务编辑</string>
     <string name="program_create">节目创建</string>
     <string name="inter_cut">节目插播</string>
+    <string name="program">节目</string>
     <string name="click_add_program">添加节目</string>
     <string name="click_add_start_time">播放时间</string>
     <string name="click_add_stop_time">结束时间</string>
@@ -147,5 +148,60 @@
     <string name="have_unbunding">设备已解绑</string>
     <string name="sure_push_program">确定要上传这个节目？</string>
     <string name="program_upload_ing">有其他节目正在上传！</string>
+    <string name="nik_change">用户名修改</string>
+    <string name="change_password">修改密码</string>
+    <string name="my_name">我的名字</string>
+    <string name="about_information">关于晶凌达发布系统</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="check_update">检查更新</string>
+    <string name="feed_back_text">帮助我们改进</string>
+    <string name="feed_back">意见反馈</string>
+    <string name="logout">退出登录</string>
+    <string name="information_trav_protocol">《晶凌达信息发布系统用户协议》</string>
+    <string name="copyright_tucson">版权所有 深圳晶凌达科技有限公司</string>
+    <string name="change_nick_title">用户名修改</string>
+    <string name="change_nick_hint">输入用户名</string>
+    <string name="original_password">请输入原始密码</string>
+    <string name="new_password">请输入新密码</string>
+    <string name="new_password_confirm">新密码确认</string>
+    <string name="please_input_original_password">请输入原始密码</string>
+    <string name="please_input_new_password">请输入新秘密</string>
+    <string name="please_confirm_new_password">请确认新密码</string>
+    <string name="two_password_different">两次密码不一致</string>
+    <string name="please_input_nick">请输入用户名</string>
+    <string name="web_load_null">加载出错</string>
+    <string name="team_member_pro_text">数据加载中...</string>
+    <string name="can_clear_cache">是否要清除缓存？</string>
+    <string name="cache_clear_ing">缓存清除中...</string>
+    <string name="cache_clear_succeed">缓存清理完成</string>
+    <string name="version_newest">当前为最新版本</string>
+    <string name="input_you_problem">请输入你需要反馈的问题</string>
+    <string name="problem_type">问题类型(必选)</string>
+    <string name="suggest">建议</string>
+    <string name="complaints">投诉</string>
+    <string name="sure_logout">是否退出当前账号</string>
+    <string name="feed_back_success">反馈成功</string>
+    <string name="change_success">修改成功</string>
+    <string name="feedback_not_null">内容不能为空</string>
+    <string name="feed_back_defeated">反馈失败</string>
+
+    <string name="unbind">解绑</string>
+    <string name="login_succeed">登陆成功</string>
+    <string name="user_already_exists">用户已存在</string>
+    <string name="phone_password_error">手机或者密码错误</string>
+    <string name="register_succeed">注册成功</string>
+    <string name="unbind_dev_affirm">确定要解绑该设备</string>
+    <string name="dialog_photo_icon_text">添加一张漂亮的头像秀</string>
+    <string name="dialog_photo_btn_text">拍摄新照片</string>
+    <string name="dialog_photo_btn_picture_text">从图库选取</string>
+    <string name="t_set_photo_no_sdcard">SD卡异常</string>
+    <string name="program_select">节目选择</string>
+    <string name="play_type">播放类型</string>
+    <string name="play_time_minute">时长(分钟)</string>
+    <string name="please_input_program_num">请输入播放次数</string>
+    <string name="please_input_program_time">请输入播放时长</string>
+    <string name="please_input_start_time">请选择起始时间</string>
+    <string name="please_input_stop_time">请输入结束时间</string>
+
 
 </resources>

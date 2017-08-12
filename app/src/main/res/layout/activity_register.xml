@@ -9,8 +9,8 @@
         android:id="@+id/register_title"
         layout="@layout/my_titlebar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-    />
+        android:layout_height="@dimen/top_title_height"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,64 +20,79 @@
 
         <LinearLayout
             style="@style/registerLinearLayoutStyle">
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="@dimen/register_input_icon"
                     android:layout_height="match_parent"
                     android:scaleType="center"
                     android:src="@mipmap/nike"/>
+
                 <View
                     android:layout_width="1px"
                     android:layout_height="match_parent"
                     android:background="@color/line_gray"/>
+
                 <com.jld.InformationRelease.widget.MyEditText
                     android:id="@+id/et_input_name"
                     style="@style/registerMyEditTextStyle"
                     android:hint="@string/register_hint_name"
-                />
+                    />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             style="@style/registerLinearLayoutStyle">
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="@dimen/register_input_icon"
                     android:layout_height="match_parent"
                     android:scaleType="center"
                     android:src="@mipmap/company_name"/>
+
                 <View
                     android:layout_width="1px"
                     android:layout_height="match_parent"
                     android:background="@color/line_gray"/>
+
                 <com.jld.InformationRelease.widget.MyEditText
                     android:id="@+id/et_input_companyName"
                     style="@style/registerMyEditTextStyle"
                     android:hint="@string/register_hint_companyName"
-                />
+                    />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             style="@style/registerLinearLayoutStyle">
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="@dimen/register_input_icon"
                     android:layout_height="match_parent"
                     android:scaleType="center"
                     android:src="@mipmap/lock"/>
+
                 <com.jld.InformationRelease.widget.MyEditText
                     android:id="@+id/et_input_password"
                     style="@style/registerMyEditTextStyle"
                     android:hint="@string/register_hint_password"
                     android:inputType="textPassword"
-                />
+                    />
+
                 <View
                     android:layout_width="1px"
                     android:layout_height="match_parent"
@@ -87,24 +102,29 @@
 
         <LinearLayout
             style="@style/registerLinearLayoutStyle">
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="@dimen/register_input_icon"
                     android:layout_height="match_parent"
                     android:scaleType="center"
                     android:src="@mipmap/lock"/>
+
                 <View
                     android:layout_width="1px"
                     android:layout_height="match_parent"
                     android:background="@color/line_gray"/>
+
                 <com.jld.InformationRelease.widget.MyEditText
                     android:id="@+id/et_input_passwordAgain"
                     style="@style/registerMyEditTextStyle"
                     android:hint="@string/register_hint_passwordAgain"
                     android:inputType="textPassword"
-                />
+                    />
             </LinearLayout>
         </LinearLayout>
 
@@ -112,6 +132,6 @@
             android:id="@+id/bt_register_complete"
             style="@style/registerNextStyle"
             android:text="@string/register_completer"
-        />
+            />
     </LinearLayout>
 </LinearLayout>

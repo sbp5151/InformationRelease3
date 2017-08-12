@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                 >
+
+    <LinearLayout android:layout_width="@dimen/dialog_width"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/dialog_shape"
+                  android:layout_marginTop="13dp"
+                  android:layout_marginLeft="13dp"
+                  android:orientation="vertical">
+        <TextView
+            android:id="@+id/dialog1_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_title_height"
+            android:gravity="center"
+            android:text="@string/change_nick_title"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/dialog_title_size"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_content_height"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/et_input_name"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="@string/change_nick_hint"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/dialog_content_size"/>
+
+            <View
+                android:layout_width="150dp"
+                android:layout_height="1px"
+                android:background="@color/colorLine"
+            />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"
+        />
+        <Button
+            android:id="@+id/btn_change_nike_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_bottom_height"
+            android:background="@drawable/dialog_button_pre_bg"
+            android:gravity="center"
+            android:text="@string/confirm"
+            android:textColor="#000"
+            android:textSize="16dp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/dialog1_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:src="@mipmap/close_dialog"/>
+</RelativeLayout>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00000000"
+    android:orientation="vertical"
+    android:padding="5dip" >
+
+    <LinearLayout
+        android:layout_margin="12dp"
+        android:layout_width="@dimen/width_phone_dialog"
+        android:layout_height="@dimen/heigth_phone_dialog"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_dialog_white_bg"
+        android:orientation="vertical"
+        android:paddingLeft="24dip"
+        android:paddingRight="24dip" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_text_phone_dialog"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:text="@string/dialog_photo_icon_text"
+            android:textColor="@color/graysh"
+            android:textSize="@dimen/sp_18" />
+
+        <!-- 拍新照片 -->
+
+        <Button
+            android:id="@+id/capture_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_red_frame_backgroud"
+            android:onClick="myset_portrait_picture"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:text="@string/dialog_photo_btn_text"
+            android:textColor="@color/backgroud_red"
+            android:textSize="18dp" />
+
+        <!-- 从图库选取 -->
+
+        <Button
+            android:id="@+id/phohe_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:background="@drawable/shape_red_frame_backgroud"
+            android:onClick="myset_portrait_picture"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:text="@string/dialog_photo_btn_picture_text"
+            android:textColor="@color/backgroud_red"
+            android:textSize="18dp" />
+    </LinearLayout>
+    
+     <ImageView
+            android:id="@+id/dialog_close_iv"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@mipmap/close_dialog" />
+
+</RelativeLayout>

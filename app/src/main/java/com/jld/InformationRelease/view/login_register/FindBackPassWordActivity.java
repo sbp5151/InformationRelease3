@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jld.InformationRelease.R;
@@ -35,29 +34,31 @@ public class FindBackPassWordActivity extends BaseActivity implements OnClickLis
     private static final int GET_VERIFY = 0x21;
     private static final int GET_CODE_TAG = 666;
 
-
     private EditText et_find_password_number, et_security_code;
     private TextView tv_find_password_country;
     private Button bt_findpassword_get_code, bt_findpassword_sure;
     private SharedPreferences sp;
     private TimeCount time;
-    private ImageView backImageView;
-    private View titleView;
     private String mCode;
+    private View mBackView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_findback_password);
-        titleView = findViewById(R.id.find_back_title_rl);
         sp = getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE);
         initView();
         time = new TimeCount(60000, 1000);// 构造CountDownTimer对象
     }
 
     private void initView() {
-        backImageView = (ImageView) findViewById(R.id.imagev_find_password_back);
-        backImageView.setOnClickListener(this);
+
+        View title_view = findViewById(R.id.layout_reste_password_title);
+        TextView titleTextView = (TextView) title_view.findViewById(R.id.title_center);
+        titleTextView.setText(R.string.t_reset_pwd_info);
+        mBackView = title_view.findViewById(R.id.title_back);
+        mBackView.setOnClickListener(this);
+        title_view.findViewById(R.id.title_right).setVisibility(View.GONE);
 
         tv_find_password_country = (TextView) findViewById(R.id.tv_find_password_country);
         tv_find_password_country.setOnClickListener(this);
@@ -92,7 +93,7 @@ public class FindBackPassWordActivity extends BaseActivity implements OnClickLis
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
-            case R.id.imagev_find_password_back://返回
+            case R.id.title_back://返回
                 finish();
                 break;
             case R.id.bt_findpassword_get_code://获取验证码

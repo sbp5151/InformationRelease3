@@ -3,7 +3,9 @@ package com.jld.InformationRelease.model;
 import android.content.Context;
 
 import com.jld.InformationRelease.base.BaseObserver2;
+import com.jld.InformationRelease.bean.request_bean.ChangeNickRequest;
 import com.jld.InformationRelease.bean.request_bean.ChangePWRequestBean;
+import com.jld.InformationRelease.bean.request_bean.FeedBackRequest;
 import com.jld.InformationRelease.bean.request_bean.RegisterRequestBean;
 import com.jld.InformationRelease.bean.request_bean.RetrievePWRequestBean;
 import com.jld.InformationRelease.bean.request_bean.UserRequest;
@@ -70,7 +72,7 @@ public class UserModel {
      * @param callBack
      * @param requestTag
      */
-    public void RetrievePW(RetrievePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+    public void retrievePW(RetrievePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
         LogUtil.d(TAG, "retrievePW:");
         mUserService.retrievePassword(body)
                 .subscribeOn(Schedulers.io())
@@ -79,15 +81,44 @@ public class UserModel {
     }
 
     /**
-     * 秘密修改
+     * 密码修改
      *
      * @param body
      * @param callBack
      * @param requestTag
      */
-    public void ChangePw(ChangePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
-        LogUtil.d(TAG, "ChangePw:");
+    public void changePw(ChangePWRequestBean body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "changePw:");
         mUserService.changerPassword(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));
+    }
+
+    /**
+     * 用户名修改
+     *
+     * @param body
+     * @param callBack
+     * @param requestTag
+     */
+    public void changeNick(ChangeNickRequest body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "ChangeNick:");
+        mUserService.changeNick(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));
+    }
+
+    /**
+     * 意见反馈
+     * @param body
+     * @param callBack
+     * @param requestTag
+     */
+    public void feedBack(FeedBackRequest body, final IPresenterListen<UserResponse> callBack, final int requestTag) {
+        LogUtil.d(TAG, "feedBack:");
+        mUserService.feedBack(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseObserver2<UserResponse>(callBack, requestTag));

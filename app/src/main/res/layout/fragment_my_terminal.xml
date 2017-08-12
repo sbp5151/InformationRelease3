@@ -4,14 +4,22 @@
               android:layout_height="match_parent"
               tools:context="com.jld.InformationRelease.view.my_terminal.MyTerminalFragment"
               android:orientation="vertical">
-
    <include
        android:id="@+id/my_terminal_title"
        layout="@layout/my_toolbar"
        android:layout_width="match_parent"
-       android:layout_height="@dimen/title_height"/>
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/terminal_recycler_view"
+       android:layout_height="@dimen/top_title_height"/>
+   <android.support.v4.widget.SwipeRefreshLayout
+       android:id="@+id/terminal_swipe_refresh"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"/>
+       android:layout_height="match_parent"
+       android:layout_below="@+id/my_progarm_title">
+      <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+          android:id="@+id/terminal_recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+
+   </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

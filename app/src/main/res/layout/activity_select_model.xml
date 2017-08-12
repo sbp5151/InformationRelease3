@@ -12,7 +12,7 @@
     <include
         android:id="@+id/title_select_model"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
+        android:layout_height="@dimen/top_title_height"
         layout="@layout/my_titlebar"
     />
     <android.support.v7.widget.RecyclerView

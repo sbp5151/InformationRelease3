@@ -13,6 +13,7 @@ import android.os.Parcelable;
  */
 public class DayTaskItem implements Parcelable {
 
+    private String type;
     private String programName;
     private String stateTime;
     private String stopTime;
@@ -26,6 +27,7 @@ public class DayTaskItem implements Parcelable {
         stateTime = in.readString();
         stopTime = in.readString();
         programLocalId = in.readString();
+        type = in.readString();
     }
 
     public static final Creator<DayTaskItem> CREATOR = new Creator<DayTaskItem>() {
@@ -51,6 +53,15 @@ public class DayTaskItem implements Parcelable {
         parcel.writeString(stateTime);
         parcel.writeString(stopTime);
         parcel.writeString(programLocalId);
+        parcel.writeString(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getProgramLocalId() {
@@ -87,8 +98,9 @@ public class DayTaskItem implements Parcelable {
 
     @Override
     public String toString() {
-        return "DayTaskBean{" +
-                "programName='" + programName + '\'' +
+        return "DayTaskItem{" +
+                "type='" + type + '\'' +
+                ", programName='" + programName + '\'' +
                 ", stateTime='" + stateTime + '\'' +
                 ", stopTime='" + stopTime + '\'' +
                 ", programLocalId='" + programLocalId + '\'' +

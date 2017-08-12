@@ -37,6 +37,7 @@ public class DayTaskService extends Service implements IViewToPresenter<ProgramR
      * 当前任务的节目ID
      */
     private String mProgramID;
+    private String mLastProgramID;
     /**
      * 当前加载的节目ID
      */
@@ -111,6 +112,7 @@ public class DayTaskService extends Service implements IViewToPresenter<ProgramR
                         if (!TextUtils.isEmpty(mLoadProgramID) &&
                                 (TextUtils.isEmpty(mProgramID) || !mLoadProgramID.equals(mProgramID)))
                             loadProgram(mLoadProgramID);
+                        mLastProgramID = mProgramID;
                         mProgramID = mLoadProgramID;
                     }
                 }
@@ -139,8 +141,10 @@ public class DayTaskService extends Service implements IViewToPresenter<ProgramR
                 message.what = MainActivity.REPLACE_FRAGMENT;
                 mMainHandler.sendMessage(message);
                 mProgramID = mLoadProgramID;
+                return;
             }
         }
+        mProgramID = mLastProgramID;
     }
 
     @Override
@@ -178,6 +182,7 @@ public class DayTaskService extends Service implements IViewToPresenter<ProgramR
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
-
+        //加载失败
+        mProgramID = mLastProgramID;
     }
 }

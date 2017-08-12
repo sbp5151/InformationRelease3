@@ -33,6 +33,7 @@ public class VpImg1Adapter extends PagerAdapter {
         mContext = context;
         for (String url : imgUlrs) {
             ImageView imageView = new ImageView(mContext);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Request request = Glide.with(mContext)
                     .load(url)
                     .placeholder(R.mipmap.img_load_error)

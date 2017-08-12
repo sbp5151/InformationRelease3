@@ -30,5 +30,17 @@ public class URLConstant {
      */
     public static final String PROGRAM_BACK = "/program/getpushdevicepro";
 
+    /**
+     * 检查设备是否被绑定
+     */
+    public static final String CHECK_BIND = "/device/checkbind";
 
+    /**
+     * 在线时间更新
+     */
+    public static final String UPDATE_TIME = "device/updatedevicetime";
+    /**
+     * 获取设备ID
+     */
+    public static final String GET_DEV_ID = "device/getidbymac";
 }

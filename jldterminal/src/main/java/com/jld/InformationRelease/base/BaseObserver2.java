@@ -20,11 +20,9 @@ public  class BaseObserver2<T> implements Observer<T> {
         mRequestTag = requestTag;
         mCallback = callback;
     }
-
     @Override
     public void onSubscribe(Disposable d) {
         mCallback.beforeRequest(mRequestTag);
-
     }
 
     @Override

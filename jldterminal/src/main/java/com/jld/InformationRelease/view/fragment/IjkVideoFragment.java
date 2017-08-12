@@ -1,6 +1,5 @@
 package com.jld.InformationRelease.view.fragment;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -13,6 +12,7 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.jld.InformationRelease.MyApplication;
 import com.jld.InformationRelease.R;
+import com.jld.InformationRelease.dialog.MyProgressDialog;
 import com.jld.InformationRelease.ijk.common.PlayerManager;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.view.MainActivity;
@@ -36,7 +36,7 @@ public class IjkVideoFragment extends Fragment implements PlayerManager.PlayerSt
             activity.hiedSystemUi();
         }
     };
-    private ProgressDialog mProgressDialog;
+    private MyProgressDialog mProgressDialog;
 
     public static IjkVideoFragment getInstance(ArrayList<String> videoPath) {
         IjkVideoFragment ijkVideoFragment = new IjkVideoFragment();
@@ -70,7 +70,7 @@ public class IjkVideoFragment extends Fragment implements PlayerManager.PlayerSt
         LogUtil.d(TAG, "onCreateView:" + mUrl);
         if (mUrl != null && mUrl.size() > 0) {
             initPlayer(view);
-            mProgressDialog = ProgressDialog.show(activity, "提示", "视频正在缓冲...");
+            mProgressDialog = new MyProgressDialog(activity, "");
 
         }
         return view;
@@ -115,7 +115,7 @@ public class IjkVideoFragment extends Fragment implements PlayerManager.PlayerSt
             httpProxyCacheServer.unregisterCacheListener(cacheListener);
         if (playerManager != null)
             playerManager.onDestroy();
-        if (mProgressDialog != null && mProgressDialog.isShowing())
+        if (mProgressDialog != null && mProgressDialog.getDialog() != null && mProgressDialog.getDialog().isShowing())
             mProgressDialog.dismiss();
     }
 
@@ -135,15 +135,15 @@ public class IjkVideoFragment extends Fragment implements PlayerManager.PlayerSt
     @Override
     public void onLoading() {
         LogUtil.d(TAG, "onLoading");
-        if (!mProgressDialog.isShowing())
-            mProgressDialog.show();
+        if (mProgressDialog != null && mProgressDialog.getDialog() != null&& !mProgressDialog.getDialog().isShowing())
+            mProgressDialog.show(activity.getFragmentManager(), "dialog");
     }
 
     @Override
     public void onPlay() {
         LogUtil.d(TAG, "onPlay");
         activity.hiedSystemUi();
-        if (mProgressDialog.isShowing())
+        if (mProgressDialog != null&& mProgressDialog.getDialog() != null && mProgressDialog.getDialog().isShowing())
             mProgressDialog.dismiss();
     }
 

@@ -132,6 +132,7 @@ public class ProgramTextFragment extends Fragment {
     }
 
 
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     public void initView(View view) {
         //中间

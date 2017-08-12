@@ -1,11 +1,14 @@
 package com.jld.InformationRelease.view;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,12 +31,15 @@ import com.jld.InformationRelease.JPushReceiver;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.base.BaseResponse;
+import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.base.IViewToPresenter;
 import com.jld.InformationRelease.base.SimpleIViewToPresenter;
+import com.jld.InformationRelease.bean.request.CheckBindRequest;
 import com.jld.InformationRelease.bean.response.FileResponseBean;
 import com.jld.InformationRelease.bean.response.ProgramResponseBean;
 import com.jld.InformationRelease.bean.response.PushResponse;
 import com.jld.InformationRelease.model.GetScreenModel;
+import com.jld.InformationRelease.presenter.CheckBindPresenter;
 import com.jld.InformationRelease.presenter.FilePresenter;
 import com.jld.InformationRelease.presenter.GetScreenPresenter;
 import com.jld.InformationRelease.presenter.LoadProgramPresenter;
@@ -43,6 +50,8 @@ import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.DeviceUtil;
 import com.jld.InformationRelease.util.GeneralUtil;
 import com.jld.InformationRelease.util.LogUtil;
+import com.jld.InformationRelease.util.MD5Util;
+import com.jld.InformationRelease.util.MacUtil;
 import com.jld.InformationRelease.util.ModelIds;
 import com.jld.InformationRelease.util.VolumeUtil;
 import com.jld.InformationRelease.view.fragment.DefaultFragment;
@@ -63,6 +72,12 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     private static final int GET_SCREEN_URL_REQUESTTAG = 0x22;
     //节目替换
     public static final int REPLACE_FRAGMENT = 0x24;
+    //隐藏系统UI
+    public static final int HIED_SYSTEM_UI = 0x25;
+    //检查设备是否被绑定
+    public static final int CHECK_BIND_REQEST = 0x26;
+    //在线时间更新
+    public static final int UPDATE_TIME_REQUEST = 0x27;
     //当前节目ID
     private String mProgramID;
     //当前加载的节目ID
@@ -90,27 +105,36 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                         replaceFragment(data);
                     }
                     break;
+                case HIED_SYSTEM_UI:
+                    hiedSystemUi();
+                    break;
             }
         }
     };
     private DayTaskService.MyBinder mMyBinder;
+    private NetworkReceiver mNetworkReceiver;
+    private SharedPreferences mSp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.d(TAG, "onCreate");
-
         hiedSystemUi();
         setContentView(R.layout.activity_main);
         //注册极光推送监听
         JPushReceiver.sendListener(this);
         dataDispose(null, false);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        mNetworkReceiver = new NetworkReceiver();
+        registerReceiver(mNetworkReceiver, filter);
+        mSp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
         //闹钟测试
 //        DayTask.alarmTask(MainActivity.this);
     }
 
-
-    public void hiedSystemUi(){
+    public void hiedSystemUi() {
         int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 //                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY    //点击不显示系统栏
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -118,6 +142,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; //hide navigationBar
         getWindow().getDecorView().setSystemUiVisibility(uiFlags);
     }
+
     /**
      * 极光推送返回监听
      *
@@ -293,6 +318,15 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             presenter.programLoadSucceedBack(deviceId, mLoadProgramID, LOAD_PROGRAM_BACK);
         } else if (requestTag == LOAD_PROGRAM_BACK) {
             LogUtil.d(TAG, "反馈成功");
+        } else if (requestTag == CHECK_BIND_REQEST) {//绑定检查
+            String result = data.getResult();
+            if (result.equals("0")) {//已绑定
+                mSp.edit().putBoolean(Constant.DEVICE_ISBINDING, true).apply();
+            } else {//未绑定
+                mSp.edit().putBoolean(Constant.DEVICE_ISBINDING, false).apply();
+                toActivity(QRCodeActivity.class);
+                finish();
+            }
         }
     }
 
@@ -340,6 +374,16 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_COMMON)) {//普通任务
             LogUtil.d(TAG, "普通任务加载完毕:");
             replaceFragment(data);
+        } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_URGENCY)) {//插播任务
+            LogUtil.d(TAG, "插播任务加载完毕:");
+            DayTaskItem SpotsData = mProgramData.getItem().getDayProgram().get(0);
+            if (SpotsData.getType().equals("0")) {//按时
+
+            } else if (SpotsData.getType().equals("1")) {//按次
+
+            } else if (SpotsData.getType().equals("2")) {//时间段
+
+            }
         }
     }
 
@@ -353,7 +397,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     //节目替换
     private synchronized void replaceFragment(ProgramResponseBean data) {
-        if(mIsStop){
+        if (mIsStop) {
             mSaveProgramData = data;
             return;
         }
@@ -411,10 +455,18 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     @Override
     protected void onResume() {
         super.onResume();
-        if(mSaveProgramData!=null){
+        if (mSaveProgramData != null) {
             replaceFragment(mSaveProgramData);
             mSaveProgramData = null;
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        LogUtil.d(TAG, "dispatchTouchEvent");
+        mHandler.removeMessages(HIED_SYSTEM_UI);
+        mHandler.sendEmptyMessageDelayed(HIED_SYSTEM_UI, 3000);
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -457,6 +509,8 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         LogUtil.d(TAG, "onDestroy");
         if (mTaskServiceIsBind && mMyBinder != null)
             unbindService(con);
+        if (mNetworkReceiver != null)
+            unregisterReceiver(mNetworkReceiver);
     }
 
     @Override
@@ -470,4 +524,23 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    private void checkBind() {
+        //检查设备是否被绑定
+        CheckBindPresenter checkBindPresenter = new CheckBindPresenter(this, this);
+        String mDecIMEI = MacUtil.getIMEI(this);
+        String sign = MD5Util.getMD5(Constant.S_KEY + mDecIMEI);
+        CheckBindRequest body = new CheckBindRequest(mDecIMEI, sign);
+        checkBindPresenter.deviceCheckBind(body, CHECK_BIND_REQEST);
+    }
+
+    class NetworkReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LogUtil.d(TAG, "onReceive:" + intent.getAction());
+            checkBind();
+        }
+    }
+
+
 }

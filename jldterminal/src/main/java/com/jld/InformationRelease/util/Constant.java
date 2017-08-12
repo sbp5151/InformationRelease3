@@ -76,4 +76,8 @@ public class Constant {
      * 每日任务节目类型
      */
     public static final String PROGRAM_TYPE_DAY = "2";
+    /**
+     * 紧急插播
+     */
+    public static final String PROGRAM_TYPE_URGENCY = "3";
 }

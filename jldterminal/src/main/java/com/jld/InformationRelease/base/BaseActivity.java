@@ -26,9 +26,7 @@ public class BaseActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN //hide statusBar
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; //hide navigationBar
         getWindow().getDecorView().setSystemUiVisibility(uiFlags);
-
     }
-
     public void toActivity(Class activity){
         Intent intent = new Intent(this, activity);
         startActivity(intent);

@@ -46,6 +46,7 @@ import com.jld.InformationRelease.presenter.LoadProgramPresenter;
 import com.jld.InformationRelease.presenter.ProgramLoadSucceedPresenter;
 import com.jld.InformationRelease.presenter.UploadScreenPresenter;
 import com.jld.InformationRelease.service.DayTaskService;
+import com.jld.InformationRelease.service.SpotsService;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.DeviceUtil;
 import com.jld.InformationRelease.util.GeneralUtil;
@@ -114,6 +115,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     private DayTaskService.MyBinder mMyBinder;
     private NetworkReceiver mNetworkReceiver;
     private SharedPreferences mSp;
+    private SpotsService.SpotsBinder mSpotsBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +126,11 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         //注册极光推送监听
         JPushReceiver.sendListener(this);
         dataDispose(null, false);
+
+        //开启插播service
+        Intent intent = new Intent(MainActivity.this, SpotsService.class);
+        startActivity(intent);
+        bindService(intent,mConn,BIND_AUTO_CREATE);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -386,7 +393,16 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             }
         }
     }
+    ServiceConnection mConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mSpotsBinder = (SpotsService.SpotsBinder) iBinder;
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
 
+        }
+    };
     private void stopTaskService() {
         mMyBinder.stopLoop();
         if (mTaskServiceIsBind) {
@@ -511,6 +527,8 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             unbindService(con);
         if (mNetworkReceiver != null)
             unregisterReceiver(mNetworkReceiver);
+        if(mSpotsBinder!=null)
+            unbindService(mConn);
     }
 
     @Override
@@ -541,6 +559,4 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             checkBind();
         }
     }
-
-
 }

@@ -17,7 +17,7 @@ import com.jld.InformationRelease.util.TimeUtil;
 
 public class SpotsService extends Service {
 
-    private MyBind mMyBind;
+    private SpotsBinder mMyBind;
     private OnSportStopListen mOnSportStopListen;
     public static final int DURATION_STOP = 0x01;
     public static final String TAG = "SpotsService";
@@ -39,12 +39,30 @@ public class SpotsService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         if (mMyBind == null)
-            mMyBind = new MyBind();
+            mMyBind = new SpotsBinder();
         return mMyBind;
     }
 
-    class MyBind extends Binder {
+    @Override
+    public boolean onUnbind(Intent intent) {
+        isGetTime = false;
+        mHandler.removeMessages(DURATION_STOP);
+        return super.onUnbind(intent);
+    }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        LogUtil.d(TAG,"onCreate");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LogUtil.d(TAG,"onStartCommand");
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+  public class SpotsBinder extends Binder {
         public void setOnSportStopListen(OnSportStopListen onSportStopListen) {
             mOnSportStopListen = onSportStopListen;
         }
@@ -55,6 +73,8 @@ public class SpotsService extends Service {
         public void setPeriodData(String startTime, String stopTime) {
             mStartTime = startTime;
             mStopTime = stopTime;
+            isGetTime = false;
+            mHandler.postDelayed(timeRun, 1000 * 10);
         }
 
         /**
@@ -65,6 +85,7 @@ public class SpotsService extends Service {
         public void setDuration(String duration) {
             try {
                 int iDuration = Integer.parseInt(duration);
+                mHandler.removeMessages(DURATION_STOP);
                 mHandler.sendEmptyMessageDelayed(DURATION_STOP, iDuration * 60 * 1000);
                 mOnSportStopListen.onProgramStart();
             } catch (Exception e) {
@@ -74,19 +95,23 @@ public class SpotsService extends Service {
     }
 
     boolean isGetTime = true;
+    boolean isStartTime = false;
     Runnable timeRun = new Runnable() {
         @Override
         public void run() {
+            isGetTime = true;
+            isStartTime = false;
             while (isGetTime) {
                 long curTime = System.currentTimeMillis();
                 curTime = curTime / 1000;
                 curTime = curTime * 1000;
                 LogUtil.d(TAG, "当前系统时间:" + curTime);
                 if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mStopTime)))) {
-
                     mOnSportStopListen.onProgramStop();
-                } else if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mStartTime)))) {
+                    isGetTime = false;
+                } else if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mStartTime))) && !isStartTime) {
                     mOnSportStopListen.onProgramStart();
+                    isStartTime = true;
                 }
                 Sleep5s();
             }
@@ -103,6 +128,7 @@ public class SpotsService extends Service {
 
     public interface OnSportStopListen {
         void onProgramStop();
+
         void onProgramStart();
     }
 }

@@ -62,7 +62,7 @@ import com.jld.InformationRelease.view.fragment.ProgramTextFragment;
 
 import java.io.File;
 
-public class MainActivity extends BaseActivity implements JPushReceiver.JPushListener, IViewToPresenter<BaseResponse> {
+public class MainActivity extends BaseActivity implements JPushReceiver.JPushListener, IViewToPresenter<BaseResponse>, SpotsService.OnSportStopListen {
 
     private static final String TAG = "MainActivity";
     //加载节目请求标识
@@ -86,6 +86,8 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
 
     //每日任务服务是否处于绑定状态
     private boolean mTaskServiceIsBind = false;
+    //插播是否处于绑定状态
+    private boolean mSpotsServiceIsBind = false;
     //activity是否处于stop状态
     private boolean mIsStop = false;
 
@@ -125,13 +127,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         setContentView(R.layout.activity_main);
         //注册极光推送监听
         JPushReceiver.sendListener(this);
-        dataDispose(null, false);
-
-        //开启插播service
-        Intent intent = new Intent(MainActivity.this, SpotsService.class);
-        startActivity(intent);
-        bindService(intent,mConn,BIND_AUTO_CREATE);
-
+        dataSave(null);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mNetworkReceiver = new NetworkReceiver();
@@ -317,7 +313,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             LogUtil.d(TAG, "加载节目成功并反馈:" + mLoadProgramID);
             Toast.makeText(this, getString(R.string.load_program_succeed), Toast.LENGTH_SHORT).show();
             //数据处理
-            dataDispose(programResponseBean, false);
+            dataSave(programResponseBean);
             //加载成功数据反馈
             SharedPreferences sp = getSharedPreferences(Constant.share_key, MODE_PRIVATE);
             String deviceId = sp.getString(Constant.DEVICE_ID, "");
@@ -338,19 +334,20 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
     }
 
     /**
-     * 节目数据处理
+     * 数据保存
      *
      * @param data
-     * @param isDayTask
      */
-    private void dataDispose(ProgramResponseBean data, boolean isDayTask) {
+    private void dataSave(ProgramResponseBean data) {
         LogUtil.d(TAG, "数据处理:" + data);
-        if (data != null && !isDayTask) {//保存数据
-            String play_data = new Gson().toJson(data);
-            SharedPreferences.Editor sp_edit = getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
-            sp_edit.putString(Constant.PLAY_DATA, play_data);
-            sp_edit.apply();
-        } else if (!isDayTask) {//展示历史数据
+        if (data != null) {//保存数据
+            if (!data.getItem().getType().equals(Constant.PROGRAM_TYPE_URGENCY)) {//插播节目不用保存数据
+                String play_data = new Gson().toJson(data);
+                SharedPreferences.Editor sp_edit = getSharedPreferences(Constant.share_key, MODE_PRIVATE).edit();
+                sp_edit.putString(Constant.PLAY_DATA, play_data);
+                sp_edit.apply();
+            }
+        } else if (data == null) {//展示历史数据
             String play_data = getSharedPreferences(Constant.share_key, MODE_PRIVATE).getString(Constant.PLAY_DATA, "");
             LogUtil.d(TAG, "展示历史数据:" + play_data);
             if (!TextUtils.isEmpty(play_data)) {
@@ -368,46 +365,92 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
                 replaceFragment(data);
                 return;
             }
-        } else if (isDayTask && data == null) {
-            return;
         }
+        dataDispose(data);
+    }
+
+    /**
+     * 节目数据处理
+     *
+     * @param data
+     */
+    private void dataDispose(ProgramResponseBean data) {
         mProgramData = data;
         mProgramID = mLoadProgramID;
-        if (mMyBinder != null)//停止每日任务，重新加载节目
-            stopTaskService();
+        //停止每日服务
+        stopTaskService();
+        //停止插播服务
+        stopSpotsService();
         if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务
-            LogUtil.d(TAG, "每日任务数据加载完毕:");
+            LogUtil.d(TAG, "每日任务数据加载完毕:" + mProgramData);
             startTaskService();
+            mSpotsBinder.setOnSportStopListen(this);
         } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_COMMON)) {//普通任务
-            LogUtil.d(TAG, "普通任务加载完毕:");
+            LogUtil.d(TAG, "普通任务加载完毕:" + mProgramData);
             replaceFragment(data);
         } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_URGENCY)) {//插播任务
-            LogUtil.d(TAG, "插播任务加载完毕:");
-            DayTaskItem SpotsData = mProgramData.getItem().getDayProgram().get(0);
-            if (SpotsData.getType().equals("0")) {//按时
-
-            } else if (SpotsData.getType().equals("1")) {//按次
-
-            } else if (SpotsData.getType().equals("2")) {//时间段
-
-            }
+            LogUtil.d(TAG, "插播任务加载完毕:" + mProgramData);
+            //开启插播service
+            Intent intent = new Intent(MainActivity.this, SpotsService.class);
+            startService(intent);
+            bindService(intent, mConn, BIND_AUTO_CREATE);
         }
     }
+
+    //插播节目 停止播放
+    @Override
+    public void onProgramStop() {
+        LogUtil.d(TAG, "onProgramStop");
+        dataSave(null);//插播节目结束，继续播放原来数据
+        stopSpotsService();//停止插播服务
+    }
+
+    //插播节目 开始播放
+    @Override
+    public void onProgramStart(ProgramResponseBean data) {
+        LogUtil.d(TAG, "onProgramStart:" + data);
+        replaceFragment(data);
+    }
+
     ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mSpotsBinder = (SpotsService.SpotsBinder) iBinder;
+            mSpotsServiceIsBind = true;
+            DayTaskItem SpotsData = mProgramData.getItem().getDayProgram().get(0);
+            mSpotsBinder.setOnSportStopListen(MainActivity.this);
+            mSpotsBinder.setData(SpotsData);
         }
+
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            mSpotsServiceIsBind = false;
         }
     };
+
+    /**
+     * 停止插播服务
+     */
+    private void stopSpotsService() {
+        if (mSpotsBinder != null) {
+            mSpotsBinder.stopService();
+            if (mSpotsServiceIsBind) {
+                unbindService(mConn);
+                mSpotsServiceIsBind = false;
+            }
+        }
+    }
+
+    /**
+     * 停止每日任务服务
+     */
     private void stopTaskService() {
-        mMyBinder.stopLoop();
-        if (mTaskServiceIsBind) {
-            unbindService(con);
-            mTaskServiceIsBind = false;
+        if (mMyBinder != null) {
+            mMyBinder.stopLoop();
+            if (mTaskServiceIsBind) {
+                unbindService(con);
+                mTaskServiceIsBind = false;
+            }
         }
     }
 
@@ -527,7 +570,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
             unbindService(con);
         if (mNetworkReceiver != null)
             unregisterReceiver(mNetworkReceiver);
-        if(mSpotsBinder!=null)
+        if (mSpotsBinder != null)
             unbindService(mConn);
     }
 
@@ -551,6 +594,7 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         CheckBindRequest body = new CheckBindRequest(mDecIMEI, sign);
         checkBindPresenter.deviceCheckBind(body, CHECK_BIND_REQEST);
     }
+
 
     class NetworkReceiver extends BroadcastReceiver {
         @Override

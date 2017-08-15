@@ -171,6 +171,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".receiver.DayTaskReceiver"
             android:enabled="true"
@@ -182,6 +183,13 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <service
+            android:name=".service.SpotsService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
         <service
             android:name=".service.UpdateTimeService"
             android:enabled="true"

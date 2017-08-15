@@ -8,6 +8,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 
+import com.jld.InformationRelease.base.DayTaskItem;
+import com.jld.InformationRelease.base.IViewToPresenter;
+import com.jld.InformationRelease.bean.response.ProgramResponseBean;
+import com.jld.InformationRelease.presenter.LoadProgramPresenter;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 
@@ -15,11 +19,16 @@ import com.jld.InformationRelease.util.TimeUtil;
  * Created by boping on 2017/8/12.
  */
 
-public class SpotsService extends Service {
+public class SpotsService extends Service implements IViewToPresenter<ProgramResponseBean> {
 
     private SpotsBinder mMyBind;
     private OnSportStopListen mOnSportStopListen;
-    public static final int DURATION_STOP = 0x01;
+    private static final int DURATION_STOP = 0x01;
+    //时间
+    private static final int DURATION_REQUEST = 0x10;
+    //时间段
+    private static final int PERIOD_REQUEST = 0x11;
+
     public static final String TAG = "SpotsService";
     Handler mHandler = new Handler() {
         @Override
@@ -32,8 +41,8 @@ public class SpotsService extends Service {
             }
         }
     };
-    private String mStartTime;
-    private String mStopTime;
+    private DayTaskItem mSpotsData;
+    private LoadProgramPresenter mPresenter;
 
     @Nullable
     @Override
@@ -47,50 +56,71 @@ public class SpotsService extends Service {
     public boolean onUnbind(Intent intent) {
         isGetTime = false;
         mHandler.removeMessages(DURATION_STOP);
+        stopSelf();
         return super.onUnbind(intent);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.d(TAG,"onCreate");
+        LogUtil.d(TAG, "onCreate");
+        mPresenter = new LoadProgramPresenter(this, this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.d(TAG,"onStartCommand");
+        LogUtil.d(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
-  public class SpotsBinder extends Binder {
+    @Override
+    public void showProgress(int requestTag) {
+
+    }
+
+    @Override
+    public void hideProgress(int requestTag) {
+
+    }
+
+    @Override
+    public void loadDataSuccess(ProgramResponseBean data, int requestTag) {
+        if (requestTag == DURATION_REQUEST) {//时长
+            int iDuration = Integer.parseInt(mSpotsData.getStateTime());
+            mHandler.sendEmptyMessageDelayed(DURATION_STOP, iDuration * 60 * 1000);
+            mOnSportStopListen.onProgramStart(data);
+        } else if (requestTag == PERIOD_REQUEST) {//时间段
+            mOnSportStopListen.onProgramStart(data);
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable e, int requestTag) {
+
+    }
+
+    public class SpotsBinder extends Binder {
         public void setOnSportStopListen(OnSportStopListen onSportStopListen) {
             mOnSportStopListen = onSportStopListen;
         }
 
-        /**
-         * 插播 时间段
-         */
-        public void setPeriodData(String startTime, String stopTime) {
-            mStartTime = startTime;
-            mStopTime = stopTime;
-            isGetTime = false;
-            mHandler.postDelayed(timeRun, 1000 * 10);
+        public void setData(DayTaskItem spotsData) {
+            mSpotsData = spotsData;
+            if (mSpotsData.getType().equals("0")) {//按时
+                String programId = mSpotsData.getProgramLocalId();
+                //节目加载
+                mPresenter.LoadProgram(programId, DURATION_REQUEST);
+            } else if (mSpotsData.getType().equals("1")) {//按次 忽略
+
+            } else if (mSpotsData.getType().equals("2")) {//时间段
+                isGetTime = false;
+                mHandler.postDelayed(timeRun, 1000 * 10);
+            }
         }
 
-        /**
-         * 插播 时长
-         *
-         * @param duration
-         */
-        public void setDuration(String duration) {
-            try {
-                int iDuration = Integer.parseInt(duration);
-                mHandler.removeMessages(DURATION_STOP);
-                mHandler.sendEmptyMessageDelayed(DURATION_STOP, iDuration * 60 * 1000);
-                mOnSportStopListen.onProgramStart();
-            } catch (Exception e) {
-
-            }
+        public void stopService() {
+            mHandler.removeMessages(DURATION_STOP);
+            isGetTime = false;
         }
     }
 
@@ -106,11 +136,13 @@ public class SpotsService extends Service {
                 curTime = curTime / 1000;
                 curTime = curTime * 1000;
                 LogUtil.d(TAG, "当前系统时间:" + curTime);
-                if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mStopTime)))) {
+                if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mSpotsData.getStateTime())))) {
                     mOnSportStopListen.onProgramStop();
                     isGetTime = false;
-                } else if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mStartTime))) && !isStartTime) {
-                    mOnSportStopListen.onProgramStart();
+                } else if (curTime >= Long.parseLong(TimeUtil.dateBack(TimeUtil.timeAddDate(mSpotsData.getStopTime()))) && !isStartTime) {
+                    String programId = mSpotsData.getProgramLocalId();
+                    //节目加载
+                    mPresenter.LoadProgram(programId, PERIOD_REQUEST);
                     isStartTime = true;
                 }
                 Sleep5s();
@@ -129,6 +161,6 @@ public class SpotsService extends Service {
     public interface OnSportStopListen {
         void onProgramStop();
 
-        void onProgramStart();
+        void onProgramStart(ProgramResponseBean data);
     }
 }

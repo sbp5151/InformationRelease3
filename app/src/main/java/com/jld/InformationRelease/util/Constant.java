@@ -48,6 +48,20 @@ public class Constant {
      * 紧急插播
      */
     public static final String PROGRAM_TYPE_URGENCY = "3";
+
+    /**
+     * 节目上传失败状态
+     */
+    public static final String UPLOAD_STATE_FAIL = "-1";
+
+    /**
+     * 节目未上传状态
+     */
+    public static final String UPLOAD_STATE_NOT = "0";
+    /**
+     * 节目上传成功状态
+     */
+    public static final String UPLOAD_STATE_SUCCESS = "1";
     /**
      * 关于晶凌达信息发布系统 网页链接
      */

@@ -278,7 +278,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
         mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
         mProgramBean.setUserid(userID);//账号
 //        body.setTable_id(mProgramBean.getTable_id());
-        mProgramBean.setUpload_state("0");
+        mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         try {
             mProgramDao = ProgramDao.getInstance(ProgramTextActivity.this);
             if (mIsAgainCompile)

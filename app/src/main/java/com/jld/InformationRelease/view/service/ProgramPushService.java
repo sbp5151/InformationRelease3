@@ -194,6 +194,8 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
          */
         public void uploadDayTask(ProgramBean body, ArrayList<ProgramBean> programBeens) {
             LogUtil.d(TAG, "上传每日任务：" + body);
+            LogUtil.d(TAG, "上传每日任务：" + programBeens);
+            initData();
             isLoadDayProgram = true;
             upload_day_program_num = 0;
             mUploadDayData = body;

@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 
 import org.json.JSONException;
@@ -305,7 +306,7 @@ public class ProgramDao {
             return;
         }
         bean.setIsLoadSucceed("0");//再编辑 设备加载状态重设为0
-        bean.setUpload_state("0");//再编辑 上传状态重设为0
+        bean.setUpload_state(Constant.UPLOAD_STATE_NOT);//再编辑 上传状态重设为0
         SQLiteDatabase wDb = mDb.getWritableDatabase();
         wDb.beginTransaction();
         ContentValues content = getContentValues(bean, userID);

@@ -16,7 +16,7 @@
     </string-array>
     <string-array name="program_play_type">
         <item>播放时长</item>
-        <item>播放次数</item>
+        <!--<item>播放次数</item>-->
         <item>播放时间段</item>
     </string-array>
 

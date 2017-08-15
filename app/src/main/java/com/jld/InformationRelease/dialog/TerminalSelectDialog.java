@@ -69,6 +69,7 @@ public class TerminalSelectDialog extends DialogFragment {
         }
         ArrayList<String> select_item = new ArrayList<>();
         for (int i = 0; i < mTerminals.size(); i++) {
+
             if (mTerminals.get(i).getState().equals("1")) {//在线终端供选择
                 select_item.add("ID: " + mTerminals.get(i).getId() + "  " + mTerminals.get(i).getName());
                 if (mCheckMac != null && mCheckMac.size() > 0) {//再编辑  默认选中以前选中过的设备

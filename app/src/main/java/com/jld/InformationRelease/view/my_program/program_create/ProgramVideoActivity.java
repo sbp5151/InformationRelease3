@@ -266,7 +266,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());
         mProgramBean.setUserid(userID);//账号
-        mProgramBean.setUpload_state("0");
+        mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
         LogUtil.d(TAG, "programPush:" + mProgramBean);
@@ -309,7 +309,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());//需要推送终端的Mac地址
         mProgramBean.setUserid(userID);//账号
-        mProgramBean.setUpload_state("0");
+        mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         try {
             ProgramDao mProgramDao = ProgramDao.getInstance(this);
             if (mIsAgainCompile) {

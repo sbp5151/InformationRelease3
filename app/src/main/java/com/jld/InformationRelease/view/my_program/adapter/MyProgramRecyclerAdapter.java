@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.ProgramBean;
+import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 
@@ -90,8 +91,10 @@ public class MyProgramRecyclerAdapter extends RecyclerView.Adapter<MyProgramRecy
             }
         });
         //头像
-        if (programBean.getType().equals("2"))
+        if (programBean.getType().equals(Constant.PROGRAM_TYPE_DAY))
             holder.mIcon.setImageResource(R.mipmap.day_task);
+        else if (programBean.getType().equals(Constant.PROGRAM_TYPE_URGENCY))
+            holder.mIcon.setImageResource(R.mipmap.program_icon);
         else
             Glide.with(mContext).load(programBean.getModel_img()).into(holder.mIcon);
         if (programBean.getUpload_state() != null && programBean.getUpload_state().equals("1")) {//上传成功

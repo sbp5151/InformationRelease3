@@ -202,6 +202,7 @@
     <string name="please_input_program_time">请输入播放时长</string>
     <string name="please_input_start_time">请选择起始时间</string>
     <string name="please_input_stop_time">请输入结束时间</string>
+    <string name="spots">插播</string>
 
 
 </resources>

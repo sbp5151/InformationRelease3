@@ -19,6 +19,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
+import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
@@ -333,7 +334,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         mProgramBean.setTime(TimeUtil.getTodayDateTime());
         mProgramBean.setDayProgram(mDayTaskItems);
         mProgramBean.setUserid(userID);//账号
-        mProgramBean.setUpload_state("0");
+        mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
         try {
             ProgramDao mProgramDao = ProgramDao.getInstance(this);
@@ -368,7 +369,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         mProgramBean.setDeviceMacs(mCheckMac);//需要推送终端的Mac地址
         mProgramBean.setDayProgram(mDayTaskItems);
         mProgramBean.setUserid(userID);//账号
-        mProgramBean.setUpload_state("0");
+        mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
         LogUtil.d(TAG, "programPush:" + mProgramBean);

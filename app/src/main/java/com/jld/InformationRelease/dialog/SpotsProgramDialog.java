@@ -29,16 +29,17 @@ import com.rey.material.app.TimePickerDialog;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * Created by boping on 2017/8/11.
  */
 
-public class UrgencyProgramDialog extends DialogFragment {
+public class SpotsProgramDialog extends DialogFragment {
 
-    public static final String TAG = "UrgencyProgramDialog";
+    public static final String TAG = "SpotsProgramDialog";
     private final String[] mPlayType;
-    private final String[] mPrograms;
+    private final ArrayList<String> mNames;
     private Context mContext;
     private String mSelectPlayType;
     private int mSelectProgramPosition;
@@ -47,11 +48,11 @@ public class UrgencyProgramDialog extends DialogFragment {
     private final ArrayAdapter<String> mProgramAdapter;
     OnUrgencyProgramListen mOnUrgencyProgramListen;
 
-    public UrgencyProgramDialog(Context context, String[] programs, OnUrgencyProgramListen onUrgencyProgramListen) {
+    public SpotsProgramDialog(Context context, ArrayList<String> names, OnUrgencyProgramListen onUrgencyProgramListen) {
         mContext = context;
-        mPrograms = programs;
+        mNames = names;
         mPlayType = context.getResources().getStringArray(R.array.program_play_type);
-        mProgramAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, programs);
+        mProgramAdapter = new ArrayAdapter<>(context, R.layout.spots_program_select, names);
         mOnUrgencyProgramListen = onUrgencyProgramListen;
     }
 

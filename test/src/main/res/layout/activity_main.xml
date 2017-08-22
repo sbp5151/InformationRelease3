@@ -4,7 +4,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
-              android:background="#943"
               android:orientation="horizontal"
               tools:context="com.jld.test.MainActivity">
+
+    <Button
+        android:id="@+id/btn_send"
+        android:layout_width="wrap_content"
+        android:text="send"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

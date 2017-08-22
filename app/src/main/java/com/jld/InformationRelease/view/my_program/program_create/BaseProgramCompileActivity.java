@@ -15,7 +15,7 @@ import android.widget.PopupWindow;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.base.BaseActivity;
 import com.jld.InformationRelease.bean.ProgramBean;
-import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.bean.response_bean.DeviceBeanSimple;
 import com.jld.InformationRelease.dialog.SetProgramTabDialog;
 import com.jld.InformationRelease.dialog.TerminalSelectDialog;
 import com.jld.InformationRelease.util.Constant;
@@ -31,7 +31,7 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
     protected ProgramBean mProgramBean;
     protected SharedPreferences mSp;
     private static final String TAG = "BaseProgramCompileActivity";
-    protected ArrayList<TerminalBeanSimple> mTerminals;
+    protected ArrayList<DeviceBeanSimple> mTerminals;
     protected boolean mIsAgainCompile = false;
     protected ArrayList<String> mCheckMac = new ArrayList<>();
     protected ImageButton mIb_tool;

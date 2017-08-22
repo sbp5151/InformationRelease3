@@ -38,7 +38,7 @@ public class ProgramTextFragment extends Fragment {
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
-    private static final int IMG_CHANGE_TIME = 3000;
+    private static final int IMG_CHANGE_TIME = 6000;
     private ViewPager mVp_img;
     private ArrayList<NamePriceBean> mNamePriceBeen1 = new ArrayList<>();
     private ArrayList<NamePriceBean> mNamePriceBeen2 = new ArrayList<>();
@@ -64,9 +64,6 @@ public class ProgramTextFragment extends Fragment {
         }
     };
     private Random mRandom;
-
-    private ProgramTextFragment() {
-    }
 
     protected FragmentActivity mContext;
     protected ProgramResponseBean mData;

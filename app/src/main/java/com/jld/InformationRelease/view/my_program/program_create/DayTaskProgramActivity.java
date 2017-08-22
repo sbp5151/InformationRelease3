@@ -42,7 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 public class DayTaskProgramActivity extends BaseProgramCompileActivity implements View.OnClickListener {
 

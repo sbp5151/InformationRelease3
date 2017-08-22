@@ -35,21 +35,26 @@ public class RetrofitManager {
     //网络访问超时
     public static final int NETWORK_TIMEOUT = 60;
     private static RetrofitManager mRetrofitManager;
+    private static RetrofitManager mRetrofitManager2;
     private Context mContext;
     private static OkHttpClient mOkHttpClient;
     private Retrofit mRetrofit;
 
     public static RetrofitManager getInstance(Context context) {
         if (mRetrofitManager == null)
-            mRetrofitManager = new RetrofitManager(context);
+            mRetrofitManager = new RetrofitManager(context,URLConstant.BASE_HTTP_URL);
         return mRetrofitManager;
     }
-
-    private RetrofitManager(Context context) {
+    public static RetrofitManager getInstanceDownload(Context context) {
+        if (mRetrofitManager2 == null)
+            mRetrofitManager2 = new RetrofitManager(context,URLConstant.BASE_HTTP_URL_DOWNLOAD);
+        return mRetrofitManager2;
+    }
+    private RetrofitManager(Context context,String url) {
         mContext = context;
         initOkHttpClient();
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(URLConstant.BASE_HTTP_URL)
+                .baseUrl(url)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//设置返回类型为RXJAVA
                 .addConverterFactory(GsonConverterFactory.create()) //Gson解析
                 .client(mOkHttpClient)

@@ -175,7 +175,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, I
                 startActivity(intent);
                 break;
             case R.id.ll_set_cache_clear://清除缓存
-
                 AlertTextDialog clearCacheDialog = new AlertTextDialog(mActivity, mActivity.getString(R.string.can_clear_cache), new AlertTextDialog.OnAlertTextListen() {
                     @Override
                     public void onConfirm() {
@@ -196,6 +195,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, I
                             }
                         }, 1000);
                     }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
                 });
                 clearCacheDialog.show(getFragmentManager(), "clear_cache_dialog");
                 break;
@@ -214,6 +218,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, I
                         startActivity(loginIntent);
                         mSp.edit().putBoolean(UserConstant.IS_LOGIN, false).apply();
                         mActivity.finish();
+                    }
+
+                    @Override
+                    public void onCancel() {
+
                     }
                 });
                 logoutDialog.show(getFragmentManager(), "logout_dialog");

@@ -176,8 +176,9 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     @Override
     public void loadDataError(Throwable e, int requestTag) {
         LogUtil.d(TAG, "loadDataError:" + e.getMessage());
-        if(isLoadDayProgram)
+        if (isLoadDayProgram && mDayUploadProgramItem.size() > (upload_day_program_num - 1)) {
             mDayUploadProgramItem.get(upload_day_program_num - 1).setType(lastType);
+        }
         mCompleteListener.pushDefeated();
     }
 
@@ -275,6 +276,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
     }
 
     private String lastType;
+
     /**
      * 上传节目
      */

@@ -55,7 +55,7 @@ import static com.jld.InformationRelease.view.my_program.program_create.adapter.
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_IMG_HEAD;
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT;
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT_HEAD;
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 /**
  * 奶茶价格表 节目编辑

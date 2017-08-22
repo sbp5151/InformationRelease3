@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 @RuntimePermissions
 public class ProgramImageActivity extends BaseProgramCompileActivity {

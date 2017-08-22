@@ -33,7 +33,7 @@ import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.util.zxing.activity.CaptureActivity;
 import com.jld.InformationRelease.view.my_program.MyProgramFragment;
-import com.jld.InformationRelease.view.my_terminal.MyTerminalFragment;
+import com.jld.InformationRelease.view.my_terminal.MyDeviceFragment;
 import com.jld.InformationRelease.view.settings.SettingFragment;
 import com.jld.InformationRelease.view.system_model.SystemModelFragment;
 
@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, IViewListen<BaseResponse> {
 
     private static final String TAG = "MainActivity";
-    public MyTerminalFragment mTerminal_fragment;
+    public MyDeviceFragment mTerminal_fragment;
     private MyProgramFragment mMyProgramFragment;
     private SystemModelFragment mSystemModelFragment;
     private Fragment mScanCodeFragment;
@@ -159,9 +159,9 @@ public class MainActivity extends BaseActivity
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         if (id == R.id.menu_my_terminal) {//我的终端
-            mTerminal_fragment = (MyTerminalFragment) fm.findFragmentByTag(MY_TERMINAL_TAG);
+            mTerminal_fragment = (MyDeviceFragment) fm.findFragmentByTag(MY_TERMINAL_TAG);
             if (mTerminal_fragment == null) {
-                mTerminal_fragment = new MyTerminalFragment();
+                mTerminal_fragment = new MyDeviceFragment();
                 maps.put(id, mTerminal_fragment);
                 ft.add(R.id.main_fragment, mTerminal_fragment, MY_TERMINAL_TAG);
             } else {

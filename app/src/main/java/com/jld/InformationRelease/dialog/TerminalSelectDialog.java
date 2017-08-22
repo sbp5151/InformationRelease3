@@ -12,7 +12,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jld.InformationRelease.R;
-import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.bean.response_bean.DeviceBeanSimple;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.ToastUtil;
@@ -32,7 +32,7 @@ public class TerminalSelectDialog extends DialogFragment {
     public static final String TAG = "TerminalSelectDialog";
     private Context mContext;
     private ArrayList<String> mCheckMac;
-    protected ArrayList<TerminalBeanSimple> mTerminals;
+    protected ArrayList<DeviceBeanSimple> mTerminals;
     //供选择的终端列表
     private String[] mSelect_item_arry;
     //默认选项
@@ -55,7 +55,7 @@ public class TerminalSelectDialog extends DialogFragment {
         SharedPreferences sp = mContext.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE);
         String terminalJson = sp.getString(Constant.MY_TERMINAL, "");
         if (!TextUtils.isEmpty(terminalJson)) {
-            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<TerminalBeanSimple>>() {
+            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<DeviceBeanSimple>>() {
             }.getType());
         }
         LogUtil.d(TAG, "mTerminals:" + mTerminals);

@@ -27,22 +27,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') {
-        // if you don't use android.app.Fragment you can exclude support for them
-        exclude module: "support-v13"
-    }
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
-
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     testCompile 'junit:junit:4.12'
 
-    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.2'
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.2'
-
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.8.2'
-    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.2'
-
-    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.2'
 }

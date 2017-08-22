@@ -9,6 +9,6 @@
 
     <!-- 填充 -->
     <solid
-        android:color="#fb18de0d"/><!-- 填充的颜色 -->
+        android:color="#fb18cf0d"/><!-- 填充的颜色 -->
 
 </shape>

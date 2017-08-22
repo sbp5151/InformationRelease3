@@ -35,8 +35,8 @@ import com.jld.InformationRelease.base.BaseProgram;
 import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.bean.ProgramStateDialogItem;
+import com.jld.InformationRelease.bean.response_bean.DeviceBeanSimple;
 import com.jld.InformationRelease.bean.response_bean.ProgramPushStateResponse;
-import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.dialog.ProgramStateProgressDialog;
 import com.jld.InformationRelease.dialog.SpotsProgramDialog;
@@ -73,8 +73,8 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramRequestCode;
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramRequestCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,7 +100,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     private ProgramLoadStatePresenter mPresenter;
     private ArrayList<String> loadProgramIds = new ArrayList<>();
     private ArrayList<Integer> loadProgramTags = new ArrayList<>();
-    private ArrayList<TerminalBeanSimple> mTerminals;
+    private ArrayList<DeviceBeanSimple> mTerminals;
     private ArrayList<ProgramBean> mProgramDatas = new ArrayList<>();
     private SharedPreferences mSp;
     private SwipeRefreshLayout mRefresh;
@@ -311,7 +311,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         String terminalJson = mSp.getString(Constant.MY_TERMINAL, "");
         LogUtil.d(TAG, "terminalJson:" + terminalJson);
         if (!TextUtils.isEmpty(terminalJson)) {
-            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<TerminalBeanSimple>>() {
+            mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<DeviceBeanSimple>>() {
             }.getType());
         }
     }
@@ -526,7 +526,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     };
 
     public ProgramStateDialogItem setMacName(ProgramStateDialogItem ret, String mac) {
-        for (TerminalBeanSimple item : mTerminals) {
+        for (DeviceBeanSimple item : mTerminals) {
             if (item.getMac().equals(mac)) {
                 ret.setName(item.getName());
                 ret.setId(item.getId());

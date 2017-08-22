@@ -384,7 +384,6 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务
             LogUtil.d(TAG, "每日任务数据加载完毕:" + mProgramData);
             startTaskService();
-            mSpotsBinder.setOnSportStopListen(this);
         } else if (data.getItem().getType().equals(Constant.PROGRAM_TYPE_COMMON)) {//普通任务
             LogUtil.d(TAG, "普通任务加载完毕:" + mProgramData);
             replaceFragment(data);
@@ -594,7 +593,6 @@ public class MainActivity extends BaseActivity implements JPushReceiver.JPushLis
         CheckBindRequest body = new CheckBindRequest(mDecIMEI, sign);
         checkBindPresenter.deviceCheckBind(body, CHECK_BIND_REQEST);
     }
-
 
     class NetworkReceiver extends BroadcastReceiver {
         @Override

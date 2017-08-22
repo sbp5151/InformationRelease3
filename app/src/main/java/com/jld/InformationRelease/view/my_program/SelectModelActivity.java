@@ -24,7 +24,7 @@ import com.jld.InformationRelease.view.my_program.program_create.ProgramVideoAct
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 /**
  * 二：模板选择

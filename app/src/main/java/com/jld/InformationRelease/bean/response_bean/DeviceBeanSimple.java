@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * @creator boping
  * @create-time 2017/4/18 14:31
  */
-public class TerminalBeanSimple implements Parcelable {
+public class DeviceBeanSimple implements Parcelable {
     /**
      * 终端id
      */
@@ -45,7 +45,12 @@ public class TerminalBeanSimple implements Parcelable {
      */
     private Boolean isCheck = false;
 
-    public TerminalBeanSimple(String id, String state, String group_name, String group_id, String mac, String name) {
+    /**
+     * 设备在线时间
+     */
+    private String updatetime;
+
+    public DeviceBeanSimple(String id, String state, String group_name, String group_id, String mac, String name) {
         this.id = id;
         this.state = state;
         this.group_name = group_name;
@@ -54,29 +59,9 @@ public class TerminalBeanSimple implements Parcelable {
         this.name = name;
     }
 
-    public TerminalBeanSimple() {
+    public DeviceBeanSimple() {
     }
 
-    protected TerminalBeanSimple(Parcel in) {
-        id = in.readString();
-        state = in.readString();
-        group_name = in.readString();
-        group_id = in.readString();
-        mac = in.readString();
-        name = in.readString();
-    }
-
-    public static final Creator<TerminalBeanSimple> CREATOR = new Creator<TerminalBeanSimple>() {
-        @Override
-        public TerminalBeanSimple createFromParcel(Parcel in) {
-            return new TerminalBeanSimple(in);
-        }
-
-        @Override
-        public TerminalBeanSimple[] newArray(int size) {
-            return new TerminalBeanSimple[size];
-        }
-    };
 
     public String getMac() {
         return mac;
@@ -127,9 +112,17 @@ public class TerminalBeanSimple implements Parcelable {
         this.group_id = group_id;
     }
 
+    public String getUpdatetime() {
+        return updatetime;
+    }
+
+    public void setUpdatetime(String updatetime) {
+        this.updatetime = updatetime;
+    }
+
     @Override
     public String toString() {
-        return "TerminalBeanSimple{" +
+        return "DeviceBeanSimple{" +
                 "id='" + id + '\'' +
                 ", upload_state='" + state + '\'' +
                 ", group_name='" + group_name + '\'' +
@@ -137,6 +130,7 @@ public class TerminalBeanSimple implements Parcelable {
                 ", mac='" + mac + '\'' +
                 ", name='" + name + '\'' +
                 ", isCheck=" + isCheck +
+                ", updatetime=" + updatetime +
                 '}';
     }
 
@@ -160,5 +154,28 @@ public class TerminalBeanSimple implements Parcelable {
         parcel.writeString(group_id);
         parcel.writeString(mac);
         parcel.writeString(name);
+        parcel.writeString(updatetime);
     }
+
+    protected DeviceBeanSimple(Parcel in) {
+        id = in.readString();
+        state = in.readString();
+        group_name = in.readString();
+        group_id = in.readString();
+        mac = in.readString();
+        name = in.readString();
+        updatetime = in.readString();
+    }
+
+    public static final Creator<DeviceBeanSimple> CREATOR = new Creator<DeviceBeanSimple>() {
+        @Override
+        public DeviceBeanSimple createFromParcel(Parcel in) {
+            return new DeviceBeanSimple(in);
+        }
+
+        @Override
+        public DeviceBeanSimple[] newArray(int size) {
+            return new DeviceBeanSimple[size];
+        }
+    };
 }

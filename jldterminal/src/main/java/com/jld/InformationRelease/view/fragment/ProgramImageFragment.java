@@ -33,7 +33,7 @@ public class ProgramImageFragment extends Fragment {
     //图片切换
     private static final int CHANGE_IMG = 0x01;
     //切换时间
-    private static final int IMG_CHANGE_TIME = 3000;
+    private static final int IMG_CHANGE_TIME = 6000;
     private ViewPager mVp_img;
     public int pagerCurrentItem = 0;
     Handler mHandler = new Handler() {

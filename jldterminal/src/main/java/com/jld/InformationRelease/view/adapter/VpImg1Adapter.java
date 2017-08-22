@@ -27,7 +27,16 @@ public class VpImg1Adapter extends PagerAdapter {
     ArrayList<ImageView> mViews = new ArrayList<>();
     ArrayList<String> mImgUlrs;
     Context mContext;
-
+    /**
+     CENTER,  保持原图大小，显示在imageview中心，超过部分裁剪 保持纵横比
+     CENTER_CROP, 以填满整个imageview为目的，等比例放大，显示在imageview中心，超过部分裁剪，
+     CENTER_INSIDE,以原图完全显示为目的，若大缩小宽或高，若小则不作处理
+     FIT_CENTER,把原图缩大或缩小居中显示 保持纵横比
+     FIT_END,把原图按比例扩大(缩小)到ImageView的高度，显示在ImageView的下部分位置
+     FIT_START,把原图按比例扩大(缩小)到ImageView的高度，显示在ImageView的上部分位置
+     FIT_XY,把原图按照指定的大小在View中显示，拉伸显示图片，不保持原比例，填满ImageView.
+     MATRIX;从图片左上角开始绘制，多余部分裁剪
+     */
     public VpImg1Adapter(ArrayList<String> imgUlrs, Context context) {
         this.mImgUlrs = imgUlrs;
         mContext = context;

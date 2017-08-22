@@ -33,7 +33,6 @@ public class AlertTextDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         final Dialog dialog = new Dialog(mContext, R.style.CustomDialog);
         View view = LayoutInflater.from(mContext).inflate(R.layout.alert_text_dialog, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.tv_alert_dialog_content);
@@ -42,7 +41,9 @@ public class AlertTextDialog extends DialogFragment {
         btn_cancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mAlertTextListen.onCancel();
                 dialog.dismiss();
+
             }
         });
         Button btn_confirm = (Button) view.findViewById(R.id.btn_change_nike_confirm);
@@ -67,5 +68,6 @@ public class AlertTextDialog extends DialogFragment {
 
     public interface OnAlertTextListen {
         void onConfirm();
+        void onCancel();
     }
 }

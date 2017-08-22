@@ -11,6 +11,7 @@ package com.jld.InformationRelease.util;
 public class URLConstant {
 
     public static final String BASE_HTTP_URL = "http://admsg.torsun.cn";
+    public static final String BASE_HTTP_URL_DOWNLOAD = "http://www.torsun.cn";
 
     /**
      * 1、注册接口
@@ -102,8 +103,14 @@ public class URLConstant {
      * 用户名修改
      */
     public static final String CHAGNE_NICK = "/user/upnick";
+
     /**
      * 用户反馈接口
      */
     public static final String FEED_BACK = "/tsmsg/feedb";
+
+    /**
+     * 获取版本信息和下载链接(后面更上当前版本号)
+     */
+    public static final String GET_VERSION_CODE = "/download/checkvadmsg.php?t=1";
 }

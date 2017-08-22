@@ -35,7 +35,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyTerminalFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
 
 /**
  * 视频广告  节目编辑

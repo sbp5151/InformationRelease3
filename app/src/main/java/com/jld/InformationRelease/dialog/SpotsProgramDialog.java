@@ -155,14 +155,14 @@ public class SpotsProgramDialog extends DialogFragment {
                         llStop.setVisibility(View.GONE);
                         ll_play_num.setVisibility(View.VISIBLE);
                         break;
-                    case 1://播放次数
+                    case 2://播放次数
                         mSelectPlayType = "1";
                         tv_play_num.setText(getString(R.string.play_num));
                         llStart.setVisibility(View.GONE);
                         llStop.setVisibility(View.GONE);
                         ll_play_num.setVisibility(View.VISIBLE);
                         break;
-                    case 2://播放时间段
+                    case 1://播放时间段
                         mSelectPlayType = "2";
                         llStart.setVisibility(View.VISIBLE);
                         llStop.setVisibility(View.VISIBLE);

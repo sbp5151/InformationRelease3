@@ -14,13 +14,13 @@ import java.util.ArrayList;
  */
 public class GetTerminalResponse extends BaseResponse {
 
-    public ArrayList<TerminalBeanSimple> item;
+    public ArrayList<DeviceBeanSimple> item;
 
-    public ArrayList<TerminalBeanSimple> getItems() {
+    public ArrayList<DeviceBeanSimple> getItems() {
         return item;
     }
 
-    public void setItems(ArrayList<TerminalBeanSimple> items) {
+    public void setItems(ArrayList<DeviceBeanSimple> items) {
         this.item = items;
     }
 

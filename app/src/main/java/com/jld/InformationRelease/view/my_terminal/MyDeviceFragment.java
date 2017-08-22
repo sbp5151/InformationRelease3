@@ -24,7 +24,7 @@ import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.request_bean.UnbindRequest;
 import com.jld.InformationRelease.bean.request_bean.UpdateTerminalRequest;
 import com.jld.InformationRelease.bean.response_bean.GetTerminalResponse;
-import com.jld.InformationRelease.bean.response_bean.TerminalBeanSimple;
+import com.jld.InformationRelease.bean.response_bean.DeviceBeanSimple;
 import com.jld.InformationRelease.dialog.AlertTextDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.TerminalFunctionPresenter;
@@ -36,7 +36,7 @@ import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
-import com.jld.InformationRelease.view.my_terminal.adapter.TerminalAdapter;
+import com.jld.InformationRelease.view.my_terminal.adapter.DeviceAdapter;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -50,13 +50,13 @@ import java.util.List;
 /**
  * 一：我的设备
  */
-public class MyTerminalFragment extends Fragment implements
-        TerminalAdapter.OnRecyclerViewItemClickListener, IViewListen<Object> {
+public class MyDeviceFragment extends Fragment implements
+        DeviceAdapter.OnRecyclerViewItemClickListener, IViewListen<Object> {
 
     private SwipeMenuRecyclerView mRecyclerView;
     private MainActivity mActivity;
-    private ArrayList<TerminalBeanSimple> terminals = new ArrayList<>();
-    public TerminalAdapter mAdapter;
+    private ArrayList<DeviceBeanSimple> terminals = new ArrayList<>();
+    public DeviceAdapter mAdapter;
     private ImageButton mPush;
     private TextView mTvComplete;
     private TextView mTitle_tx;
@@ -66,7 +66,7 @@ public class MyTerminalFragment extends Fragment implements
     public static final int UNBIND_REQUEST_TAG = 0x23;//解绑数据返回
     private static final int UPDATE_TERMINAL = 0x24;//获取设备数据
     private String mUserId;
-    public static final String TAG = "MyTerminalFragment";
+    public static final String TAG = "MyDeviceFragment";
     private static final int INIT_DATA = 0x01;
     Handler mHandler = new Handler() {
         @Override
@@ -121,7 +121,7 @@ public class MyTerminalFragment extends Fragment implements
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mRecyclerView.setSwipeMenuItemClickListener(mSwipeMenuItemClickListener);
-        mAdapter = new TerminalAdapter(terminals, mActivity);
+        mAdapter = new DeviceAdapter(terminals, mActivity);
         mAdapter.setOnRecyclerViewItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
         //
@@ -205,6 +205,10 @@ public class MyTerminalFragment extends Fragment implements
                     public void onConfirm() {
                         unbindTerminal(adapterPosition);
                     }
+
+                    @Override
+                    public void onCancel() {
+                    }
                 });
                 unbindDialog.show(getFragmentManager(),"dialog");
             } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {//左侧菜单
@@ -213,14 +217,14 @@ public class MyTerminalFragment extends Fragment implements
     };
 
     private void unbindTerminal(int position){
-        TerminalBeanSimple terminal = terminals.get(position);
+        DeviceBeanSimple terminal = terminals.get(position);
         ArrayList<String> macs = new ArrayList<>();//解绑
         macs.add(terminal.getMac());
         UnbindRequest body = new UnbindRequest();
         body.setDeviceMacs(macs);
         body.setUserId(mUserId);
         body.setSign(MD5Util.getMD5(Constant.S_KEY + mUserId));
-        TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyTerminalFragment.this);
+        TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyDeviceFragment.this);
         presenter.unbind(body, UNBIND_REQUEST_TAG);
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -266,7 +270,7 @@ public class MyTerminalFragment extends Fragment implements
                     body.setDeviceMacs(pushId);
                     body.setUserId(mUserId);
                     body.setSign(MD5Util.getMD5(Constant.S_KEY + mUserId));
-                    TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyTerminalFragment.this);
+                    TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyDeviceFragment.this);
                     presenter.unbind(body, UNBIND_REQUEST_TAG);
                     break;
                 case R.id.pp_showdown://关机
@@ -348,9 +352,9 @@ public class MyTerminalFragment extends Fragment implements
      * @return
      */
     public ArrayList<String> getCheckMac() {
-        List<TerminalBeanSimple> data = mAdapter.getData();
+        List<DeviceBeanSimple> data = mAdapter.getData();
         ArrayList<String> checkMac = new ArrayList<>();
-        for (TerminalBeanSimple bean : data) {
+        for (DeviceBeanSimple bean : data) {
             if (bean.getCheck())
                 checkMac.add(bean.getMac());
         }
@@ -365,7 +369,7 @@ public class MyTerminalFragment extends Fragment implements
         } else if (requestTag == UPDATE_TERMINAL) {
             GetTerminalResponse response = (GetTerminalResponse) data;
             //获取数据成功，更新界面
-            ArrayList<TerminalBeanSimple> items = response.getItems();
+            ArrayList<DeviceBeanSimple> items = response.getItems();
 
             SharedPreferences.Editor edit = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE).edit();
             edit.putString(Constant.MY_TERMINAL, new Gson().toJson(items));

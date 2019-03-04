@@ -265,18 +265,20 @@ public class ProgramDao {
      * @param tableId
      * @param isSucceed
      */
-    public void updateLoadState(String tableId, String isSucceed, ArrayList loadMacs) {
+    public void  updateLoadState(String tableId, String isSucceed, ArrayList loadMacs) {
         LogUtil.d(TAG, "updateProgramId:" + isSucceed);
         LogUtil.d(TAG, "tableId:" + tableId);
         LogUtil.d(TAG, "loadMacs:" + loadMacs);
         if (tableId == null)
             return;
         SQLiteDatabase wdb = mDb.getWritableDatabase();
+        wdb.beginTransaction();
         ContentValues values = new ContentValues();
         values.put(is_load_succeed, isSucceed);
         values.put(load_macs, mGson.toJson(loadMacs));
         wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
         wdb.setTransactionSuccessful();
+        wdb.endTransaction();
     }
     /**
      * 更新加载节目成功的设备
@@ -294,6 +296,7 @@ public class ProgramDao {
         values.put(load_macs, mGson.toJson(loadMacs));
         wdb.update(TABLE_NAME, values, table_id + "=?", new String[]{tableId});
         wdb.setTransactionSuccessful();
+        wdb.endTransaction();
     }
 
     /**

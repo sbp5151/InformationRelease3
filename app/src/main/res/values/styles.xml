@@ -67,10 +67,8 @@
     </style>
 
     <style name="CustomDialog" parent="android:style/Theme.Dialog">
-
         <!-- 背景颜色及透明程度 -->
         <item name="android:windowBackground">@color/dialog_backgroud</item>
-
     </style>
     <!-- dialog的出入场动画 -->
     <style name="main_menu_animstyle">

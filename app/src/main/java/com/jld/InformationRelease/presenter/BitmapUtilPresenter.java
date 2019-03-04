@@ -22,8 +22,8 @@ public class BitmapUtilPresenter {
         mCompressListen = bitmapCompressListen;
     }
 
-    public void bitmapCompress(Bitmap bitmap, String compressFile) {
-        mModel.bitmapCompress(bitmap, compressFile, mCompressListen);
+    public void bitmapCompress(Bitmap bitmap,int quality, String compressFile) {
+        mModel.bitmapCompress(bitmap, quality,compressFile, mCompressListen);
     }
 
     public interface BitmapCompressListen {

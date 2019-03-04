@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -20,7 +21,6 @@ import com.jld.InformationRelease.base.DayTaskItem;
 import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
@@ -42,7 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 public class DayTaskProgramActivity extends BaseProgramCompileActivity implements View.OnClickListener {
 
@@ -74,7 +74,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         setContentView(R.layout.activity_day_task_program);
         mDayTaskItems = mProgramBean.getDayProgram();
         mLastString = mDayTaskItems.toString();
-        LogUtil.d(TAG, "mLastString:" + mLastString);
+        Log.d(TAG, "mLastString:" + mLastString);
         mNames = new String[mProgramDatas.size()];
         mProgramIds = new String[mProgramDatas.size()];
         mTabIds = new String[mProgramDatas.size()];
@@ -144,6 +144,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
     DayTaskAdapter.OnItemClickListen mOnItemClickListen = new DayTaskAdapter.OnItemClickListen() {
         boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
         Dialog.Builder builder = null;
+
         //节目名称设置
         @Override
         public void onNameClickListen(View view, final int position) {
@@ -156,19 +157,17 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                 public void onPositiveActionClicked(DialogFragment fragment) {
                     super.onPositiveActionClicked(fragment);
                     int index = getSelectedIndex();
-                    LogUtil.d(TAG, "index:" + index);//节目名称设置
+                    Log.d(TAG, "index:" + index);//节目名称设置
                     mAdapter.datas.get(position).setProgramName(mNames[index]);
                     mAdapter.datas.get(position).setProgramLocalId(mProgramIds[index]);
                     mAdapter.datas.get(position).setProgramTabId(mTabIds[index]);
                     mAdapter.notifyDataSetChanged();
                 }
-
                 @Override
                 public void onNegativeActionClicked(DialogFragment fragment) {
                     super.onNegativeActionClicked(fragment);
                 }
             };
-
             ((SimpleDialog.Builder) builder).items(mNames, 0)
                     .title(getResources().getString(R.string.select_program))
                     .positiveAction(getResources().getString(R.string.sure))
@@ -194,9 +193,9 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                     for (int i = 0; i < mAdapter.datas.size(); i++) {
                         DayTaskItem item = mAdapter.datas.get(i);
                         if (position != i && !TextUtils.isEmpty(item.getStateTime()) && !TextUtils.isEmpty(item.getStopTime())) {
-                            LogUtil.d(TAG, "item.getStateTime():" + item.getStateTime());
-                            LogUtil.d(TAG, "startTime:" + startTime);
-                            LogUtil.d(TAG, "--------");
+                            Log.d(TAG, "item.getStateTime():" + item.getStateTime());
+                            Log.d(TAG, "startTime:" + startTime);
+                            Log.d(TAG, "--------");
                             if (startTime.equals(item.getStateTime()) || (TimeUtil.timeCompare(startTime, item.getStateTime()) && TimeUtil.timeCompare(item.getStopTime(), startTime))) {
                                 ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.play_time_error2), 3000);
                                 return;
@@ -235,7 +234,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                 public void onPositiveActionClicked(DialogFragment fragment) {//设置节目停止时间
                     TimePickerDialog dialog = (TimePickerDialog) fragment.getDialog();
                     DateFormat timeInstance = SimpleDateFormat.getTimeInstance();
-                    LogUtil.d(TAG, "timeInstance:" + timeInstance);
+                    Log.d(TAG, "timeInstance:" + timeInstance);
                     String stopTime = dialog.getFormattedTime(timeInstance);
                     String startTime = mAdapter.datas.get(position).getStateTime();
                     super.onPositiveActionClicked(fragment);
@@ -244,7 +243,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                     for (int i = 0; i < mAdapter.datas.size(); i++) {
                         DayTaskItem item = mAdapter.datas.get(i);
                         if (i != position && !TextUtils.isEmpty(item.getStateTime()) && !TextUtils.isEmpty(item.getStopTime())) {
-                            LogUtil.d(TAG, "stopTime:" + stopTime);
+                            Log.d(TAG, "stopTime:" + stopTime);
                             if (!stopTime.equals("00:00:00") && TimeUtil.timeCompare(stopTime, item.getStateTime()) && TimeUtil.timeCompare(item.getStopTime(), stopTime)) {
                                 ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.play_time_error2), 3000);
                                 return;
@@ -253,8 +252,8 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                     }
 
                     //结束时间大于播放时间检测
-                    if (stopTime.equals("00:00:00")||TextUtils.isEmpty(startTime) || TimeUtil.timeCompare(stopTime, startTime)) {
-                        if("00:00:00".equals(stopTime))
+                    if (stopTime.equals("00:00:00") || TextUtils.isEmpty(startTime) || TimeUtil.timeCompare(stopTime, startTime)) {
+                        if ("00:00:00".equals(stopTime))
                             stopTime = "24:00:00";
                         mAdapter.datas.get(position).setStopTime(stopTime);
                         mAdapter.notifyDataSetChanged();
@@ -262,6 +261,7 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
                         ToastUtil.showToast(DayTaskProgramActivity.this, getString(R.string.play_time_error), 3000);
                     }
                 }
+
                 @Override
                 public void onNegativeActionClicked(DialogFragment fragment) {
                     super.onNegativeActionClicked(fragment);
@@ -331,11 +331,11 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
             ToastUtil.showToast(this, getResources().getString(R.string.please_login), 3000);
             return;
         }
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(System.currentTimeMillis()+"");
         mProgramBean.setDayProgram(mDayTaskItems);
         mProgramBean.setUserid(userID);//账号
         mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
-        LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
+        Log.d(TAG, "mProgramBean:" + mProgramBean);
         try {
             ProgramDao mProgramDao = ProgramDao.getInstance(this);
             if (mIsAgainCompile) {
@@ -372,16 +372,16 @@ public class DayTaskProgramActivity extends BaseProgramCompileActivity implement
         mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
-        LogUtil.d(TAG, "programPush:" + mProgramBean);
-        setResult(mProgramResultCode, intent);//编辑结果返回
+        Log.d(TAG, "节目编辑数据返回:" + mProgramBean);
+        setResult(PROGRAM_RESULT_CODE, intent);//编辑结果返回
         finish();
     }
 
     @Override
     public boolean isDataChange() {
         String toString = mDayTaskItems.toString();
-        LogUtil.d(TAG, "mLastString:" + mLastString);
-        LogUtil.d(TAG, "toString:" + toString);
+        Log.d(TAG, "mLastString:" + mLastString);
+        Log.d(TAG, "toString:" + toString);
         if (mIsAgainCompile) {
             if (toString.equals(mLastString)) {
                 return false;

@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
 
@@ -38,7 +39,6 @@ public class BitmapCompress {
             switch (msg.what) {
                 case IMAGE_COMPRESS:
                     if (currentItem < imgs.size()) {
-                        LogUtil.d(TAG, "压缩：" + imgs.get(currentItem));
                         photoCompress(imgs.get(currentItem));
                         currentItem++;
                     } else {
@@ -48,6 +48,8 @@ public class BitmapCompress {
             }
         }
     };
+    private String mMiniPath;
+    private File mMiniFile;
 
     private BitmapCompress() {
     }
@@ -59,10 +61,10 @@ public class BitmapCompress {
     }
 
     public void compressBitmaps(ArrayList<String> images, CompressListener compressListener) {
-        LogUtil.d(TAG, "compressBitmaps:" + images);
         currentItem = 0;
         imgs = images;
         mCompressListener = compressListener;
+        createMiniPhotoFile();
         mHandler.sendEmptyMessage(IMAGE_COMPRESS);
     }
 
@@ -73,45 +75,69 @@ public class BitmapCompress {
      */
     private void photoCompress(final String path) {
         currentImg = path;
-        LogUtil.d(TAG, "path:" + path);
+        LogUtil.d(TAG, "图片压缩路径：" + path);
         if (!TextUtils.isEmpty(path)) {
+            long fileSize = new File(path).length();
+            LogUtil.d(TAG, "图片压缩前大小：" + fileSize);
             //所获取图片的bitmap
             Bitmap photoBmp = BitmapFactory.decodeFile(path);
             if (photoBmp != null) {
-                String[] split = path.split(File.separator);
-                String imgName = split[split.length - 1];
-                //创建miniphone文件夹
-                String miniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
-                File file = new File(miniPath);
-                if (!file.exists())
-                    file.mkdirs();
-                int lastIndexOf = path.lastIndexOf(".");
-                LogUtil.d(TAG, "imgName:" + imgName);
-                String miniImgPath;
-                if (imgName.contains("jldmini"))
-                    miniImgPath = miniPath + File.separator + imgName;
-                else
-                    miniImgPath = miniPath + File.separator + "jldmini" + imgName;
-                LogUtil.d(TAG, "miniImgPath:" + miniImgPath);
-                if (!new File(miniImgPath).exists()) {//没有压缩过进行压缩
-                    LogUtil.d(TAG, "压缩:");
-                    //图片压缩
-                    BitmapUtilPresenter presenter = new BitmapUtilPresenter(mBitmapCompressListen);
-                    //图片压缩RxJava
-                    presenter.bitmapCompress(photoBmp, miniImgPath);
-                } else {
-                    mCompressListener.compressDefeat(currentImg);
+                if (fileSize <= 50 * 1024) {
+                    LogUtil.d(TAG, "太小不用压缩");
+                    mCompressListener.compressSucceed(path);
                     mHandler.sendEmptyMessage(IMAGE_COMPRESS);
+                    return;
+                }
+                String imgName = path.substring(path.lastIndexOf(File.separator) + 1);
+                LogUtil.d(TAG, "图片名称：" + imgName);
+                File[] miniFiles = mMiniFile.listFiles();
+                for (File file : miniFiles) {
+                    if (file.getName().equals("jldmini" + imgName)) {//不用压缩
+                        LogUtil.d(TAG, "不用压缩：" + file.getAbsolutePath());
+                        mCompressListener.compressSucceed(file.getAbsolutePath());
+                        mHandler.sendEmptyMessage(IMAGE_COMPRESS);
+                        return;
+                    }
+                }
+                LogUtil.d(TAG, "进行压缩：" + imgName);
+                imgName = mMiniPath + File.separator + "jldmini" + imgName;
+                //图片压缩
+                BitmapUtilPresenter presenter = new BitmapUtilPresenter(mBitmapCompressListen);
+                //图片压缩RxJava
+                if (fileSize >= 10 * 1024 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 20, imgName);
+                } else if (fileSize >= 5 * 1024 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 30, imgName);
+                } else if (fileSize >= 3 * 1024 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 40, imgName);
+                } else if (fileSize >= 1024 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 55, imgName);
+                } else if (fileSize >= 800 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 65, imgName);
+                } else if (fileSize >= 500 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 75, imgName);
+                } else if (fileSize >= 300 * 1024) {
+                    presenter.bitmapCompress(photoBmp, 85, imgName);
+                } else {
+                    presenter.bitmapCompress(photoBmp, 95, imgName);
                 }
             } else {
                 mCompressListener.compressDefeat(currentImg);
                 mHandler.sendEmptyMessage(IMAGE_COMPRESS);
-                throw new IllegalArgumentException(path);
             }
         } else {
             mCompressListener.compressDefeat(currentImg);
             mHandler.sendEmptyMessage(IMAGE_COMPRESS);
-            throw new IllegalArgumentException(path);
+            Log.e(TAG, "photoCompress: 压缩的图片的路径为空");
+        }
+    }
+
+    private void createMiniPhotoFile() {
+        if (TextUtils.isEmpty(mMiniPath)) {
+            mMiniPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miniPhoto";
+            mMiniFile = new File(mMiniPath);
+            if (!mMiniFile.exists())
+                mMiniFile.mkdirs();
         }
     }
 
@@ -122,7 +148,6 @@ public class BitmapCompress {
             mCompressListener.compressSucceed(compressPath);
             mHandler.sendEmptyMessage(IMAGE_COMPRESS);
             LogUtil.d(TAG, "压缩成功：" + compressPath);
-
         }
 
         @Override
@@ -130,7 +155,6 @@ public class BitmapCompress {
             mCompressListener.compressDefeat(currentImg);
             mHandler.sendEmptyMessage(IMAGE_COMPRESS);
             LogUtil.d(TAG, "压缩失败：" + currentImg);
-
         }
 
         @Override

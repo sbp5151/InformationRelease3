@@ -72,11 +72,11 @@ public class RetrofitManager {
             synchronized (RetrofitManager.class) {
                 if (mOkHttpClient == null) {
                     File cacheFile = new File(mContext.getCacheDir(), "HttpCache");
-                    if (cacheFile.exists())
+                    if (!cacheFile.exists())
                         cacheFile.mkdirs();
                     // 指定缓存路径,缓存大小100Mb
                     Cache cache = new Cache(new File(cacheFile, "HttpCache"),
-                            1024 * 1024 * 5);
+                            1024 * 1024 * 10);
                     mOkHttpClient = new OkHttpClient.Builder()
                             .cache(cache)
                             .addInterceptor(mRewriteCacheControlInterceptor)

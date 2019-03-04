@@ -17,15 +17,15 @@ public class ProgramPushStateResponse extends BaseResponse {
     private ArrayList<PushStateItem> item;
 
     public class PushStateItem{
-        private String deviceMacs;
+        private String deviceid;
         private String time;
 
         public String getDeviceMacs() {
-            return deviceMacs;
+            return deviceid;
         }
 
         public void setDeviceMacs(String deviceMacs) {
-            this.deviceMacs = deviceMacs;
+            this.deviceid = deviceMacs;
         }
 
         public String getTime() {
@@ -39,7 +39,7 @@ public class ProgramPushStateResponse extends BaseResponse {
         @Override
         public String toString() {
             return "PushStateItem{" +
-                    "deviceMacs='" + deviceMacs + '\'' +
+                    "deviceid='" + deviceid + '\'' +
                     ", time='" + time + '\'' +
                     '}';
         }

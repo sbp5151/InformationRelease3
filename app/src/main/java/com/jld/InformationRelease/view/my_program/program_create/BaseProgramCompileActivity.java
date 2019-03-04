@@ -108,6 +108,7 @@ public abstract class BaseProgramCompileActivity extends BaseActivity {
             @Override
             public void onSure(ArrayList<String> selectMac) {
                 mProgramBean.getLoadDeviceMacs().clear();
+                //初始化节目被加载状态
                 mProgramBean.setIsLoadSucceed("0");
                 programPush();
             }

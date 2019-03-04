@@ -25,6 +25,7 @@ public class VerifyCodeModel {
 
     private static final java.lang.String TAG = "VerifyCodeModel";
     private final UserModelService mUserService;
+
     public VerifyCodeModel(Context context) {
         Retrofit retrofit = RetrofitManager.getInstance(context).getRetrofit();
         mUserService = retrofit.create(UserModelService.class);
@@ -39,13 +40,14 @@ public class VerifyCodeModel {
      * @param requestTag 请求标识
      */
     public void retrofitVerifyCode1(VerifyCodeRequestBean body, final IPresenterListen<VerifyCodeResponseBean> callback, final int requestTag) {
-        LogUtil.d(TAG,"retrofitVerifyCode1:"+ body);
+        LogUtil.d(TAG, "retrofitVerifyCode1:" + body);
         mUserService.getVerifyCode1(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseObserver<VerifyCodeResponseBean>(callback, requestTag) {
                     @Override
                     public void onNext(VerifyCodeResponseBean value) {
+                        LogUtil.d(TAG, "onNext:" + value);
                         if (value != null && value.getResult().equals("0")) {//成功
                             callback.requestSuccess(value, requestTag);
                         } else if (value != null) {//失败
@@ -67,7 +69,7 @@ public class VerifyCodeModel {
      * @param requestTag 请求标识
      */
     public void retrofitVerifyCode2(VerifyCodeRequestBean body, final IPresenterListen<VerifyCodeResponseBean> callback, final int requestTag) {
-        LogUtil.d(TAG,"retrofitVerifyCode1:"+ body);
+        LogUtil.d(TAG, "retrofitVerifyCode1:" + body);
         mUserService.getVerifyCode2(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

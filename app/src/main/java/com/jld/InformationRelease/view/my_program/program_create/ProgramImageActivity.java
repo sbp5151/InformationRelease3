@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,19 +30,19 @@ import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.BitmapCompress;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
-import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
 import com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramImageAdapter;
 import com.jld.InformationRelease.view.my_program.program_create.preview.ProgramImagePreview;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 @RuntimePermissions
 public class ProgramImageActivity extends BaseProgramCompileActivity {
@@ -76,6 +77,7 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
         LogUtil.d(TAG, "mProgramBean:" + mProgramBean);
         if (mIsAgainCompile) {
             mImagePath = mProgramBean.getImages();//提取视频路径
+            Log.d(TAG, "onCreate: 原始数据：" + mImagePath);
             mLastPath.addAll(mImagePath);
         }
         setPopupWindowListener(mPopupWindowListener);
@@ -119,6 +121,7 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.iv_add_image:
+                    //先执行按钮动画
                     AnimationUtil.togetherRun(mAdd_image, 270);
                     if (mAdapter.getItemCount() < 20) {
                         mHandler.sendEmptyMessageDelayed(ADD_IMAGE, 200);
@@ -144,7 +147,7 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
     @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
     void getImg() {
         PhotoPickerIntent intent = new PhotoPickerIntent(this);
-        intent.setSelectModel(SelectModel.MULTI);
+        intent.setSelectModel(SelectModel.MULTI);//多张
         intent.setShowCarema(true); // 是否显示拍照， 默认false
         int max = (20 - mAdapter.getItemCount()) > 9 ? 9 : (20 - mAdapter.getItemCount());
         intent.setMaxTotal(max); // 最多选择照片数量，默认为9
@@ -155,19 +158,22 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_PICK_IMAGE:
+            case REQUEST_CODE_PICK_IMAGE://获取相册图片
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> mPhotos = data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT);
-                    LogUtil.d(TAG, "photos:" + mPhotos);
                     if (mPhotos != null && mPhotos.size() > 0) {
-                        //获取图片集合并处理
+                        LogUtil.d(TAG, "获取相片成功：:" + mPhotos);
+                        //压缩相片
                         BitmapCompress.getInstance().compressBitmaps(mPhotos, mCompressListener);
+                        //压缩dialog提示
                         mPhotoCompileDialog = new ProgressDialog(this);
                         mPhotoCompileDialog.setCancelable(false);
                         mPhotoCompileDialog.setCanceledOnTouchOutside(false);
                         mPhotoCompileDialog.setMessage(getResources().getString(R.string.loading));
                         if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
                             mPhotoCompileDialog.show();
+                    } else {
+                        LogUtil.d(TAG, "获取相片失败");
                     }
                 }
                 break;
@@ -183,22 +189,23 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
     BitmapCompress.CompressListener mCompressListener = new BitmapCompress.CompressListener() {
         @Override
         public void compressSucceed(String imgPath) {
+            LogUtil.d(TAG, "图片压缩成功:" + imgPath + "\r\n" + "大小：" + new File(imgPath).length());
             mAdapter.addData(imgPath);
         }
 
         @Override
         public void compressComplete() {
+            LogUtil.d(TAG, "图片压缩完成");
             if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
                 mPhotoCompileDialog.dismiss();
         }
 
         @Override
         public void compressDefeat(String imgPath) {
+            LogUtil.d(TAG, "图片压缩失败:" + imgPath + "\n\r" + "大小：" + new File(imgPath).length());
             mAdapter.addData(imgPath);
         }
     };
-
-
 
     @Override
     public void saveProgram() {
@@ -208,7 +215,7 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
             toActivity(LoginActivity.class);
             return;
         }
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(System.currentTimeMillis()+"");
         mProgramBean.setModelId(Constant.IMAGE_MODEL);//模板ID
         mProgramBean.setImages(mAdapter.getImgDatas());//需要推送终端的Mac地址
         mProgramBean.setUserid(userID);//账号
@@ -246,8 +253,8 @@ public class ProgramImageActivity extends BaseProgramCompileActivity {
         mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
-        LogUtil.d(TAG, "programPush:" + mProgramBean);
-        setResult(mProgramResultCode, intent);//编辑结果返回
+        LogUtil.d(TAG, "节目编辑数据返回:" + mProgramBean);
+        setResult(PROGRAM_RESULT_CODE, intent);//编辑结果返回
         finish();
     }
 

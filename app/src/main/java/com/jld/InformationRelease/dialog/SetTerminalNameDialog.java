@@ -29,6 +29,7 @@ public class SetTerminalNameDialog extends DialogFragment {
     public SetTerminalNameDialog(Context context, SetTerminalNameListen listen) {
         mContext = context;
         mListen = listen;
+
     }
 
     @Override

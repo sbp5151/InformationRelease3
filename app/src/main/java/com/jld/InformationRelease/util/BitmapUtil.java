@@ -22,8 +22,8 @@ public class BitmapUtil {
      * @param optimize      是否采用哈弗曼表数据计算，品质相差5-10倍，但对设备性能有所要求
      * @return
      */
-    public static String compressBitmap(Bitmap bit, String fileNameBytes,
+    public static String compressBitmap(Bitmap bit,int quality, String fileNameBytes,
                                         boolean optimize) {
-        return NativeUtil.compressBitmap(bit, fileNameBytes, optimize);
+        return NativeUtil.compressBitmap(bit,quality, fileNameBytes, optimize);
     }
 }

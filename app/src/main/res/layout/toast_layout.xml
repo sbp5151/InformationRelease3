@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:background="#6666"
+              android:layout_width="300dp"
+              android:layout_height="140dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_weight="1.3"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="提示"
+        android:layout_height="0dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:background="#666"
+        android:layout_height="1px"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_weight="3"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="您的房间时长少于三分钟"
+        android:layout_height="0dp"/>
+</LinearLayout>

@@ -2,7 +2,6 @@ package com.jld.InformationRelease.model;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.jld.InformationRelease.base.BaseObserver2;
 import com.jld.InformationRelease.base.BaseResponse;
@@ -34,7 +33,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import permissions.dispatcher.NeedsPermission;
 import retrofit2.Retrofit;
 
 /**
@@ -92,7 +90,6 @@ public class FileModel {
 
     public void updateFile(String filePath, final IPresenterListen<BaseResponse> callback, final int requestTag) {
 
-        Log.d(TAG, "filePath:" + filePath);
         /**sign*/
         String md5Sig = MD5Util.getMD5(Constant.S_KEY);
         RequestBody sign = RequestBody.create(mTextType, md5Sig);
@@ -106,12 +103,10 @@ public class FileModel {
                 .subscribe(new Observer<BaseResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        LogUtil.d(TAG, "onSubscribe");
                     }
 
                     @Override
                     public void onNext(BaseResponse value) {
-                        LogUtil.d(TAG, "onNext:" + value);
                         if (value != null && value.getResult().equals("0")) {//成功
                             callback.requestSuccess(value, requestTag);
                         } else if (value != null) {//失败
@@ -124,13 +119,11 @@ public class FileModel {
                     @Override
                     public void onError(Throwable e) {
                         callback.requestError(e, requestTag);
-                        LogUtil.d(TAG, "onError:" + e);
                     }
 
                     @Override
                     public void onComplete() {
                         callback.requestComplete(requestTag);
-                        LogUtil.d(TAG, "onComplete");
 
                     }
                 });
@@ -143,7 +136,7 @@ public class FileModel {
      *
      * @return 返回响应的内容
      */
-    public static void uploadFile2(String imgPath,PushFileListener listener) {
+    public static void uploadFile2(String imgPath, PushFileListener listener) {
         String end = "\r\n";
         String twoHyphens = "--";
         String boundary = "******";
@@ -177,7 +170,7 @@ public class FileModel {
             dos.writeBytes(end);
 
             FileInputStream fis = new FileInputStream(imgPath);// 文件输入流，写入到内存中
-            LogUtil.d(TAG, "水水水水picPath = " + imgPath);
+            LogUtil.d(TAG, "picPath = " + imgPath);
             byte[] buffer = new byte[8192]; // 8k
             int count = 0;
             // 读取文件
@@ -201,9 +194,9 @@ public class FileModel {
                 JSONObject json = new JSONObject(result);
                 String result1 = json.getString("result");
                 String iamgurl = json.getString("msg");
-                if(result1.equals("0")){
+                if (result1.equals("0")) {
                     listener.pushSucceed(iamgurl);
-                }else{
+                } else {
                     listener.pushDefeat(result1);
                 }
             }
@@ -213,9 +206,10 @@ public class FileModel {
         }
     }
 
-    public interface PushFileListener{
-         void pushSucceed(String fileUrl);
-         void pushDefeat(String defeat);
+    public interface PushFileListener {
+        void pushSucceed(String fileUrl);
+
+        void pushDefeat(String defeat);
     }
 
 }

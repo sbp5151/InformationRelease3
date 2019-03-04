@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/titlepage"
-    tools:context="com.jld.InformationRelease.view.StartActivity">
+    tools:context="com.jld.InformationRelease.view.SplashActivity">
     <!--noraml （普通字体,系统默认使用的字体）
         sans（非衬线字体）
         serif （衬线字体）

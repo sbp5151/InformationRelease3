@@ -3,12 +3,8 @@ package com.jld.InformationRelease.view.my_program.program_create;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -30,11 +26,10 @@ import com.foamtrace.photopicker.intent.PhotoPreviewIntent;
 import com.jld.InformationRelease.R;
 import com.jld.InformationRelease.bean.ProgramBean;
 import com.jld.InformationRelease.db.ProgramDao;
-import com.jld.InformationRelease.presenter.BitmapUtilPresenter;
+import com.jld.InformationRelease.util.BitmapCompress;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
-import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
@@ -55,7 +50,7 @@ import static com.jld.InformationRelease.view.my_program.program_create.adapter.
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_IMG_HEAD;
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT;
 import static com.jld.InformationRelease.view.my_program.program_create.adapter.ProgramCompileAdapter.ITEM_TAG_TEXT_HEAD;
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 /**
  * 奶茶价格表 节目编辑
@@ -269,7 +264,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
 //        ArrayList<String> imgs = mAdapter.getImgDatas(true);
 //        ArrayList<ProgramBean.Commodity> data = mAdapter.getTextDatas(true);
 //        ProgramBean body = new ProgramBean();
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(System.currentTimeMillis()+"");
         mProgramBean.setCover(mAdapter.mImgAdapter.getCover());
         mProgramBean.getImages().remove(0);
 //        body.setLift_texts(data);//名称和价格
@@ -314,8 +309,8 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
         mProgramBean.getImages().remove(0);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
-        LogUtil.d(TAG, "programPush:" + mProgramBean);
-        setResult(mProgramResultCode, intent);//编辑结果返回
+        LogUtil.d(TAG, "节目编辑数据返回:" + mProgramBean);
+        setResult(PROGRAM_RESULT_CODE, intent);//编辑结果返回
         finish();
     }
 
@@ -362,19 +357,12 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_IMAGE) {//轮播图返回
-            isCompressCover = false;
             if (resultCode == RESULT_OK && data != null) {
                 mPhotos = data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT);
                 LogUtil.d(TAG, "photos:" + mPhotos);
+                isCompressCover = false;
                 if (mPhotos != null && mPhotos.size() > 0) {
-                    //获取图片集合并处理
-                    mHandler.sendEmptyMessage(PHOTO_COMPRESS);
-                    mPhotoCompileDialog = new ProgressDialog(this);
-                    mPhotoCompileDialog.setCancelable(false);
-                    mPhotoCompileDialog.setCanceledOnTouchOutside(false);
-                    mPhotoCompileDialog.setMessage(getResources().getString(R.string.loading));
-                    if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
-                        mPhotoCompileDialog.show();
+                    photoCompress(mPhotos);
                 }
             }
         } else if (requestCode == REQUEST_CODE_COVER) {//封面返回
@@ -384,13 +372,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
                 isCompressCover = true;
                 LogUtil.d(TAG, "photos:" + mPhotos);
                 //获取图片集合并处理
-                mPhotoCompileDialog = new ProgressDialog(this);
-                mPhotoCompileDialog.setCancelable(false);
-                mPhotoCompileDialog.setCanceledOnTouchOutside(false);
-                mPhotoCompileDialog.setMessage(getResources().getString(R.string.loading));
-                if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
-                    mPhotoCompileDialog.show();
-                photoCompress(coverPath);
+                photoCompress(mPhotos);
             }
         } else if (requestCode == REQUEST_PREVIEW_CODE) {//预览处理后的图片
             ArrayList<String> mPhotos = data.getStringArrayListExtra(PhotoPreviewActivity.EXTRA_RESULT);
@@ -403,108 +385,46 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
      */
     boolean isCompressCover = false;
 
-    private static final int PHOTO_COMPRESS = 0x11;
-    private int current_photo = 0;
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case PHOTO_COMPRESS://图片处理
-                    if (current_photo < mPhotos.size()) {
-                        photoCompress(mPhotos.get(current_photo));
-                        current_photo++;
-                    } else {//图片处理完成
-                        current_photo = 0;
-                        if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
-                            mPhotoCompileDialog.dismiss();
-                    }
-                    break;
-            }
-        }
-    };
-
     /**
      * 图片压缩
      *
-     * @param path
+     * @param photos
      */
-    private void photoCompress(final String path) {
-        LogUtil.d(TAG, "path:" + path);
-        if (!TextUtils.isEmpty(path)) {
-            //所获取图片的bitmap
-            Bitmap photoBmp = BitmapFactory.decodeFile(path);
-            if (photoBmp != null) {
-                String[] split = path.split(File.separator);
-                String imgName = split[split.length - 1];
-                //创建miniphone文件夹
-                String miniPath = Constant.IMAGE_CHACE;
-                File file = new File(miniPath);
-                if (!file.exists())
-                    file.mkdirs();
-
-                int lastIndexOf = path.lastIndexOf(".");
-                LogUtil.d(TAG, "lastIndexOf:" + lastIndexOf);
-
-                String miniImgPath;
-                if (imgName.contains("jldmini"))
-                    miniImgPath = miniPath + File.separator + imgName;
-                else
-                    miniImgPath = miniPath + File.separator + "jldmini" + imgName;
-
-                if (!new File(miniImgPath).exists()) {//没有压缩过进行压缩
-                    LogUtil.d(TAG, "压缩:");
-                    //图片压缩
-                    BitmapUtilPresenter presenter = new BitmapUtilPresenter(mBitmapCompressListen);
-                    //图片压缩RxJava
-                    presenter.bitmapCompress(photoBmp, miniImgPath);
-                } else {
-                    LogUtil.d(TAG, "不压缩:" + isCompressCover);
-                    //添加图片并更新
-                    if (isCompressCover) {//封面
-                        mAdapter.mImgAdapter.addCover(miniImgPath);
-                        isCompressCover = false;
-                        if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
-                            mPhotoCompileDialog.dismiss();
-                    } else {
-                        mAdapter.addImgItem(miniImgPath);
-                        mHandler.sendEmptyMessage(PHOTO_COMPRESS);
-                    }
-                }
-            }
-        }
+    private void photoCompress(ArrayList<String> photos) {
+        LogUtil.d(TAG, "photos:" + photos);
+        BitmapCompress.getInstance().compressBitmaps(photos, mCompressListener);
+        mPhotoCompileDialog = new ProgressDialog(this);
+        mPhotoCompileDialog.setCancelable(false);
+        mPhotoCompileDialog.setCanceledOnTouchOutside(false);
+        mPhotoCompileDialog.setMessage(getResources().getString(R.string.loading));
+        if (mPhotoCompileDialog != null && !mPhotoCompileDialog.isShowing())
+            mPhotoCompileDialog.show();
     }
 
-    //图片压缩返回监听
-    BitmapUtilPresenter.BitmapCompressListen mBitmapCompressListen = new BitmapUtilPresenter.BitmapCompressListen() {
-
+    BitmapCompress.CompressListener mCompressListener = new BitmapCompress.CompressListener() {
         @Override
-        public void compressSucceed(String compressPath) {//成功并返回结果
+        public void compressSucceed(String imgPath) {
+            LogUtil.d(TAG, "图片压缩成功:" + imgPath + "\r\n" + "大小：" + new File(imgPath).length());
             if (isCompressCover) {
-                mAdapter.mImgAdapter.addCover(compressPath);
+                mAdapter.mImgAdapter.addCover(imgPath);
                 isCompressCover = false;
                 if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
                     mPhotoCompileDialog.dismiss();
             } else {
                 //添加图片并更新
-                mAdapter.addImgItem(compressPath);
-                mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+                mAdapter.addImgItem(imgPath);
             }
         }
 
         @Override
-        public void compressError() {//失败
-            if (isCompressCover) {
-                isCompressCover = false;
-                if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
-                    mPhotoCompileDialog.dismiss();
-
-            } else
-                mHandler.sendEmptyMessage(PHOTO_COMPRESS);
+        public void compressComplete() {
+            if (mPhotoCompileDialog != null && mPhotoCompileDialog.isShowing())
+                mPhotoCompileDialog.dismiss();
         }
 
         @Override
-        public void onStart() {//开始
+        public void compressDefeat(String imgPath) {
+            LogUtil.d(TAG, "图片压缩失败:" + imgPath + "\n\r" + "大小：" + new File(imgPath).length());
         }
     };
 
@@ -550,7 +470,7 @@ public class ProgramTextActivity extends BaseProgramCompileActivity {
             View transInfoView = recyclerView.findChildViewUnder(
                     mHead_head.getMeasuredWidth() / 2, mHead_head.getMeasuredHeight() + 1);
             LogUtil.d(TAG, "transInfoView:" + transInfoView);
-            if(headView==null)
+            if (headView == null)
                 return;
             int headView_tag = (int) headView.getTag();
             int transInfoView_tag = (int) transInfoView.getTag();

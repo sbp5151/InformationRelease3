@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.jld.test">
-
-    <permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    package="com.jld.test">
 
     <application
         android:allowBackup="true"
@@ -13,40 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"> <!-- 设定进去的为竖屏格式 -->
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver
-            android:name=".BootReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="temperature_110"/>
-                <action android:name="temperature_90"/>
-            </intent-filter>
-        </receiver>
-
-        <!-- 温度监听广播 -->
-        <service
-            android:name=".TemperatureService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-
-        <receiver
-            android:name=".AdjustTimeReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="jld_adjust_time"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

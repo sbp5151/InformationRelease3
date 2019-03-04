@@ -265,7 +265,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         }
         mUpdateImages = mUploadData.getImages();
         //上传封面
-        if (mUploadData.getCover().equals("") || mUploadData.getCover().contains("http://admsgimg.torsun.cn")) {//封面为空或者上传过则直接上传轮播图
+        if (mUploadData.getCover().equals("") || mUploadData.getCover().contains("http:/")) {//封面为空或者上传过则直接上传轮播图
             if (mUploadData.getImages().size() > 0) {
                 mHandler.sendEmptyMessage(UPDATE_IMG);
             } else {//如果图片为空，或者图片上传过（上传失败重新上传），则直接上传节目
@@ -342,7 +342,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
         if (update_img_num < mUpdateImages.size()) {
             String imgurl = mUpdateImages.get(update_img_num);
             LogUtil.d(TAG, "图片上传:" + imgurl);
-            if (imgurl.contains("http://admsgimg.torsun.cn")) {//上传过不再上传
+            if (imgurl.contains("http:/")) {//上传过不再上传
                 mImgUrl.add(imgurl);
                 update_img_num++;
                 mHandler.sendEmptyMessage(UPDATE_IMG);
@@ -414,7 +414,7 @@ public class ProgramPushService extends Service implements IViewListen<BaseRespo
             uploadVideoPath = mUpdateVideos.get(update_video_num);
             update_video_num++;
             LogUtil.d(TAG, "视频文件上传:" + uploadVideoPath);
-            if (uploadVideoPath.contains("http://admsgimg.torsun.cn")) {//上传过不再上传
+            if (uploadVideoPath.contains("http:/")) {//上传过不再上传
                 mVideoUrl.add(uploadVideoPath);
                 mHandler.sendEmptyMessage(NEXT_VIDEO_PATH);
             } else {//上传

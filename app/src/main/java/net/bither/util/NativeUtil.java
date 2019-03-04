@@ -30,7 +30,7 @@ import java.io.IOException;
 public class NativeUtil {
 
 	private static final String TAG = "NativeUtil";
-	private static int DEFAULT_QUALITY = 95;
+	private static int DEFAULT_QUALITY = 65;
 
 	/**
 	 * @Description: JNI基本压缩
@@ -44,8 +44,8 @@ public class NativeUtil {
 	 * @date 2016年3月23日 下午6:32:49
 	 * @version V1.0.0
 	 */
-	public static String compressBitmap(Bitmap bit, String fileName, boolean optimize) {
-		return saveBitmap(bit, DEFAULT_QUALITY, fileName, optimize);
+	public static String compressBitmap(Bitmap bit,int quality, String fileName, boolean optimize) {
+		return saveBitmap(bit, quality, fileName, optimize);
 	}
 
 	/**

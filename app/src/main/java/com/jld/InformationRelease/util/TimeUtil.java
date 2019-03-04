@@ -1,5 +1,6 @@
 package com.jld.InformationRelease.util;
 
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ import java.util.Locale;
  */
 public class TimeUtil {
 
+    public static final String TAG = "TimeUtil";
 
     /**
      * 时间转日期
@@ -33,6 +35,7 @@ public class TimeUtil {
     /**
      * time1 比 time2 大返回true 否则返回false
      * 时间格式  00:00:00
+     *
      * @param time1
      * @param time2
      * @return
@@ -63,6 +66,11 @@ public class TimeUtil {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date d1 = null;
         Date d2 = null;
+        if (timeFirst.getBytes().length == 13)
+            timeFirst = timeFirst.substring(0, 10);
+        if (timeLast.getBytes().length == 13)
+            timeLast = timeLast.substring(0, 10);
+
         try {
             d1 = df.parse(timeFirst);
             d2 = df.parse(timeLast);
@@ -82,8 +90,9 @@ public class TimeUtil {
      * @return
      */
     public static long toCurrentTimeGap(String time) {
-        String currentTime = getTodayDateTime();
-        return getTimeGap(time, currentTime);
+//        String currentTime = getTodayDateTime();
+//        return getTimeGap(time, currentTime);
+        return System.currentTimeMillis()-Long.parseLong(time);
     }
 
     /**

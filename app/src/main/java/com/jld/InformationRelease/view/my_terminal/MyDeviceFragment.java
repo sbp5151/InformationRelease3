@@ -61,8 +61,8 @@ public class MyDeviceFragment extends Fragment implements
     private TextView mTvComplete;
     private TextView mTitle_tx;
     private PopupWindow mPopupWindow;
-    public static final int mProgramRequestCode = 0x21;//节目编辑数据返回
-    public static final int mProgramResultCode = 0x22;//节目编辑数据返回
+    public static final int PROGRAM_REQUEST_CODE = 0x21;//节目编辑请求TAG
+    public static final int PROGRAM_RESULT_CODE = 0x22;//节目编辑数据返回TAG
     public static final int UNBIND_REQUEST_TAG = 0x23;//解绑数据返回
     private static final int UPDATE_TERMINAL = 0x24;//获取设备数据
     private String mUserId;
@@ -75,11 +75,13 @@ public class MyDeviceFragment extends Fragment implements
             switch (msg.what) {
                 case INIT_DATA:
                     initData();
+                    mHandler.sendEmptyMessageDelayed(INIT_DATA, 1000 * 5);//延迟加载 提升用户体验
                     break;
             }
         }
     };
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean isSwiperRefresh = true;
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -87,6 +89,7 @@ public class MyDeviceFragment extends Fragment implements
         LogUtil.d(TAG, "hidden:" + hidden);
         if (!hidden)
             mHandler.sendEmptyMessageDelayed(INIT_DATA, 200);//延迟加载 提升用户体验
+        else mHandler.removeMessages(INIT_DATA);
     }
 
     @Override
@@ -103,6 +106,7 @@ public class MyDeviceFragment extends Fragment implements
         initData();
         return view;
     }
+
     private void initView(View view) {
         //title
         View title_view = view.findViewById(R.id.my_terminal_title);
@@ -110,6 +114,7 @@ public class MyDeviceFragment extends Fragment implements
         mTvComplete = (TextView) title_view.findViewById(R.id.toolbar_complete);
         mTvComplete.setVisibility(View.GONE);
         mPush = (ImageButton) title_view.findViewById(R.id.toolbar_push);
+        mPush.setVisibility(View.VISIBLE);
         menu.setOnClickListener(mOnClickListener);
         mTitle_tx = (TextView) title_view.findViewById(R.id.toolbar_title);
         mTitle_tx.setText(getString(R.string.device_list));
@@ -129,7 +134,8 @@ public class MyDeviceFragment extends Fragment implements
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                LogUtil.d(TAG,"onRefresh");
+                LogUtil.d(TAG, "onRefresh");
+                isSwiperRefresh = true;
                 initData();
             }
         });
@@ -210,13 +216,14 @@ public class MyDeviceFragment extends Fragment implements
                     public void onCancel() {
                     }
                 });
-                unbindDialog.show(getFragmentManager(),"dialog");
+                unbindDialog.show(getFragmentManager(), "dialog");
             } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {//左侧菜单
             }
         }
     };
 
-    private void unbindTerminal(int position){
+    private void unbindTerminal(int position) {
+        LogUtil.d(TAG, "数据解绑：" + position);
         DeviceBeanSimple terminal = terminals.get(position);
         ArrayList<String> macs = new ArrayList<>();//解绑
         macs.add(terminal.getMac());
@@ -227,6 +234,7 @@ public class MyDeviceFragment extends Fragment implements
         TerminalFunctionPresenter presenter = new TerminalFunctionPresenter(mActivity, MyDeviceFragment.this);
         presenter.unbind(body, UNBIND_REQUEST_TAG);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showPopupwindow() {
         mPopupWindow = new PopupWindow(mActivity);
@@ -264,7 +272,7 @@ public class MyDeviceFragment extends Fragment implements
                 return;
             }
             switch (view.getId()) {
-                case R.id.pp_program_unbind://节目推送
+                case R.id.pp_program_unbind://解绑
                     mPopupWindow.dismiss();
                     UnbindRequest body = new UnbindRequest();
                     body.setDeviceMacs(pushId);
@@ -301,7 +309,7 @@ public class MyDeviceFragment extends Fragment implements
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
-//        if (mProgramResultCode == resultCode && requestCode == mProgramRequestCode && data != null) {
+//        if (PROGRAM_RESULT_CODE == resultCode && requestCode == PROGRAM_REQUEST_CODE && data != null) {
 //            ProgramBean mProgram = (ProgramBean) data.getSerializableExtra("body");
 //            LogUtil.d(TAG, "program:" + mProgram);
 //            //开启service上传节目
@@ -363,20 +371,22 @@ public class MyDeviceFragment extends Fragment implements
 
     @Override
     public void loadDataSuccess(Object data, int requestTag) {
-        LogUtil.d(TAG, "GetTerminalResponse:" + data);
         if (UNBIND_REQUEST_TAG == requestTag) {
+            LogUtil.d(TAG, "数据解绑成功");
             initData();
         } else if (requestTag == UPDATE_TERMINAL) {
             GetTerminalResponse response = (GetTerminalResponse) data;
             //获取数据成功，更新界面
             ArrayList<DeviceBeanSimple> items = response.getItems();
-
             SharedPreferences.Editor edit = mActivity.getSharedPreferences(Constant.SHARE_KEY, Context.MODE_PRIVATE).edit();
             edit.putString(Constant.MY_TERMINAL, new Gson().toJson(items));
             edit.apply();
             terminals.clear();
             terminals.addAll(items);
             mAdapter.notifyDataSetChanged();
+            if (isSwiperRefresh)
+                ToastUtil.showToast(mActivity, getString(R.string.refresh_succeed), 3000);
+            isSwiperRefresh = false;
         }
     }
 
@@ -400,5 +410,7 @@ public class MyDeviceFragment extends Fragment implements
     public void loadDataError(Throwable e, int requestTag) {
         ToastUtil.showToast(mActivity, e.getMessage().toString(), 3000);
         hideProgress(requestTag);
+        if (requestTag == UPDATE_TERMINAL)
+            isSwiperRefresh = false;
     }
 }

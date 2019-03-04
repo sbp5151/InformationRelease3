@@ -2,6 +2,7 @@ package com.jld.InformationRelease.view.my_program.program_create.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,16 +43,20 @@ public class ProgramImageAdapter extends RecyclerView.Adapter<ProgramImageAdapte
 
     @Override
     public void onBindViewHolder(final ProgramImageAdapter.MyHolder holder, int position) {
-            Glide.with(mContext)
-                    .load(mDatas.get(position))
-                    .crossFade()
-                    .into(holder.mImg);
-            holder.mImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mClickListen.onItemClickListen(view, holder.getLayoutPosition());
-                }
-            });
+        Log.d(TAG, "onBindViewHolder: url:" + mDatas.get(position));
+        Glide.with(mContext)
+                .load(mDatas.get(position))
+                .crossFade()
+                .into(holder.mImg);
+//        Picasso.with(mContext)
+//                .load(mDatas.get(position))
+//                .into(holder.mImg);
+        holder.mImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClickListen.onItemClickListen(view, holder.getLayoutPosition());
+            }
+        });
     }
 
     @Override
@@ -60,26 +65,31 @@ public class ProgramImageAdapter extends RecyclerView.Adapter<ProgramImageAdapte
             return 0;
         return mDatas.size();
     }
+
     MyItemClickListen mClickListen;
 
     public void setItemClickListen(MyItemClickListen clickListen) {
         mClickListen = clickListen;
     }
+
     public String getdata(int position) {
         return mDatas.get(position);
     }
+
     public void addData(String imgPath) {
         mDatas.add(imgPath);
         notifyDataSetChanged();
     }
 
-    public ArrayList<String> getImgDatas(){
+    public ArrayList<String> getImgDatas() {
         return mDatas;
     }
-    public void refreshDatas(ArrayList<String> datas){
+
+    public void refreshDatas(ArrayList<String> datas) {
         mDatas = datas;
         notifyDataSetChanged();
     }
+
     public interface MyItemClickListen {
         void onItemClickListen(View view, int position);
     }

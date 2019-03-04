@@ -19,6 +19,7 @@ import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.VerifyCodePresenter;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.GeneralUtil;
+import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.MyTextWatcher;
 import com.jld.InformationRelease.util.ToastUtil;
@@ -28,6 +29,7 @@ import com.jld.InformationRelease.util.ToastUtil;
  */
 public class RegisterActivity1_Phone extends BaseActivity implements IViewListen<VerifyCodeResponseBean> {
 
+    public static final String TAG = "RegisterActivity1_Phone";
     private static final int GET_CODE_TAG = 666;
     private ProgressDialog mProgressDialog;
     private ImageView mImg_back;
@@ -108,6 +110,7 @@ public class RegisterActivity1_Phone extends BaseActivity implements IViewListen
                     overridePendingTransition(R.anim.right_in, R.anim.left_out);
                     break;
                 case R.id.bt_register_number_next://下一步
+                    LogUtil.d(TAG,"下一步");
                     VerifyCodeRequestBean bean = new VerifyCodeRequestBean();
                     mPhoneNum = mEt_number.getText().toString();
                     bean.setMobile(mPhoneNum);
@@ -121,6 +124,7 @@ public class RegisterActivity1_Phone extends BaseActivity implements IViewListen
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LogUtil.d(TAG,"onActivityResult:"+requestCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (null != data && requestCode == GET_CODE_TAG) {
             countryCode = data.getExtras().getString("CountryCode");
@@ -147,6 +151,7 @@ public class RegisterActivity1_Phone extends BaseActivity implements IViewListen
     @Override
     public void loadDataSuccess(VerifyCodeResponseBean data, int requestTag) {
         String code = data.getCode();
+        LogUtil.d(TAG,"code:"+code);
         if (!TextUtils.isEmpty(code)) {
             Intent intent = new Intent(this, RegisterActivity2_Code.class);
             intent.putExtra("code", code);

@@ -24,7 +24,7 @@ import com.jld.InformationRelease.view.my_program.program_create.ProgramVideoAct
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 /**
  * 二：模板选择
@@ -129,7 +129,7 @@ public class SelectModelActivity extends BaseActivity implements IViewListen<Get
             LogUtil.d(TAG, "ProgramBean:" + body);
             Intent intent = new Intent();
             intent.putExtra("body", body);
-            setResult(mProgramResultCode, intent);//编辑结果返回
+            setResult(PROGRAM_RESULT_CODE, intent);//编辑结果返回
         }
         finish();
     }

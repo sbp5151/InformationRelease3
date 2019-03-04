@@ -205,6 +205,7 @@
     <string name="spots">插播</string>
     <string name="version_update_fail">版本更新失败！</string>
     <string name="version_update_hint">有新版本需要更新</string>
+    <string name="refresh_succeed">刷新成功</string>
 
 
 </resources>

@@ -1,14 +1,15 @@
 package com.jld.InformationRelease.view;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 
+import com.jld.InformationRelease.BuildConfig;
 import com.jld.InformationRelease.util.LogUtil;
 
 /**
@@ -23,10 +24,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("MyApplication", "onCreate");
         mApplicationContext = this;
         registerActivityLifecycleCallbacks(mCallbacks);
-
         // 获取版本
         PackageManager pm = getPackageManager();
         try {
@@ -36,6 +35,8 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
 
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        int memorySize = activityManager.getMemoryClass();
 
     }
 

@@ -105,11 +105,9 @@ public class MainActivity extends BaseActivity
         LogUtil.d(TAG, "iconPath:" + iconPath);
         LogUtil.d(TAG, "background:" + background);
         mMenuText.setText(mSp.getString(UserConstant.USER_NICK, ""));
-        Glide.with(this).load(iconPath).crossFade()
-                .error(this.getResources().getDrawable(R.mipmap.meizi))
+        Glide.with(this).load(iconPath)
                 .into(mMenuIcon);
-        Glide.with(this).load(background).crossFade()
-                .error(this.getResources().getDrawable(R.mipmap.head_back))
+        Glide.with(this).load(background)
                 .into(mMenuBackground);
     }
 
@@ -134,6 +132,7 @@ public class MainActivity extends BaseActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -238,7 +237,6 @@ public class MainActivity extends BaseActivity
         //扫描添加数据返回
         if (mScanResultCode == resultCode && requestCode == mScanRequestCode && data != null) {
             String mac = data.getStringExtra("result");
-//            boolean isMac = GeneralUtil.isMac(mac);
             if (mac.contains("JLDIMEI")) {
                 showSetNameDialog(mac);
             } else {

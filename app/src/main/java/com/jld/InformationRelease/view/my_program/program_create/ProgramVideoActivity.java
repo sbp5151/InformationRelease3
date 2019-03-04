@@ -20,7 +20,6 @@ import com.jld.InformationRelease.db.ProgramDao;
 import com.jld.InformationRelease.util.AnimationUtil;
 import com.jld.InformationRelease.util.Constant;
 import com.jld.InformationRelease.util.LogUtil;
-import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.login_register.LoginActivity;
@@ -35,7 +34,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
 
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 /**
  * 视频广告  节目编辑
@@ -227,22 +226,6 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
                 case R.id.title_tool:
                     showPopupwindow();
                     break;
-//                case R.id.pp_program_push://发布
-//                    mPopupWindow.dismiss();
-//                    if (getNoNullPath().size() > 0)
-//                        terminalSelect();
-//                    else
-//                        ToastUtil.showToast(ProgramVideoActivity.this, getResources().getString(R.string.please_compile), 3000);
-//                    break;
-//                case R.id.pp_preview://预览
-//                    Intent intent = new Intent(ProgramVideoActivity.this, ProgramVideoPreview.class);
-//                    intent.putStringArrayListExtra("videoPath", getNoNullPath());
-//                    startActivity(intent);
-//                    break;
-//                case R.id.pp_save://保存
-//                    mPopupWindow.dismiss();
-//                    saveProgram();
-//                    break;
             }
         }
     };
@@ -269,8 +252,8 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
         mProgramBean.setUpload_state(Constant.UPLOAD_STATE_NOT);
         Intent intent = new Intent();
         intent.putExtra("body", mProgramBean);
-        LogUtil.d(TAG, "programPush:" + mProgramBean);
-        setResult(mProgramResultCode, intent);//编辑结果返回
+        LogUtil.d(TAG, "节目编辑数据返回:" + mProgramBean);
+        setResult(PROGRAM_RESULT_CODE, intent);//编辑结果返回
         finish();
     }
 
@@ -305,7 +288,7 @@ public class ProgramVideoActivity extends BaseProgramCompileActivity {
             toActivity(LoginActivity.class);
             return;
         }
-        mProgramBean.setTime(TimeUtil.getTodayDateTime());
+        mProgramBean.setTime(System.currentTimeMillis()+"");
         mProgramBean.setModelId(Constant.VIDEO_MODEL);//模板ID
         mProgramBean.setVideos(getNoNullPath());//需要推送终端的Mac地址
         mProgramBean.setUserid(userID);//账号

@@ -26,12 +26,12 @@ public class BitmapUtilModel {
 
     private static final String TAG = "BitmapUtilModel";
 
-    public void bitmapCompress(final Bitmap bitmap, final String compressFile, final BitmapUtilPresenter.BitmapCompressListen compressListen) {
+    public void bitmapCompress(final Bitmap bitmap, final int quality, final String compressFile, final BitmapUtilPresenter.BitmapCompressListen compressListen) {
 
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> e) throws Exception {
-                String s = BitmapUtil.compressBitmap(bitmap, compressFile, true);
+                String s = BitmapUtil.compressBitmap(bitmap,quality, compressFile, true);
                 // 释放Bitmap
                 if (!bitmap.isRecycled()) {
                     bitmap.recycle();

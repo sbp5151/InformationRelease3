@@ -18,12 +18,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -44,12 +44,12 @@ import com.jld.InformationRelease.dialog.TerminalSelectDialog;
 import com.jld.InformationRelease.interfaces.IViewListen;
 import com.jld.InformationRelease.presenter.ProgramLoadStatePresenter;
 import com.jld.InformationRelease.util.Constant;
-import com.jld.InformationRelease.util.LogUtil;
 import com.jld.InformationRelease.util.MD5Util;
 import com.jld.InformationRelease.util.TimeUtil;
 import com.jld.InformationRelease.util.ToastUtil;
 import com.jld.InformationRelease.util.UserConstant;
 import com.jld.InformationRelease.view.MainActivity;
+import com.jld.InformationRelease.view.login_register.LoginActivity;
 import com.jld.InformationRelease.view.my_program.adapter.MyProgramRecyclerAdapter;
 import com.jld.InformationRelease.view.my_program.program_create.DayTaskProgramActivity;
 import com.jld.InformationRelease.view.my_program.program_create.ProgramImageActivity;
@@ -66,15 +66,14 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramRequestCode;
-import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.mProgramResultCode;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_REQUEST_CODE;
+import static com.jld.InformationRelease.view.my_terminal.MyDeviceFragment.PROGRAM_RESULT_CODE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,7 +86,6 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     private static final java.lang.String TAG = "MyProgramFragment";
     private MainActivity mActivity;
     public MyProgramRecyclerAdapter mAdapter;
-    private ImageView mIv_add;
     private static final int NEW_PROGRAM = 101;//新建节目
     private static final int DAY_PROGRAM = 102;//每日任务
     private static final int INTER_CUT_PROGRAM = 103;//插播节目
@@ -107,6 +105,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     private FloatingActionsMenu mBtn_menu;
     private Button mBtn_hide;
     private ArrayList<String> mNames = new ArrayList<>();
+    private boolean isSwipeRefresh = true;
     /**
      * 插播类型
      */
@@ -115,7 +114,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     //数据更新次数 默认为一次
     private int init_data_time = 1;
     //连续更新数据 间隔时间 默认2s
-    private int init_data_interval = 3000;
+    private int init_data_interval = 5000;
 
     Handler mHandler = new Handler() {
         @Override
@@ -126,12 +125,12 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                 case NEW_PROGRAM:
                     intent = new Intent(mActivity, SelectModelActivity.class);
                     intent.putParcelableArrayListExtra("terminal_data", mActivity.mTerminal_fragment.mAdapter.getData());//终端数据
-                    startActivityForResult(intent, mProgramRequestCode);
+                    startActivityForResult(intent, PROGRAM_REQUEST_CODE);
                     break;
                 case DAY_PROGRAM:
                     intent = new Intent(mActivity, DayTaskProgramActivity.class);
                     intent.putParcelableArrayListExtra("program_datas", mProgramDatas);
-                    startActivityForResult(intent, mProgramRequestCode);
+                    startActivityForResult(intent, PROGRAM_REQUEST_CODE);
                     break;
                 case INTER_CUT_PROGRAM:
                     mBtn_hide.callOnClick();
@@ -155,24 +154,25 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtil.d(TAG, "onCreate:");
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
         mIntercut_types[0] = getResources().getString(R.string.time_span);
         mIntercut_types[1] = getResources().getString(R.string.time_quantun);
         mIntercut_types[2] = getResources().getString(R.string.play_num);
+        mSp = mActivity.getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         createProgramService();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LogUtil.d(TAG, "onCreateView:");
+        Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_my_program, container, false);
-        mSp = mActivity.getSharedPreferences(Constant.SHARE_KEY, MODE_PRIVATE);
         mUserid = mSp.getString(UserConstant.USER_ID, "");
         if (TextUtils.isEmpty(mUserid)) {//需要登录
             ToastUtil.showToast(mActivity, getResources().getString(R.string.please_login), 3000);
+            mActivity.toActivity(LoginActivity.class);
             return view;
         }
         initView(view);
@@ -200,8 +200,10 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         //swipeRefresh
         mRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_my_program);
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
             @Override
             public void onRefresh() {
+                isSwipeRefresh = true;
                 initData();
                 mHandler.sendEmptyMessageDelayed(HIDE_REFRESH, 1000);
             }
@@ -273,7 +275,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     @Override
     public void onStart() {
         super.onStart();
-        LogUtil.d(TAG, "onStart");
+        Log.d(TAG, "onStart");
         if (isFirst) {
             mRefresh.setRefreshing(true);
             mHandler.sendEmptyMessageDelayed(INIT_DATA, 500);
@@ -288,13 +290,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         ProgramDao programDao = ProgramDao.getInstance(mActivity);
         try {
             mProgramDatas = programDao.getAllProgram(mUserid);
-            LogUtil.d(TAG, "initData--mProgramDatas:" + mProgramDatas);
+            Log.d(TAG, "initData--mProgramDatas:" + mProgramDatas);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         //排序
-        if (mProgramDatas.size() >= 2)
-            Collections.sort(mProgramDatas, new SortByTime());
+        //if (mProgramDatas.size() >= 2)
+          //  Collections.sort(mProgramDatas, new SortByTime());
         mNames.clear();
         for (int i = 0; i < mProgramDatas.size(); i++) {
             if (mProgramDatas.get(i).getType().equals(Constant.PROGRAM_TYPE_COMMON)) {
@@ -309,7 +311,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         }
         //获取终端设备
         String terminalJson = mSp.getString(Constant.MY_TERMINAL, "");
-        LogUtil.d(TAG, "terminalJson:" + terminalJson);
+        Log.d(TAG, "terminalJson:" + terminalJson);
         if (!TextUtils.isEmpty(terminalJson)) {
             mTerminals = new Gson().fromJson(terminalJson, new TypeToken<ArrayList<DeviceBeanSimple>>() {
             }.getType());
@@ -324,7 +326,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         TerminalSelectDialog selectDialog = new TerminalSelectDialog(mActivity, checkMac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
             public void onSure(ArrayList<String> selectMac) {
-                LogUtil.d(TAG, "terminalSelect:" + selectMac);
+                Log.d(TAG, "terminalSelect:" + selectMac);
                 mProgramDatas.get(position).getLoadDeviceMacs().clear();
                 mProgramDatas.get(position).setIsLoadSucceed("0");
                 MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(
@@ -346,7 +348,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         TerminalSelectDialog selectDialog = new TerminalSelectDialog(mActivity, new_mac, new TerminalSelectDialog.TerminalSelectListen() {
             @Override
             public void onSure(ArrayList<String> selectMac) {
-                LogUtil.d(TAG, "terminalSelect:" + selectMac);
+                Log.d(TAG, "terminalSelect:" + selectMac);
                 pushProgramBean.setDeviceMacs(selectMac);
                 MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, pushProgramBean);
             }
@@ -379,7 +381,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         loadProgramIds.clear();
         for (int i = 0; i < mProgramDatas.size(); i++) {
             //和发布时间间隔不超过五分钟
-            LogUtil.d(TAG, "timeGap:i--" + i + "--" +
+            Log.d(TAG, "timeGap:i--" + i + "--" +
                     (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getTime())) / 1000 / 60);
             if (TimeUtil.toCurrentTimeGap(mProgramDatas.get(i).getTime()) > PROGRAM_LOAD_TIME)//前五分钟
                 continue;
@@ -387,7 +389,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             if (!TextUtils.isEmpty(mProgramDatas.get(i).getProgramId()) && mProgramDatas.get(i).getIsLoadSucceed().equals("0")) {
                 if (mPresenter == null)
                     mPresenter = new ProgramLoadStatePresenter(this, mActivity);
-                LogUtil.d(TAG, "节目ID加载情况:" + mProgramDatas.get(i).getProgramId());
+                Log.d(TAG, "节目ID加载情况:" + mProgramDatas.get(i).getProgramId());
                 mPresenter.programLoadState(mProgramDatas.get(i).getProgramId(), PROGRAM_LOAD_STATE_TAG + i);
                 loadProgramIds.add(mProgramDatas.get(i).getProgramId());
                 loadProgramTags.add(PROGRAM_LOAD_STATE_TAG + i);
@@ -427,9 +429,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                     SpotsProgramDialog spotsDialog = new SpotsProgramDialog(getActivity(), mNames, new SpotsProgramDialog.OnUrgencyProgramListen() {
                         @Override
                         public void onPush(int selectProgramPosition, String play_type, String num1, String num2) {
-                            LogUtil.d(TAG, "selectProgramPosition:" + selectProgramPosition + "\n\r"
+                            Log.d(TAG, "selectProgramPosition:" + selectProgramPosition + "\n\r"
                                     + "play_type:" + play_type + "\n\r" + "num1:" + num1 + "\n\r" + "num2:" + num2);
-                            LogUtil.d(TAG,"---mProgramDatas1:"+mProgramDatas);
+                            Log.d(TAG, "---mProgramDatas1:" + mProgramDatas);
                             ProgramBean program = new ProgramBean();
                             program.setType(Constant.PROGRAM_TYPE_URGENCY);
                             program.setUserid(mUserid);
@@ -445,7 +447,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                             dayTaskItems.add(item);
                             program.setDayProgram(dayTaskItems);
                             program.setSign(MD5Util.getMD5(Constant.S_KEY + mUserid));
-                            LogUtil.d(TAG,"---mProgramDatas1.1:"+mProgramDatas);
+                            Log.d(TAG, "---mProgramDatas1.1:" + mProgramDatas);
                             terminalSelect2(selectProgramPosition, program);
                         }
                     });
@@ -460,7 +462,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         public void onItemClickListen(View view, int position) {
             if (!mAdapter.getCompileState()) {//在编辑状态不让点击
                 ProgramBean programBean = mProgramDatas.get(position);
-                LogUtil.d(TAG, "programBean:" + programBean);
+                Log.d(TAG, "programBean:" + programBean);
                 if (programBean.getType().equals(Constant.PROGRAM_TYPE_COMMON)) {
                     Intent intent = null;
                     switch (programBean.getModelId()) {
@@ -476,8 +478,8 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                     }
                     if (intent != null) {
                         intent.putExtra("program_data", programBean);//节目数据
-                        LogUtil.d(TAG, "programBean:" + programBean);
-                        startActivityForResult(intent, mProgramRequestCode);
+                        Log.d(TAG, "programBean:" + programBean);
+                        startActivityForResult(intent, PROGRAM_REQUEST_CODE);
                     }
                 } else if (programBean.getType().equals(Constant.PROGRAM_TYPE_DAY)) {//每日任务
                     Intent intent = new Intent(mActivity, DayTaskProgramActivity.class);
@@ -489,7 +491,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                     }
                     intent.putParcelableArrayListExtra("program_datas", transferData);
                     intent.putExtra("program_data", programBean);
-                    startActivityForResult(intent, mProgramRequestCode);
+                    startActivityForResult(intent, PROGRAM_REQUEST_CODE);
                 }
             }
         }
@@ -499,10 +501,10 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         public void onItemProgressClickListen(View view, int position) {
 
             ProgramBean program = mProgramDatas.get(position);
-            LogUtil.d(TAG, "program:" + program);
+            Log.d(TAG, "program:" + program);
             ArrayList<String> deviceMacs = program.getDeviceMacs();
             ArrayList<String> loadDeviceMacs = program.getLoadDeviceMacs();
-            LogUtil.d(TAG, "mTerminals:" + mTerminals);
+            Log.d(TAG, "mTerminals:" + mTerminals);
             ArrayList<ProgramStateDialogItem> items = new ArrayList<>();
             for (String str : deviceMacs) {
                 ProgramStateDialogItem item = new ProgramStateDialogItem();
@@ -564,10 +566,9 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == mProgramRequestCode && resultCode == mProgramResultCode) {
+        if (requestCode == PROGRAM_REQUEST_CODE && resultCode == PROGRAM_RESULT_CODE) {
             //再发布
             ProgramBean body = data.getParcelableExtra("body");
-            LogUtil.d(TAG, "onActivityResult:" + body);
             if (body != null) {
                 MyProgramFragmentPermissionsDispatcher.uploadProgramDataWithCheck(MyProgramFragment.this, body);
             }
@@ -581,13 +582,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
      */
     @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
     public void uploadProgramData(final ProgramBean program) {
-        LogUtil.d(TAG, "上传节目数据:" + program);
+        Log.d(TAG, "上传节目数据:" + program);
         sIsProgramUpload = true;
         //progressbar
         mProgressBar.setVisibility(View.VISIBLE);
         ToastUtil.showToast(mActivity, getString(R.string.program_back_push), 3000);
         //更新节目最新时间
-        program.setTime(TimeUtil.getTodayDateTime());
+        program.setTime(System.currentTimeMillis()+"");
         //更新数据库为已上传状态
         program.setSign(MD5Util.getMD5(Constant.S_KEY + program.getUserid()));
         //上传结果监听
@@ -595,7 +596,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
             @Override
             public void pushSucceed(String programId) {//节目上传成功
                 sIsProgramUpload = false;
-                LogUtil.d(TAG, "pushSucceed 节目上传成功:" + program);
+                Log.d(TAG, "pushSucceed 节目上传成功:" + program);
                 mProgressBar.setVisibility(View.GONE);
                 //更新数据库为已上传状态
                 try {
@@ -615,7 +616,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                 sIsProgramUpload = false;
                 mProgressBar.setVisibility(View.GONE);
                 //更新数据库为已上传状态
-                LogUtil.d(TAG, "pushDefeated  发布失败:");
+                Log.e(TAG, "pushDefeated  发布失败:");
                 try {
                     //保存到数据库
                     program.setUpload_state(Constant.UPLOAD_STATE_FAIL);//上传失败状态
@@ -629,7 +630,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
 
             @Override
             public void uploadSucceed(ProgramBean programBean) {
-                LogUtil.d(TAG, "uploadSucceed:" + programBean);
+                Log.d(TAG, "uploadSucceed:" + programBean);
                 if (programBean != null) {
                     try {
                         //保存到数据库
@@ -644,19 +645,19 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         });
         //开始上传
         if (program.getType().equals(Constant.PROGRAM_TYPE_DAY) || program.getType().equals(Constant.PROGRAM_TYPE_URGENCY)) {
-            LogUtil.d(TAG,"---mProgramDatas3:"+mProgramDatas);
+            Log.d(TAG, "---mProgramDatas3:" + mProgramDatas);
             mPushProgramBinder.uploadDayTask(program, mProgramDatas);
         } else if (program.getType().equals(Constant.PROGRAM_TYPE_COMMON))
             mPushProgramBinder.startPush(program);
         else
-            LogUtil.e("上传数据未匹配");
+            Log.e(TAG,"上传数据未匹配");
     }
 
     /**
      * 将节目保存到数据库
      */
     public void saveProgramDatabase(ProgramBean program) throws Exception {
-        LogUtil.d(TAG, "数据库保存节目数据：" + program);
+        Log.d(TAG, "数据库保存节目数据：" + program);
         final ProgramDao baseHelper = ProgramDao.getInstance(mActivity);
         if (program.getTable_id() == -1)//新建
             baseHelper.addProgram(program, mSp.getString(UserConstant.USER_ID, ""));
@@ -679,13 +680,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             isBind = true;
-            LogUtil.d(TAG, "mCon:" + "onServiceConnected");
+            Log.d(TAG, "mCon:" + "onServiceConnected");
             mPushProgramBinder = (ProgramPushService.MyBinder) iBinder;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            LogUtil.d(TAG, "mCon:" + "onServiceDisconnected");
+            Log.d(TAG, "mCon:" + "onServiceDisconnected");
             isBind = false;
         }
     };
@@ -693,7 +694,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LogUtil.d(TAG, "onDestroy:" + isBind);
+        Log.d(TAG, "onDestroy:" + isBind);
         if (isBind)
             mActivity.unbindService(mCon);
     }
@@ -701,7 +702,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     @Override
     public void onStop() {
         super.onStop();
-        LogUtil.d(TAG, "onStop:");
+        Log.d(TAG, "onStop:");
         if (mBtn_menu.isExpanded())
             mBtn_menu.collapse();
     }
@@ -709,7 +710,7 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        LogUtil.d(TAG, "onHiddenChanged:" + hidden);
+        Log.d(TAG, "onHiddenChanged:" + hidden);
         if (hidden) {
             if (mBtn_menu.isExpanded())
                 mBtn_menu.collapse();
@@ -718,28 +719,27 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
 
     @Override
     public void showProgress(int requestTag) {
-
     }
 
     @Override
     public void hideProgress(int requestTag) {
-        LogUtil.d(TAG, "hideProgress");
+        Log.d(TAG, "hideProgress");
         if (mRefresh.isRefreshing())
             mRefresh.setRefreshing(false);
     }
 
     @Override
     public void loadDataSuccess(ProgramPushStateResponse data, int requestTag) {
-        LogUtil.d(TAG, "loadDataSuccess:" + data);
-        LogUtil.d(TAG, "PROGRAM_LOAD_STATE_TAG:" + requestTag);
+        Log.d(TAG, "loadDataSuccess:" + data);
+        Log.d(TAG, "PROGRAM_LOAD_STATE_TAG:" + requestTag);
         if (loadProgramTags.contains(requestTag)) {
             if (data != null && data.getItem() != null && data.getItem().size() > 0) {
                 //已加载成功的Mac地址
                 ArrayList<ProgramPushStateResponse.PushStateItem> items = data.getItem();
                 //对应节目数据
                 ProgramBean programBean = mProgramDatas.get(requestTag - PROGRAM_LOAD_STATE_TAG);
-                LogUtil.d(TAG, "load_programBean:" + programBean);
-                LogUtil.d(TAG, "items:" + items);
+                Log.d(TAG, "load_programBean:" + programBean);
+                Log.d(TAG, "items:" + items);
                 //同步 以防用户删除节目
                 if (loadProgramIds.contains(programBean.getProgramId())) {
                     //添加已加载节目的设备mac
@@ -758,9 +758,13 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
                         dao.updateLoadState(programBean.getTable_id() + "", programBean.getIsLoadSucceed(), programBean.getLoadDeviceMacs());
                     } catch (Exception e) {
                         e.printStackTrace();
-                        LogUtil.e("数据库更新错误：" + e.getMessage());
+                        Log.e(TAG,"数据库更新错误：" + e.getMessage());
                     }
                     mAdapter.notifyDataSetChanged();
+                    if(isSwipeRefresh){
+                        ToastUtil.showToast(mActivity, getString(R.string.refresh_succeed), 3000);
+                        isSwipeRefresh = false;
+                    }
                 }
             }
         }
@@ -768,9 +772,10 @@ public class MyProgramFragment extends Fragment implements IViewListen<ProgramPu
 
     @Override
     public void loadDataError(Throwable e, int requestTag) {
-        LogUtil.d(TAG, "loadDataError");
-        if (requestTag == (PROGRAM_LOAD_STATE_TAG + 0) && mRefresh.isRefreshing()) {
+        Log.d(TAG, "loadDataError");
+        if (loadProgramTags.contains(requestTag)) {
             ToastUtil.showToast(mActivity, e.getMessage(), 3000);
+            isSwipeRefresh = false;
         }
     }
 }

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
@@ -65,6 +66,8 @@ public class StartActivity extends BaseActivity implements IViewListen<CheckVers
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.d(TAG, "外部存储目录："+ Environment.getExternalStorageDirectory().getAbsolutePath());
+
         int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 //                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY    //点击不显示系统栏
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
